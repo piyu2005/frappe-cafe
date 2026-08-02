@@ -53,3 +53,6 @@ jspm_packages/
 
 # Aider AI Chat
 .aider*
+
+# Frontend build output (regenerate with: cd frontend && npm install && npm run build)
+my_new_app/public/frontend/

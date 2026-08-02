@@ -1,5 +1,5 @@
 app_name = "my_new_app"
-app_title = "My New App"
+app_title = "Frappe's Cafe"
 app_publisher = "Priyanshi"
 app_description = "project"
 app_email = "hodagepriyanshi@gmail.com"
@@ -126,13 +126,13 @@ app_license = "mit"
 # -----------
 # Permissions evaluated in scripted ways
 
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
-#
-# has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
-# }
+permission_query_conditions = {
+	"Post": "my_new_app.my_new_app.doctype.post.post.get_permission_query_conditions",
+}
+
+has_permission = {
+	"Post": "my_new_app.my_new_app.doctype.post.post.has_permission",
+}
 
 # Document Events
 # ---------------
@@ -255,4 +255,6 @@ app_license = "mit"
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
+
+after_migrate = ["my_new_app.setup.after_migrate"]
 
