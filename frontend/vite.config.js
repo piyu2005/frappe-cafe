@@ -24,7 +24,25 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['frappe-ui'],
+    exclude: [
+      'frappe-ui',
+      // frappe-ui is excluded above (served as source, since it ships raw
+      // .vue/.ts and esbuild's optimizer can't process .vue SFCs), but its
+      // editor pulls in tiptap/prosemirror from multiple page entry points
+      // (WritePost.vue, Messages.vue). Optimizing tiptap separately from
+      // frappe-ui's own raw-served imports of it produces two distinct
+      // module instances of the same package, which ProseMirror rejects at
+      // runtime with "Adding different instances of a keyed plugin". Excluding
+      // the whole tiptap graph too keeps it on native, single-instance ESM
+      // resolution consistent with frappe-ui's own unbundled imports.
+      '@tiptap/core',
+      '@tiptap/pm',
+      '@tiptap/vue-3',
+      '@tiptap/starter-kit',
+      '@tiptap/extensions',
+      '@tiptap/suggestion',
+      '@tiptap/markdown',
+    ],
     include: [
       'feather-icons',
       'tippy.js',

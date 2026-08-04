@@ -11,3 +11,48 @@ app.use(router)
 app.use(FrappeUI)
 
 app.mount('#app')
+
+// Tooltips (and similar hover UI) can reappear "on their own" after
+// switching tabs/apps and back, for two independent reasons that both need
+// handling:
+// 1. Focus: clicking a nav link (e.g. a rail icon) to navigate leaves it
+//    keyboard-focused in an SPA — there's no full page load to reset focus.
+//    Accessible tooltips open on focus as well as hover, and focus doesn't
+//    clear just because the tab lost visibility, so the still-focused
+//    element's tooltip can (re)open purely from the window regaining focus.
+// 2. Hover: the cursor doesn't move when switching tabs without touching the
+//    mouse, so if it was left resting over a hoverable element, the browser
+//    still counts it as hovered on return — and if a hover-delay timer was
+//    mid-flight when the tab backgrounded, background-tab timer throttling
+//    can make it fire late, right as focus returns.
+function dismissFloatingUI() {
+  document.activeElement?.blur?.()
+
+  const hovered = document.querySelectorAll(':hover')
+  for (let i = hovered.length - 1; i >= 0; i--) {
+    const el = hovered[i]
+    el.dispatchEvent(new PointerEvent('pointerleave', { bubbles: false, cancelable: true }))
+    el.dispatchEvent(new PointerEvent('pointerout', { bubbles: true, cancelable: true }))
+    el.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false, cancelable: true }))
+    el.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, cancelable: true }))
+  }
+
+  // Escape is the accessibility-mandated way to dismiss floating UI
+  // (tooltips/popovers/menus) — a backstop for anything the above missed.
+  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+}
+
+document.addEventListener('visibilitychange', () => {
+  dismissFloatingUI()
+  if (document.visibilityState !== 'visible') return
+  document.body.style.pointerEvents = 'none'
+  const restore = () => {
+    document.body.style.pointerEvents = ''
+    window.removeEventListener('mousemove', restore)
+  }
+  window.addEventListener('mousemove', restore, { passive: true })
+})
+
+// visibilitychange only fires for tab switches within the browser; blur/focus
+// also cover switching to a different application entirely.
+window.addEventListener('blur', dismissFloatingUI)

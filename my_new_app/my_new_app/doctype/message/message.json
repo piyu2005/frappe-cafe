@@ -12,6 +12,8 @@
   "sender_image",
   "content",
   "attachment",
+  "attachments",
+  "shared_post",
   "link_url",
   "link_title",
   "link_description",
@@ -55,6 +57,18 @@
    "fieldname": "attachment",
    "fieldtype": "Attach",
    "label": "Attachment"
+  },
+  {
+   "fieldname": "attachments",
+   "fieldtype": "Table",
+   "label": "Attachments",
+   "options": "Message Attachment"
+  },
+  {
+   "fieldname": "shared_post",
+   "fieldtype": "Link",
+   "label": "Shared Post",
+   "options": "Post"
   },
   {
    "fieldname": "link_url",

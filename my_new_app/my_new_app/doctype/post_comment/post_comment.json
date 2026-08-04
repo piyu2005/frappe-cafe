@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "post",
+  "parent_comment",
   "comment_by",
   "comment_by_name",
   "comment_by_image",
@@ -20,6 +21,13 @@
    "label": "Post",
    "options": "Post",
    "reqd": 1
+  },
+  {
+   "fieldname": "parent_comment",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Parent Comment",
+   "options": "Post Comment"
   },
   {
    "fieldname": "comment_by",

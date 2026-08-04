@@ -173,15 +173,20 @@ import {
   FontHighlight,
   HeadingGroup,
   HorizontalRule,
+  InlineCode,
+  InsertAttachment,
   InsertIframe,
   InsertImage,
   InsertLink,
   InsertTable,
+  InsertVideo,
   Italic,
   OrderedList,
+  Redo,
   RichTextKit,
   Separator,
   Strike,
+  Undo,
 } from 'frappe-ui/editor'
 import { ensureHtmlContent } from '@/utils/content'
 import { APP_NAME } from '@/utils/appName'
@@ -245,29 +250,63 @@ const publicationOptions = computed(() =>
     .map((p) => ({ label: p.title, value: p.publication })),
 )
 
+// Underline is already part of frappe-ui's own StarterKit (on by default),
+// which RichTextKit builds on — the toolbar just needs the button below
+// (there's no ready-made one), not a second copy of the mark itself.
 const extensions = [RichTextKit.configure({ mention: false, tag: false })]
 
+// frappe-ui doesn't ship ready-made toolbar buttons for underline or task
+// lists (TaskList/TaskItem are enabled by RichTextKit, just without a menu
+// entry), so these follow the same public `CommandMenuItem` shape used to
+// build the exported items above — the documented escape hatch for exactly
+// this case, not a bypass of it.
+const UnderlineItem = {
+  label: 'Underline',
+  icon: 'lucide-underline',
+  action: (editor) => editor.chain().focus().toggleUnderline().run(),
+  isActive: (editor) => editor.isActive('underline'),
+}
+
+const TaskListItem = {
+  label: 'Task list',
+  icon: 'lucide-list-checks',
+  action: (editor) => editor.chain().focus().toggleTaskList().run(),
+  isActive: (editor) => editor.isActive('taskList'),
+}
+
 const toolbar = [
+  Undo,
+  Redo,
+  Separator,
   HeadingGroup,
   Separator,
   Bold,
   Italic,
+  UnderlineItem,
   Strike,
+  InlineCode,
   FontColor,
   FontHighlight,
   Separator,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Separator,
   BulletList,
   OrderedList,
+  TaskListItem,
   Blockquote,
   Separator,
   InsertLink,
   InsertImage,
+  InsertVideo,
+  InsertAttachment,
   InsertTable,
   InsertIframe,
   HorizontalRule,
 ]
 
-const bubbleToolbar = [Bold, Italic, Strike, InsertLink, Separator, AlignLeft, AlignCenter, AlignRight]
+const bubbleToolbar = [Bold, Italic, UnderlineItem, Strike, InsertLink, Separator, AlignLeft, AlignCenter, AlignRight]
 
 const { upload: uploadFile } = useFileUpload()
 

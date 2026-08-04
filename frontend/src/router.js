@@ -82,4 +82,12 @@ router.beforeEach((to) => {
   }
 })
 
+// Clicking a nav link (e.g. a rail icon) to navigate leaves it focused —
+// there's no full page load to reset focus like a normal link click would
+// cause. Left focused, its tooltip can reopen later purely from the window
+// regaining focus (e.g. after switching tabs), with no hover involved.
+router.afterEach(() => {
+  document.activeElement?.blur?.()
+})
+
 export default router

@@ -351,7 +351,15 @@ def list_comments(post):
 	rows = frappe.db.get_all(
 		"Post Comment",
 		filters={"post": post},
-		fields=["name", "comment_by", "comment_by_name", "comment_by_image", "content", "creation"],
+		fields=[
+			"name",
+			"parent_comment",
+			"comment_by",
+			"comment_by_name",
+			"comment_by_image",
+			"content",
+			"creation",
+		],
 		order_by="creation desc",
 	)
 
@@ -376,15 +384,33 @@ def list_comments(post):
 
 
 @frappe.whitelist()
-def add_comment(post, content):
+def add_comment(post, content, parent_comment=None):
 	_check_post_visible(post)
-	comment = frappe.get_doc({"doctype": "Post Comment", "post": post, "content": content})
+
+	if parent_comment:
+		parent = frappe.db.get_value(
+			"Post Comment", parent_comment, ["post", "parent_comment", "comment_by"], as_dict=True
+		)
+		if not parent or parent.post != post:
+			frappe.throw("Comment not found", frappe.DoesNotExistError)
+		# Keep threading a single level deep: replying to a reply attaches to
+		# its top-level ancestor instead of nesting further.
+		parent_comment = parent.parent_comment or parent_comment
+
+	comment = frappe.get_doc(
+		{"doctype": "Post Comment", "post": post, "content": content, "parent_comment": parent_comment}
+	)
 	comment.insert()
 
 	from my_new_app.follow import _notify
 
-	post_author = frappe.db.get_value("Post", post, "author")
-	_notify(post_author, frappe.session.user, "Comment", "commented on your post", "Post", post)
+	if parent_comment:
+		reply_to = frappe.db.get_value("Post Comment", parent_comment, "comment_by")
+		if reply_to != frappe.session.user:
+			_notify(reply_to, frappe.session.user, "Comment", "replied to your comment", "Post Comment", parent_comment)
+	else:
+		post_author = frappe.db.get_value("Post", post, "author")
+		_notify(post_author, frappe.session.user, "Comment", "commented on your post", "Post", post)
 
 	return comment.as_dict()
 

@@ -4,7 +4,20 @@ import urllib.request
 import frappe
 from frappe.utils import now_datetime
 
+from my_new_app.api import _check_post_visible
+
 URL_RE = re.compile(r"(https?://[^\s]+)")
+HTML_TAG_RE = re.compile(r"<[^>]*>")
+
+
+def _preview_text(content):
+	"""Plain-text preview for conversation/search listings — messages composed
+	with the rich-text composer store HTML, which shouldn't leak into a
+	one-line snippet."""
+	if not content:
+		return content
+	stripped = HTML_TAG_RE.sub(" ", content)
+	return re.sub(r"\s+", " ", stripped).strip() or None
 
 
 def _is_member(conversation, user=None):
@@ -72,6 +85,23 @@ def _unfurl(url):
 		return {"link_url": url, "link_title": url, "link_description": None, "link_image": None}
 
 
+def _post_card(post_id):
+	post = frappe.db.get_value(
+		"Post",
+		post_id,
+		["title", "post_type", "cover_image", "attachment", "author_name"],
+		as_dict=True,
+	)
+	image = post.cover_image or (post.attachment if post.post_type != "Video" else None)
+	return {
+		"shared_post": post_id,
+		"link_url": f"/posts/{post_id}",
+		"link_title": post.title,
+		"link_description": f"by {post.author_name}" if post.author_name else None,
+		"link_image": image,
+	}
+
+
 @frappe.whitelist()
 def list_conversations():
 	user = frappe.session.user
@@ -117,7 +147,7 @@ def list_conversations():
 				"other_user": other_user,
 				"is_group": conv.is_group,
 				"muted": m.muted,
-				"last_message": last_message.content if last_message else None,
+				"last_message": _preview_text(last_message.content) if last_message else None,
 				"last_message_at": last_message.creation if last_message else None,
 				"unread_count": 0 if m.muted else unread_count,
 			}
@@ -209,6 +239,21 @@ def get_conversation(conversation):
 	}
 
 
+def _attachments_by_message(names):
+	rows = frappe.db.get_all(
+		"Message Attachment",
+		filters={"parent": ["in", names]},
+		fields=["parent", "file_url", "file_name", "file_size"],
+		order_by="idx asc",
+	)
+	grouped = {}
+	for r in rows:
+		grouped.setdefault(r.parent, []).append(
+			{"file_url": r.file_url, "file_name": r.file_name, "file_size": r.file_size}
+		)
+	return grouped
+
+
 @frappe.whitelist()
 def get_messages(conversation, start=0, limit=50):
 	_require_member(conversation)
@@ -222,6 +267,7 @@ def get_messages(conversation, start=0, limit=50):
 			"sender_image",
 			"content",
 			"attachment",
+			"shared_post",
 			"link_url",
 			"link_title",
 			"link_description",
@@ -233,26 +279,45 @@ def get_messages(conversation, start=0, limit=50):
 		page_length=int(limit),
 	)
 	rows.reverse()
+
+	grouped = _attachments_by_message([r.name for r in rows])
 	for row in rows:
 		row.reactions = _group_reactions(row.name)
+		# Older messages only have the single legacy `attachment` field;
+		# surface it the same way so the frontend only ever deals with a list.
+		row.attachments = grouped.get(row.name) or (
+			[{"file_url": row.attachment, "file_name": row.attachment.rsplit("/", 1)[-1], "file_size": None}]
+			if row.attachment
+			else []
+		)
 	return rows
 
 
 @frappe.whitelist()
-def send_message(conversation, content=None, attachment=None):
+def send_message(conversation, content=None, attachments=None, shared_post=None):
 	_require_member(conversation)
-	if not content and not attachment:
+	if isinstance(attachments, str):
+		attachments = frappe.parse_json(attachments)
+	attachments = attachments or []
+
+	if not content and not attachments and not shared_post:
 		frappe.throw("Message cannot be empty")
 
 	others = _other_members(conversation)
 	if len(others) == 1 and _is_blocked(frappe.session.user, others[0]):
 		frappe.throw("You can't message this user")
 
-	doc = frappe.get_doc(
-		{"doctype": "Message", "conversation": conversation, "content": content, "attachment": attachment}
-	)
+	doc = frappe.get_doc({"doctype": "Message", "conversation": conversation, "content": content})
+	for a in attachments:
+		doc.append(
+			"attachments",
+			{"file_url": a.get("file_url"), "file_name": a.get("file_name"), "file_size": a.get("file_size")},
+		)
 
-	if content:
+	if shared_post:
+		_check_post_visible(shared_post)
+		doc.update(_post_card(shared_post))
+	elif content:
 		match = URL_RE.search(content)
 		if match:
 			doc.update(_unfurl(match.group(1)))
@@ -373,10 +438,13 @@ def search_people_to_message(query=None):
 @frappe.whitelist()
 def search_messages(conversation, query):
 	_require_member(conversation)
-	return frappe.db.get_all(
+	rows = frappe.db.get_all(
 		"Message",
 		filters={"conversation": conversation, "content": ["like", f"%{query}%"]},
 		fields=["name", "content", "sender_name", "creation"],
 		order_by="creation desc",
 		limit_page_length=50,
 	)
+	for row in rows:
+		row.content = _preview_text(row.content)
+	return rows

@@ -126,10 +126,22 @@
               <Avatar v-if="m.sender !== session.user" :image="m.sender_image" :label="m.sender_name" size="sm" />
               <div class="max-w-[70%]">
                 <div
-                  class="relative rounded-lg px-3 py-2 text-sm"
-                  :class="m.sender === session.user ? 'bg-surface-gray-10 text-ink-base' : 'bg-surface-gray-2 text-ink-gray-9'"
+                  class="relative rounded-lg bg-surface-gray-2 px-3 py-2 text-sm text-ink-gray-9"
                 >
-                  <div v-if="m.content" class="whitespace-pre-wrap">
+                  <!-- Messages written with the rich-text composer store HTML;
+                       older messages sent before it existed are plain text
+                       with light markdown, still parsed the original way. -->
+                  <Editor
+                    v-if="isHtmlContent(m.content)"
+                    :model-value="m.content"
+                    :extensions="composerExtensions"
+                    :editable="false"
+                  >
+                    <template #default>
+                      <EditorContent class="prose-sm" />
+                    </template>
+                  </Editor>
+                  <div v-else-if="m.content" class="whitespace-pre-wrap">
                     <template v-for="(t, i) in parseRichText(m.content)" :key="i">
                       <strong v-if="t.type === 'bold'">{{ t.value }}</strong>
                       <em v-else-if="t.type === 'italic'">{{ t.value }}</em>
@@ -144,15 +156,57 @@
                       <template v-else>{{ t.value }}</template>
                     </template>
                   </div>
-                  <img v-if="m.attachment" :src="m.attachment" class="mt-1 max-h-64 rounded object-cover" />
+                  <div v-if="m.attachments && m.attachments.length" class="mt-1 flex flex-wrap gap-1.5">
+                    <template v-for="(a, i) in m.attachments" :key="i">
+                      <img
+                        v-if="isImageFile(a.file_name)"
+                        :src="a.file_url"
+                        class="max-h-64 rounded object-cover"
+                      />
+                      <a
+                        v-else
+                        :href="a.file_url"
+                        target="_blank"
+                        rel="noopener"
+                        class="flex items-center gap-2 rounded-lg border border-outline-gray-2 bg-surface-base px-2 py-1.5 text-xs text-ink-gray-8 no-underline hover:bg-surface-gray-1"
+                      >
+                        <span class="lucide-file size-3.5 shrink-0 text-ink-gray-5" aria-hidden="true" />
+                        <span class="max-w-32 truncate">{{ a.file_name }}</span>
+                      </a>
+                    </template>
+                  </div>
+
+                  <button
+                    v-if="m.shared_post"
+                    class="mt-2 flex w-64 items-center gap-3 overflow-hidden rounded-lg border border-outline-gray-1 bg-surface-base p-2 text-left"
+                    @click="router.push(m.link_url)"
+                  >
+                    <img
+                      v-if="m.link_image"
+                      :src="m.link_image"
+                      class="size-14 shrink-0 rounded object-cover"
+                    />
+                    <div
+                      v-else
+                      class="grid size-14 shrink-0 place-content-center rounded bg-surface-gray-3"
+                    >
+                      <span class="lucide-image size-5 text-ink-gray-4" aria-hidden="true" />
+                    </div>
+                    <div class="min-w-0">
+                      <div class="truncate text-sm font-medium text-ink-gray-9">{{ m.link_title }}</div>
+                      <p v-if="m.link_description" class="truncate text-xs text-ink-gray-5">
+                        {{ m.link_description }}
+                      </p>
+                      <span class="text-xs text-ink-gray-5">View post</span>
+                    </div>
+                  </button>
 
                   <a
-                    v-if="m.link_url"
+                    v-else-if="m.link_url"
                     :href="m.link_url"
                     target="_blank"
                     rel="noopener"
-                    class="mt-2 block overflow-hidden rounded border"
-                    :class="m.sender === session.user ? 'border-white/20' : 'border-outline-gray-1'"
+                    class="mt-2 block overflow-hidden rounded border border-outline-gray-1"
                   >
                     <img v-if="m.link_image" :src="m.link_image" class="h-28 w-full object-cover" />
                     <div class="p-2">
@@ -214,119 +268,157 @@
         </ScrollArea>
 
         <div class="border-t border-outline-gray-1 p-3">
-          <div class="rounded-lg border border-outline-gray-2 bg-surface-base focus-within:border-outline-gray-4">
-            <textarea
-              ref="composerRef"
-              v-model="newMessageText"
-              rows="1"
-              class="max-h-32 w-full resize-none border-0 bg-transparent px-3 pb-1 pt-2.5 text-p-base text-ink-gray-9 placeholder:text-ink-gray-4 focus:outline-none focus:ring-0"
-              placeholder="Write a message… (use **bold**, *italic*)"
-              :disabled="conversation.data.is_blocked"
-              @input="onTyping"
-              @keydown.enter.exact.prevent="submitMessage"
-            />
-            <div class="flex items-center justify-between px-1.5 pb-1.5">
-              <TooltipProvider :hover-delay="0.4" :skip-delay="0.3">
-                <div class="flex items-center gap-0.5">
-                  <FileUploader @success="onFileUploaded">
-                    <template #default="{ uploading, openFileSelector }">
-                      <Tooltip text="Attach file">
+          <Editor
+            ref="composerEditorRef"
+            v-model="newMessageText"
+            :extensions="composerExtensions"
+            placeholder="Write a message…"
+            :editable="!conversation.data.is_blocked"
+          >
+            <template #default>
+              <div class="rounded-lg border border-outline-gray-2 bg-surface-base focus-within:border-outline-gray-4">
+                <div v-if="pendingAttachments.length" class="flex flex-wrap gap-2 p-2 pb-0">
+                  <div
+                    v-for="(a, i) in pendingAttachments"
+                    :key="i"
+                    class="flex w-56 items-center gap-2 rounded-lg border border-outline-gray-2 p-2"
+                  >
+                    <img
+                      v-if="isImageFile(a.file_name)"
+                      :src="a.file_url"
+                      class="size-8 shrink-0 rounded-full object-cover"
+                    />
+                    <div v-else class="grid size-8 shrink-0 place-content-center rounded-full bg-surface-gray-3">
+                      <span class="lucide-file size-3.5 text-ink-gray-5" aria-hidden="true" />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <div class="truncate text-sm-medium text-ink-gray-9">{{ a.file_name }}</div>
+                      <div class="text-xs text-ink-gray-5">{{ formatBytes(a.file_size) }}</div>
+                    </div>
+                    <button
+                      type="button"
+                      class="flex size-6 shrink-0 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8"
+                      @click="clearPendingAttachment(i)"
+                    >
+                      <span class="lucide-trash-2 size-3.5" aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
+
+                <div v-if="showFormatting" class="border-b border-outline-gray-1 px-2 py-1.5">
+                  <EditorFixedMenu :items="composerToolbar" class="flex-wrap" />
+                </div>
+
+                <EditorContent
+                  class="prose-sm max-h-32 overflow-y-auto px-3 pb-1 pt-2.5 text-ink-gray-9"
+                  @keydown.enter.exact="onComposerEnter"
+                />
+
+                <div class="flex items-center justify-between px-1.5 pb-1.5">
+                  <TooltipProvider :hover-delay="0.4" :skip-delay="0.3">
+                    <div class="flex items-center gap-0.5">
+                      <FileUploader ref="fileUploaderRef" @success="onFileUploaded">
+                        <template #default="{ uploading, openFileSelector }">
+                          <Tooltip text="Attach file">
+                            <button
+                              type="button"
+                              class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
+                              :disabled="uploading || conversation.data.is_blocked"
+                              @click="openFileSelector"
+                            >
+                              <span class="lucide-paperclip size-4" aria-hidden="true" />
+                            </button>
+                          </Tooltip>
+                        </template>
+                      </FileUploader>
+
+                      <Tooltip text="Formatting">
                         <button
                           type="button"
                           class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                          :disabled="uploading || conversation.data.is_blocked"
-                          @click="openFileSelector"
+                          :class="showFormatting ? 'bg-surface-gray-3 text-ink-gray-8' : ''"
+                          :disabled="conversation.data.is_blocked"
+                          @click="showFormatting = !showFormatting"
                         >
-                          <span class="lucide-paperclip size-4" aria-hidden="true" />
+                          <span class="lucide-type size-4" aria-hidden="true" />
                         </button>
                       </Tooltip>
-                    </template>
-                  </FileUploader>
 
-                  <Tooltip text="Formatting">
-                    <button
-                      type="button"
-                      class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                      :disabled="conversation.data.is_blocked"
-                      @click="toggleBold"
-                    >
-                      <span class="lucide-type size-4" aria-hidden="true" />
-                    </button>
-                  </Tooltip>
-
-                  <Tooltip text="Mention">
-                    <button
-                      type="button"
-                      class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                      :disabled="conversation.data.is_blocked"
-                      @click="toast.info('Mentions are coming soon')"
-                    >
-                      <span class="lucide-at-sign size-4" aria-hidden="true" />
-                    </button>
-                  </Tooltip>
-
-                  <Tooltip text="Emoji">
-                    <Popover>
-                      <template #trigger>
+                      <Tooltip text="Mention">
                         <button
                           type="button"
                           class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
                           :disabled="conversation.data.is_blocked"
+                          @click="toast.info('Mentions are coming soon')"
                         >
-                          <span class="lucide-smile-plus size-4" aria-hidden="true" />
+                          <span class="lucide-at-sign size-4" aria-hidden="true" />
                         </button>
-                      </template>
-                      <template #default="{ close }">
-                        <div class="grid w-64 max-h-56 grid-cols-8 gap-0.5 overflow-y-auto p-1.5">
-                          <button
-                            v-for="e in composerEmojiOptions"
-                            :key="e"
-                            type="button"
-                            class="rounded p-1 text-lg hover:bg-surface-gray-2"
-                            @click="selectEmoji(e), close()"
-                          >
-                            {{ e }}
-                          </button>
-                        </div>
-                      </template>
-                    </Popover>
-                  </Tooltip>
+                      </Tooltip>
 
-                  <span class="mx-1 h-4 w-px bg-outline-gray-2" aria-hidden="true" />
+                      <Tooltip text="Emoji">
+                        <Popover>
+                          <template #trigger>
+                            <button
+                              type="button"
+                              class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
+                              :disabled="conversation.data.is_blocked"
+                            >
+                              <span class="lucide-smile-plus size-4" aria-hidden="true" />
+                            </button>
+                          </template>
+                          <template #default="{ close }">
+                            <div class="grid w-64 max-h-56 grid-cols-8 gap-0.5 overflow-y-auto p-1.5">
+                              <button
+                                v-for="e in composerEmojiOptions"
+                                :key="e"
+                                type="button"
+                                class="rounded p-1 text-lg hover:bg-surface-gray-2"
+                                @click="selectEmoji(e), close()"
+                              >
+                                {{ e }}
+                              </button>
+                            </div>
+                          </template>
+                        </Popover>
+                      </Tooltip>
 
-                  <Tooltip text="Poll">
-                    <button
-                      type="button"
-                      class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                      :disabled="conversation.data.is_blocked"
-                      @click="toast.info('Polls are coming soon')"
-                    >
-                      <span class="lucide-bar-chart-2 size-4" aria-hidden="true" />
-                    </button>
-                  </Tooltip>
+                      <span class="mx-1 h-4 w-px bg-outline-gray-2" aria-hidden="true" />
 
-                  <Tooltip text="Attach a document from the system">
-                    <button
-                      type="button"
-                      class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                      :disabled="conversation.data.is_blocked"
-                      @click="toast.info('Attaching existing documents is coming soon')"
-                    >
-                      <span class="lucide-image-plus size-4" aria-hidden="true" />
-                    </button>
-                  </Tooltip>
+                      <Tooltip text="Poll">
+                        <button
+                          type="button"
+                          class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
+                          :disabled="conversation.data.is_blocked"
+                          @click="toast.info('Polls are coming soon')"
+                        >
+                          <span class="lucide-bar-chart-2 size-4" aria-hidden="true" />
+                        </button>
+                      </Tooltip>
+
+                      <Tooltip text="Attach a document from the system">
+                        <button
+                          type="button"
+                          class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
+                          :disabled="conversation.data.is_blocked"
+                          @click="toast.info('Attaching existing documents is coming soon')"
+                        >
+                          <span class="lucide-image-plus size-4" aria-hidden="true" />
+                        </button>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
+                  <Button
+                    variant="solid"
+                    theme="gray"
+                    icon="lucide-send"
+                    :loading="sendMessage.loading"
+                    :disabled="conversation.data.is_blocked"
+                    @click="submitMessage"
+                  />
                 </div>
-              </TooltipProvider>
-              <Button
-                variant="solid"
-                theme="gray"
-                icon="lucide-send"
-                :loading="sendMessage.loading"
-                :disabled="conversation.data.is_blocked"
-                @click="submitMessage"
-              />
-            </div>
-          </div>
+              </div>
+            </template>
+          </Editor>
         </div>
       </template>
     </div>
@@ -350,9 +442,26 @@ import {
   Tooltip,
   TooltipProvider,
   dialog,
+  formatBytes,
   toast,
   useCall,
 } from 'frappe-ui'
+import {
+  Blockquote,
+  Bold,
+  BulletList,
+  CommentKit,
+  Editor,
+  EditorContent,
+  EditorFixedMenu,
+  FontHighlight,
+  Highlight,
+  InlineCode,
+  InsertLink,
+  Italic,
+  OrderedList,
+  Strike,
+} from 'frappe-ui/editor'
 import { session } from '@/data/session'
 import { getSocket } from '@/data/socket'
 import { parseRichText } from '@/utils/richText'
@@ -364,11 +473,14 @@ const router = useRouter()
 
 const search = ref('')
 const newMessageText = ref('')
+const pendingAttachments = ref([])
 const typingUser = ref(null)
 const searchOpen = ref(false)
 const messageSearchQuery = ref('')
 const scrollAreaRef = ref(null)
-const composerRef = ref(null)
+const composerEditorRef = ref(null)
+const fileUploaderRef = ref(null)
+const showFormatting = ref(false)
 const emojiOptions = ['👍', '❤️', '😂', '😮', '😢', '🎉']
 const composerEmojiOptions = [
   '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '😉',
@@ -379,6 +491,83 @@ const composerEmojiOptions = [
   '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '💕', '💯',
   '🎉', '🎊', '🔥', '✨', '⭐', '🌟', '💡', '👀', '🚀', '🎯',
 ]
+
+// Enter sends the message (chat convention); Shift-Enter still inserts a
+// line break via the editor's own default handling of that combination. A
+// plain native keydown listener avoids depending on `@tiptap/core` directly
+// in app code — see the comment on `composerExtensions` below for why that
+// matters here.
+function onComposerEnter(e) {
+  if (e.shiftKey) return
+  e.preventDefault()
+  submitMessage()
+}
+
+// frappe-ui doesn't ship ready-made toolbar buttons for underline, clearing
+// formatting, or code blocks, so these follow the same public `CommandMenuItem`
+// shape used by the exported items above — the documented escape hatch for
+// exactly this case (see WritePost.vue's UnderlineItem for the same pattern).
+const UnderlineItem = {
+  label: 'Underline',
+  icon: 'lucide-underline',
+  action: (editor) => editor.chain().focus().toggleUnderline().run(),
+  isActive: (editor) => editor.isActive('underline'),
+}
+
+const ClearFormatItem = {
+  label: 'Clear formatting',
+  icon: 'lucide-remove-formatting',
+  action: (editor) => editor.chain().focus().unsetAllMarks().run(),
+}
+
+const CodeBlockItem = {
+  label: 'Code block',
+  icon: 'lucide-braces',
+  action: (editor) => editor.chain().focus().toggleCodeBlock().run(),
+  isActive: (editor) => editor.isActive('codeBlock'),
+}
+
+const composerToolbar = [
+  Bold,
+  Italic,
+  UnderlineItem,
+  Strike,
+  FontHighlight,
+  ClearFormatItem,
+  InlineCode,
+  CodeBlockItem,
+  BulletList,
+  OrderedList,
+  Blockquote,
+  InsertLink,
+]
+
+// CommentKit ("comments, chat, replies" per frappe-ui) is the lighter stack
+// vs RichTextKit — no headings/tables/task-lists. Media/mention/tag/emoji are
+// disabled since this app attaches files and picks emoji through its own UI
+// below, not the editor's built-in nodes. Underline is already part of
+// frappe-ui's own StarterKit (on by default), so it just needs the toolbar
+// button above. Highlight isn't part of CommentKit's defaults, so it's added
+// here directly — both are pulled in only through `frappe-ui/editor`'s own
+// exports, never a direct `@tiptap/*` import (see vite.config.js's
+// optimizeDeps comment for why that matters).
+const composerExtensions = [
+  CommentKit.configure({
+    mention: false,
+    tag: false,
+    image: false,
+    imageGroup: false,
+    imageViewer: false,
+    video: false,
+    attachment: false,
+    emoji: false,
+  }),
+  Highlight,
+]
+
+function isHtmlContent(text) {
+  return /<[a-z][\s\S]*>/i.test(text || '')
+}
 
 let typingClearTimer = null
 let typingThrottled = false
@@ -467,7 +656,6 @@ async function openConversationData(id) {
   if (!id) return
   await Promise.all([conversation.reload(), messages.reload()])
   markRead.submit({ conversation: id })
-  resetComposerHeight()
   scrollToBottom()
 }
 
@@ -496,7 +684,7 @@ const sendMessage = useCall({
   onSuccess: (msg) => {
     messageList.value = [...messageList.value, msg]
     newMessageText.value = ''
-    resetComposerHeight()
+    pendingAttachments.value = []
     conversations.reload()
     scrollToBottom()
   },
@@ -504,12 +692,38 @@ const sendMessage = useCall({
 })
 
 function submitMessage() {
-  if (!newMessageText.value.trim() || !activeConversationId.value) return
-  sendMessage.submit({ conversation: activeConversationId.value, content: newMessageText.value })
+  const editor = composerEditorRef.value?.editor
+  const isEmpty = !editor || editor.isEmpty
+  if ((isEmpty && !pendingAttachments.value.length) || !activeConversationId.value) return
+  sendMessage.submit({
+    conversation: activeConversationId.value,
+    content: isEmpty ? null : newMessageText.value,
+    attachments: pendingAttachments.value.map((a) => ({
+      file_url: a.file_url,
+      file_name: a.file_name,
+      file_size: a.file_size,
+    })),
+  })
 }
 
+function isImageFile(fileName) {
+  return /\.(jpe?g|png|gif|webp)$/i.test(fileName || '')
+}
+
+// Resetting the underlying <input type="file">'s value after every pick is
+// required so selecting the same file again later still fires a change
+// event — browsers don't re-fire it when the file list is unchanged.
 function onFileUploaded(file) {
-  sendMessage.submit({ conversation: activeConversationId.value, attachment: file.file_url })
+  pendingAttachments.value = [
+    ...pendingAttachments.value,
+    { file_url: file.file_url, file_name: file.file_name, file_size: file.file_size },
+  ]
+  const inputEl = fileUploaderRef.value?.inputRef?.()
+  if (inputEl) inputEl.value = ''
+}
+
+function clearPendingAttachment(index) {
+  pendingAttachments.value = pendingAttachments.value.filter((_, i) => i !== index)
 }
 
 const setTypingCall = useCall({
@@ -519,45 +733,15 @@ const setTypingCall = useCall({
 })
 
 function selectEmoji(e) {
-  newMessageText.value += e
-  // Popover returns focus to its trigger button on close; grab it back on
-  // the next macrotask so the composer stays focused for continued typing.
-  setTimeout(() => composerRef.value?.focus(), 50)
+  composerEditorRef.value?.editor?.chain().focus().insertContent(e).run()
 }
 
-function toggleBold() {
-  const el = composerRef.value
-  if (!el) return
-  const { selectionStart, selectionEnd, value } = el
-  const selected = value.slice(selectionStart, selectionEnd)
-  const insert = selected ? `**${selected}**` : '**bold**'
-  newMessageText.value = value.slice(0, selectionStart) + insert + value.slice(selectionEnd)
-  nextTick(() => {
-    el.focus()
-    if (selected) {
-      el.setSelectionRange(selectionStart + insert.length, selectionStart + insert.length)
-    } else {
-      el.setSelectionRange(selectionStart + 2, selectionStart + 6)
-    }
-  })
-}
-
-function resetComposerHeight() {
-  nextTick(() => {
-    if (composerRef.value) composerRef.value.style.height = 'auto'
-  })
-}
-
-function onTyping(e) {
-  const el = e.target
-  el.style.height = 'auto'
-  el.style.height = Math.min(el.scrollHeight, 128) + 'px'
-
+watch(newMessageText, () => {
   if (!activeConversationId.value || typingThrottled) return
   typingThrottled = true
   setTypingCall.submit({ conversation: activeConversationId.value })
   setTimeout(() => (typingThrottled = false), 2000)
-}
+})
 
 function onSearchInput() {
   if (messageSearchQuery.value.trim()) searchResults.reload()

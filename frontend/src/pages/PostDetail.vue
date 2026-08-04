@@ -39,13 +39,6 @@
             :loading="followUser.loading || unfollowUser.loading"
             @click="handleFollowClick"
           />
-          <Button
-            icon="lucide-bookmark"
-            :variant="post.data.saved_by_me ? 'solid' : 'outline'"
-            theme="gray"
-            :loading="toggleSave.loading"
-            @click="handleSave"
-          />
           <Dropdown :options="moreOptions">
             <Button icon="lucide-more-horizontal" />
           </Dropdown>
@@ -72,28 +65,7 @@
           <Badge v-for="tag in post.data.tags" :key="tag" :label="tag" variant="subtle" size="lg" />
         </div>
 
-        <div class="mt-8 flex items-center justify-between rounded-md border border-outline-gray-1 p-4">
-          <div class="flex items-center gap-3">
-            <Avatar :image="post.data.author_image" :label="post.data.author_name" size="lg" />
-            <div>
-              <div class="text-sm text-ink-gray-5">Written by</div>
-              <div class="text-base-medium text-ink-gray-9">{{ post.data.author_name }}</div>
-              <p v-if="post.data.author_bio" class="mt-1 max-w-md text-p-sm text-ink-gray-6">
-                {{ post.data.author_bio }}
-              </p>
-            </div>
-          </div>
-          <Button
-            v-if="post.data.author !== session.user"
-            :variant="post.data.author_following_by_me || post.data.author_follow_pending ? 'outline' : 'solid'"
-            theme="gray"
-            :label="authorFollowLabel"
-            :loading="followUser.loading || unfollowUser.loading"
-            @click="handleFollowClick"
-          />
-        </div>
-
-        <div class="mt-4 flex items-center justify-between border-y border-outline-gray-1 py-3">
+        <div class="mt-8 flex items-center justify-between border-y border-outline-gray-1 py-3">
           <div class="flex items-center gap-4">
             <button
               class="flex items-center gap-1.5 text-sm"
@@ -113,14 +85,14 @@
             </span>
           </div>
           <div class="flex items-center gap-2">
-            <Button icon="lucide-share-2" @click="copyLink" />
+            <Button icon="lucide-share-2" @click="openShareDialog" />
             <Button
-            icon="lucide-bookmark"
-            :variant="post.data.saved_by_me ? 'solid' : 'outline'"
-            theme="gray"
-            :loading="toggleSave.loading"
-            @click="handleSave"
-          />
+              icon="lucide-bookmark"
+              :variant="post.data.saved_by_me ? 'solid' : 'outline'"
+              theme="gray"
+              :loading="toggleSave.loading"
+              @click="handleSave"
+            />
           </div>
         </div>
 
@@ -164,13 +136,95 @@
                 />
                 {{ c.like_count }}
               </button>
-              <button class="text-ink-gray-5 hover:underline" @click="toast.info('Replies are coming soon')">Reply</button>
+              <button class="text-ink-gray-5 hover:underline" @click="toggleReplyBox(c)">Reply</button>
+            </div>
+
+            <div v-if="replyingTo === c.name" class="mt-2 pl-8">
+              <FormControl
+                v-model="replyText"
+                type="textarea"
+                :placeholder="`Reply to ${c.comment_by_name}`"
+                :rows="2"
+              />
+              <div class="mt-1.5 flex gap-2">
+                <Button
+                  variant="solid"
+                  theme="gray"
+                  label="Reply"
+                  size="sm"
+                  :loading="addComment.loading"
+                  @click="submitReply(c)"
+                />
+                <Button variant="ghost" theme="gray" label="Cancel" size="sm" @click="cancelReply" />
+              </div>
+            </div>
+
+            <button
+              v-if="repliesFor(c.name).length && !expandedReplies.has(c.name)"
+              class="mt-2 ml-8 flex items-center gap-1.5 text-xs text-ink-gray-5 hover:underline"
+              @click="expandedReplies.add(c.name)"
+            >
+              <span class="h-px w-6 bg-outline-gray-2" aria-hidden="true" />
+              View {{ repliesFor(c.name).length }} {{ repliesFor(c.name).length === 1 ? 'reply' : 'replies' }}
+            </button>
+
+            <div v-if="expandedReplies.has(c.name)" class="mt-2 ml-8 space-y-3">
+              <div v-for="r in repliesFor(c.name)" :key="r.name">
+                <div class="flex items-center gap-2">
+                  <Avatar :image="r.comment_by_image" :label="r.comment_by_name" size="sm" />
+                  <span class="text-sm-medium text-ink-gray-8">{{ r.comment_by_name }}</span>
+                  <span class="text-xs text-ink-gray-5">{{ timeAgo(r.creation) }}</span>
+                </div>
+                <p class="mt-1 pl-8 text-p-sm text-ink-gray-7">{{ r.content }}</p>
+                <div class="mt-1 flex items-center gap-3 pl-8 text-xs">
+                  <button
+                    class="flex items-center gap-1"
+                    :class="r.liked_by_me ? 'text-ink-red-6' : 'text-ink-gray-5'"
+                    @click="toggleCommentLike(r)"
+                  >
+                    <span
+                      :class="r.liked_by_me ? 'lucide-heart fill-current' : 'lucide-heart'"
+                      class="size-3"
+                      aria-hidden="true"
+                    />
+                    {{ r.like_count }}
+                  </button>
+                  <button class="text-ink-gray-5 hover:underline" @click="toggleReplyBox(r)">Reply</button>
+                </div>
+
+                <div v-if="replyingTo === r.name" class="mt-2 pl-8">
+                  <FormControl
+                    v-model="replyText"
+                    type="textarea"
+                    :placeholder="`Reply to ${r.comment_by_name}`"
+                    :rows="2"
+                  />
+                  <div class="mt-1.5 flex gap-2">
+                    <Button
+                      variant="solid"
+                      theme="gray"
+                      label="Reply"
+                      size="sm"
+                      :loading="addComment.loading"
+                      @click="submitReply(r)"
+                    />
+                    <Button variant="ghost" theme="gray" label="Cancel" size="sm" @click="cancelReply" />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                class="ml-8 flex items-center gap-1.5 text-xs text-ink-gray-5 hover:underline"
+                @click="expandedReplies.delete(c.name)"
+              >
+                Hide replies
+              </button>
             </div>
           </div>
         </div>
 
         <button
-          v-if="commentList.length > visibleCount"
+          v-if="topLevelComments.length > visibleCount"
           class="mt-2 w-full text-center text-sm text-ink-gray-6 hover:underline"
           @click="visibleCount += 10"
         >
@@ -182,13 +236,14 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   Avatar,
   Badge,
   Breadcrumbs,
   Button,
+  dialog,
   Dropdown,
   FormControl,
   LoadingText,
@@ -203,6 +258,9 @@ import { ensureHtmlContent } from '@/utils/content'
 import { APP_NAME } from '@/utils/appName'
 
 const router = useRouter()
+// Underline is already part of frappe-ui's own StarterKit (on by default),
+// which RichTextKit builds on — no need to add a second copy of the mark
+// just to render posts that use it.
 const readExtensions = [RichTextKit.configure({ mention: false, tag: false })]
 
 const route = useRoute()
@@ -234,7 +292,41 @@ watch(
   { immediate: true },
 )
 
-const visibleComments = computed(() => commentList.value.slice(0, visibleCount.value))
+const topLevelComments = computed(() => commentList.value.filter((c) => !c.parent_comment))
+const visibleComments = computed(() => topLevelComments.value.slice(0, visibleCount.value))
+
+function repliesFor(commentName) {
+  return commentList.value
+    .filter((c) => c.parent_comment === commentName)
+    .slice()
+    .reverse()
+}
+
+const expandedReplies = reactive(new Set())
+const replyingTo = ref(null)
+const replyText = ref('')
+
+function toggleReplyBox(comment) {
+  if (replyingTo.value === comment.name) {
+    cancelReply()
+    return
+  }
+  replyingTo.value = comment.name
+  replyText.value = ''
+}
+
+function cancelReply() {
+  replyingTo.value = null
+  replyText.value = ''
+}
+
+function submitReply(comment) {
+  if (!replyText.value.trim()) return
+  const threadRoot = comment.parent_comment || comment.name
+  addComment.submit({ post: route.params.postId, content: replyText.value, parent_comment: threadRoot }).then(() => {
+    expandedReplies.add(threadRoot)
+  })
+}
 
 const renderedContent = computed(() => ensureHtmlContent(post.data?.content))
 
@@ -263,6 +355,8 @@ const addComment = useCall({
   immediate: false,
   onSuccess: () => {
     newComment.value = ''
+    replyingTo.value = null
+    replyText.value = ''
     comments.reload()
     post.reload()
   },
@@ -353,6 +447,50 @@ function submitComment() {
 function copyLink() {
   navigator.clipboard.writeText(window.location.href)
   toast.success('Link copied')
+}
+
+const shareablePeople = useCall({
+  url: '/api/v2/method/my_new_app.api.list_people',
+})
+
+const startShareDm = useCall({
+  url: '/api/v2/method/my_new_app.chat.start_dm',
+  method: 'POST',
+  immediate: false,
+  onSuccess: (data) => {
+    sendSharedPost.submit({ conversation: data.conversation, shared_post: route.params.postId })
+  },
+  onError: (err) => toast.error(err.message),
+})
+
+const sendSharedPost = useCall({
+  url: '/api/v2/method/my_new_app.chat.send_message',
+  method: 'POST',
+  immediate: false,
+  onSuccess: () => toast.success('Post shared'),
+  onError: (err) => toast.error(err.message),
+})
+
+async function openShareDialog() {
+  if (!shareablePeople.data) {
+    await shareablePeople.reload()
+  }
+  dialog.prompt({
+    title: 'Share this post',
+    fields: [
+      {
+        name: 'user',
+        label: 'Send to',
+        type: 'combobox',
+        required: true,
+        options: (shareablePeople.data || []).map((p) => ({ label: p.full_name, value: p.name })),
+      },
+    ],
+    onConfirm: ({ values, close }) => {
+      startShareDm.submit({ other_user: values.user })
+      close()
+    },
+  })
 }
 
 function readTime(content) {
