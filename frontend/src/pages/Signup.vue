@@ -4,7 +4,7 @@
     subtitle="Write, share, and connect — without the noise."
   >
     <form @submit.prevent="submit">
-      <FormControl type="text" label="Full name" placeholder="Jane Doe" v-model="fullName" required />
+      <FormControl type="text" label="Username" placeholder="janedoe" v-model="username" required />
 
       <FormControl
         class="mt-4"
@@ -62,7 +62,7 @@ import GoogleIcon from '@/components/GoogleIcon.vue'
 
 const router = useRouter()
 
-const fullName = ref('')
+const username = ref('')
 const email = ref('')
 const password = ref('')
 
@@ -90,8 +90,8 @@ const signup = useCall({
 })
 
 function submit() {
-  if (!fullName.value || !email.value || !password.value) return
-  signup.submit({ email: email.value, password: password.value, full_name: fullName.value })
+  if (!username.value || !email.value || !password.value) return
+  signup.submit({ email: email.value, password: password.value, username: username.value })
 }
 
 function continueWithGoogle() {

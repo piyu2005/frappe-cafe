@@ -13,8 +13,17 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppLayout: typeof import('./src/components/AppLayout.vue')['default']
     AuthCard: typeof import('./src/components/AuthCard.vue')['default']
+    CreateGroupDialog: typeof import('./src/components/CreateGroupDialog.vue')['default']
+    EmojiPicker: typeof import('./src/components/EmojiPicker.vue')['default']
     GoogleIcon: typeof import('./src/components/GoogleIcon.vue')['default']
+    GroupMembersDialog: typeof import('./src/components/GroupMembersDialog.vue')['default']
+    InvitePublicationDialog: typeof import('./src/components/InvitePublicationDialog.vue')['default']
+    MentionChip: typeof import('./src/components/MentionChip.vue')['default']
+    NotificationsPanel: typeof import('./src/components/NotificationsPanel.vue')['default']
+    PeoplePicker: typeof import('./src/components/PeoplePicker.vue')['default']
+    PostImageCarousel: typeof import('./src/components/PostImageCarousel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    StoryPreviewDialog: typeof import('./src/components/StoryPreviewDialog.vue')['default']
   }
 }

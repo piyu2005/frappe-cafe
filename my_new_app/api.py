@@ -3,16 +3,21 @@ from frappe.auth import LoginManager
 
 
 @frappe.whitelist(allow_guest=True)
-def signup(email, password, full_name):
+def signup(email, password, username):
 	email = email.strip().lower()
 	if frappe.db.exists("User", email):
 		frappe.throw("An account with this email already exists. Please log in instead.")
+
+	username = username.strip()
+	if frappe.db.exists("User", {"username": username}):
+		frappe.throw("This username is already taken. Please choose another.")
 
 	user = frappe.get_doc(
 		{
 			"doctype": "User",
 			"email": email,
-			"first_name": full_name or email,
+			"first_name": username,
+			"username": username,
 			"enabled": 1,
 			"user_type": "Website User",
 			"send_welcome_email": 0,
@@ -99,8 +104,10 @@ def get_profile(user=None):
 		[
 			"name",
 			"full_name",
+			"username",
 			"user_image",
 			"bio",
+			"headline",
 			"location",
 			"job_title",
 			"company",
@@ -114,7 +121,7 @@ def get_profile(user=None):
 
 	from my_new_app.follow import get_follow_state
 
-	profile.username = profile.name.split("@")[0]
+	profile.username = profile.username or profile.name.split("@")[0]
 	profile.post_count = frappe.db.count("Post", {"author": user, "status": "Published"})
 	profile.follower_count = _subscriber_count("User", user)
 	follow_state = get_follow_state(user) if frappe.session.user != "Guest" else {"following": False, "pending": False}
@@ -136,10 +143,67 @@ def get_profile(user=None):
 
 
 @frappe.whitelist()
-def change_password(new_password):
+def list_profile_posts(user=None, limit=3):
+	user = user or frappe.session.user
+	rows = frappe.db.get_all(
+		"Post",
+		filters={"author": user, "status": "Published"},
+		fields=[
+			"name",
+			"title",
+			"display_title",
+			"content",
+			"excerpt",
+			"post_type",
+			"cover_image",
+			"attachment",
+			"creation",
+		],
+		order_by="creation desc",
+		limit_page_length=int(limit),
+	)
+	counts = {}
+	if rows:
+		for c in frappe.db.get_all(
+			"Post Comment", filters={"post": ["in", [r.name for r in rows]]}, fields=["post"]
+		):
+			counts[c.post] = counts.get(c.post, 0) + 1
+	for row in rows:
+		row.comment_count = counts.get(row.name, 0)
+	return rows
+
+
+@frappe.whitelist()
+def get_comment_counts(posts):
+	if isinstance(posts, str):
+		posts = frappe.parse_json(posts)
+	if not posts:
+		return {}
+	counts = {}
+	for c in frappe.db.get_all("Post Comment", filters={"post": ["in", posts]}, fields=["post"]):
+		counts[c.post] = counts.get(c.post, 0) + 1
+	return counts
+
+
+@frappe.whitelist()
+def change_password(old_password, new_password):
 	user = frappe.session.user
 	if user == "Guest":
 		frappe.throw("Not permitted", frappe.PermissionError)
+
+	from frappe.utils.password import check_password
+
+	# Deliberately not re-raising frappe.AuthenticationError here: Frappe's
+	# response middleware treats that exception type as a real login
+	# failure and clears the session cookie regardless of where it came
+	# from, which would silently log the user out just for mistyping their
+	# current password. A plain ValidationError (the frappe.throw default)
+	# surfaces the same message without that side effect.
+	try:
+		check_password(user, old_password)
+	except frappe.AuthenticationError:
+		frappe.throw("Current password is incorrect")
+
 	doc = frappe.get_doc("User", user)
 	doc.new_password = new_password
 	doc.flags.ignore_permissions = True
@@ -167,10 +231,24 @@ def list_people(query=None):
 	return frappe.db.get_all(
 		"User",
 		filters=filters,
-		fields=["name", "full_name", "user_image"],
+		fields=["name", "full_name", "user_image", "username"],
 		order_by="full_name asc",
 		limit_page_length=50,
 	)
+
+
+def _publication_role(publication, user=None):
+	user = user or frappe.session.user
+	return frappe.db.get_value("Publication Member", {"publication": publication, "user": user}, "role")
+
+
+def _is_publication_admin(publication, user=None):
+	return _publication_role(publication, user) == "Admin"
+
+
+def _require_publication_admin(publication):
+	if not _is_publication_admin(publication):
+		frappe.throw("Only publication admins can do this", frappe.PermissionError)
 
 
 @frappe.whitelist()
@@ -196,7 +274,7 @@ def create_publication(title, handle, description=None, website=None):
 			"doctype": "Publication Member",
 			"publication": handle,
 			"user": frappe.session.user,
-			"role": "Editor",
+			"role": "Admin",
 		}
 	)
 	member.flags.ignore_permissions = True
@@ -246,7 +324,9 @@ def get_publication(handle):
 		m.full_name = frappe.db.get_value("User", m.user, "full_name")
 		m.user_image = frappe.db.get_value("User", m.user, "user_image")
 
-	pub.editor_count = len([m for m in members if m.role == "Editor"])
+	# "Editors" here matches the Members page's grouping — Admins are editors
+	# too, just badged distinctly, not a separate headline tier.
+	pub.editor_count = len([m for m in members if m.role in ("Admin", "Editor")])
 	pub.member_count = len(members)
 	pub.members = members[:3]
 	pub.subscriber_count = _subscriber_count("Publication", handle)
@@ -255,11 +335,170 @@ def get_publication(handle):
 	pub.posts = frappe.db.get_all(
 		"Post",
 		filters={"publication": handle, "status": "Published"},
-		fields=["name", "title", "content", "post_type", "attachment", "cover_image", "creation"],
+		fields=["name", "title", "display_title", "content", "post_type", "attachment", "cover_image", "creation"],
 		order_by="creation desc",
 		limit_page_length=20,
 	)
 	return pub
+
+
+@frappe.whitelist()
+def list_publication_members(publication):
+	if not frappe.db.exists("Publication", publication):
+		frappe.throw("Publication not found")
+
+	rows = frappe.db.get_all(
+		"Publication Member",
+		filters={"publication": publication},
+		fields=["name", "user", "role", "creation"],
+		order_by="creation asc",
+	)
+	for r in rows:
+		r.full_name = frappe.db.get_value("User", r.user, "full_name")
+		r.user_image = frappe.db.get_value("User", r.user, "user_image")
+		r.username = frappe.db.get_value("User", r.user, "username")
+
+	pending_invites = frappe.db.get_all(
+		"Publication Invite",
+		filters={"publication": publication, "status": "Pending"},
+		fields=["name", "invited_user", "role", "creation"],
+		order_by="creation desc",
+	)
+	for p in pending_invites:
+		p.full_name = frappe.db.get_value("User", p.invited_user, "full_name")
+		p.user_image = frappe.db.get_value("User", p.invited_user, "user_image")
+
+	return {
+		# Admins are shown grouped in with editors ("Editors" section in the
+		# UI), just badged distinctly — mirrors how the Frappe blog itself
+		# groups them.
+		"editors": [r for r in rows if r.role in ("Admin", "Editor")],
+		"members": [r for r in rows if r.role == "Member"],
+		"pending_invites": pending_invites,
+		"my_role": _publication_role(publication),
+	}
+
+
+def _invite_to_publication(publication, user, role="Member"):
+	"""Mirrors chat.py's _invite_to_group: adding someone is a request, not
+	immediate membership — skip silently if they're already in, or already
+	have a pending invite, rather than erroring on what's really a no-op."""
+	if frappe.db.exists("Publication Member", {"publication": publication, "user": user}):
+		return
+	if frappe.db.exists(
+		"Publication Invite", {"publication": publication, "invited_user": user, "status": "Pending"}
+	):
+		return
+	invite = frappe.get_doc(
+		{"doctype": "Publication Invite", "publication": publication, "invited_user": user, "role": role}
+	)
+	invite.insert(ignore_permissions=True)
+
+	from my_new_app.follow import _notify
+
+	title = frappe.db.get_value("Publication", publication, "title") or "a publication"
+	_notify(
+		recipient=user,
+		actor=frappe.session.user,
+		notif_type="Publication Invite",
+		message=f'invited you to join "{title}" as {"an" if role == "Editor" else "a"} {role.lower()}',
+		reference_doctype="Publication Invite",
+		reference_name=invite.name,
+	)
+
+
+@frappe.whitelist()
+def invite_to_publication(publication, user, role="Member"):
+	_require_publication_admin(publication)
+	if role not in ("Editor", "Member"):
+		frappe.throw("Invalid role")
+	if user == frappe.session.user:
+		frappe.throw("You're already in this publication")
+	_invite_to_publication(publication, user, role)
+	return "success"
+
+
+@frappe.whitelist()
+def cancel_publication_invite(name):
+	invite = frappe.get_doc("Publication Invite", name)
+	_require_publication_admin(invite.publication)
+	frappe.delete_doc("Publication Invite", name, ignore_permissions=True)
+	return "success"
+
+
+@frappe.whitelist()
+def respond_to_publication_invite(name, accept):
+	invite = frappe.get_doc("Publication Invite", name)
+	if invite.invited_user != frappe.session.user:
+		frappe.throw("Not permitted", frappe.PermissionError)
+	if invite.status != "Pending":
+		return {"status": invite.status}
+
+	accept = int(accept)
+	invite.status = "Accepted" if accept else "Declined"
+	invite.flags.ignore_permissions = True
+	invite.save()
+
+	if accept:
+		if not frappe.db.exists(
+			"Publication Member", {"publication": invite.publication, "user": frappe.session.user}
+		):
+			member = frappe.get_doc(
+				{
+					"doctype": "Publication Member",
+					"publication": invite.publication,
+					"user": frappe.session.user,
+					"role": invite.role,
+				}
+			)
+			member.insert(ignore_permissions=True)
+
+		from my_new_app.follow import _notify
+
+		title = frappe.db.get_value("Publication", invite.publication, "title") or "the publication"
+		_notify(
+			recipient=invite.invited_by,
+			actor=frappe.session.user,
+			notif_type="Publication Invite",
+			message=f'joined "{title}"',
+			reference_doctype="Publication",
+			reference_name=invite.publication,
+		)
+
+	return {"status": invite.status, "publication": invite.publication if accept else None}
+
+
+@frappe.whitelist()
+def remove_publication_member(publication, user):
+	_require_publication_admin(publication)
+	if user == frappe.session.user:
+		frappe.throw('Use "Leave" to remove yourself')
+	name = frappe.db.get_value("Publication Member", {"publication": publication, "user": user})
+	if not name:
+		frappe.throw("That person isn't in this publication")
+	frappe.delete_doc("Publication Member", name, ignore_permissions=True)
+	return "success"
+
+
+@frappe.whitelist()
+def set_publication_member_role(publication, user, role):
+	_require_publication_admin(publication)
+	if role not in ("Admin", "Editor", "Member"):
+		frappe.throw("Invalid role")
+
+	name = frappe.db.get_value("Publication Member", {"publication": publication, "user": user})
+	if not name:
+		frappe.throw("That person isn't in this publication")
+
+	if role != "Admin":
+		current_role = frappe.db.get_value("Publication Member", name, "role")
+		if current_role == "Admin":
+			admin_count = frappe.db.count("Publication Member", {"publication": publication, "role": "Admin"})
+			if admin_count <= 1:
+				frappe.throw("A publication needs at least one admin")
+
+	frappe.db.set_value("Publication Member", name, "role", role)
+	return "success"
 
 
 @frappe.whitelist()
@@ -278,6 +517,11 @@ def get_post(post_id):
 		)
 	)
 	post.tags = [t.strip() for t in (post.tags or "").split(",") if t.strip()]
+	# Older Image posts predate the Images table and only have the single
+	# legacy `attachment` field — surface it the same way so the frontend
+	# only ever deals with a list.
+	if post.post_type == "Image" and not post.images and post.attachment:
+		post.images = [{"image": post.attachment}]
 	post.author_bio = frappe.db.get_value("User", post.author, "bio")
 	post.author_follower_count = _subscriber_count("User", post.author)
 
@@ -384,6 +628,20 @@ def list_comments(post):
 
 
 @frappe.whitelist()
+def delete_comment(name):
+	comment = frappe.get_doc("Post Comment", name)
+	if comment.comment_by != frappe.session.user:
+		frappe.throw("You can only delete your own comments", frappe.PermissionError)
+
+	# Threading is one level deep (see add_comment) — deleting a top-level
+	# comment takes its replies with it rather than leaving them orphaned.
+	if not comment.parent_comment:
+		frappe.db.delete("Post Comment", {"parent_comment": name})
+	frappe.delete_doc("Post Comment", name, ignore_permissions=True)
+	return "success"
+
+
+@frappe.whitelist()
 def add_comment(post, content, parent_comment=None):
 	_check_post_visible(post)
 
@@ -419,6 +677,7 @@ def add_comment(post, content, parent_comment=None):
 def update_profile(
 	full_name=None,
 	bio=None,
+	headline=None,
 	user_image=None,
 	location=None,
 	job_title=None,
@@ -431,9 +690,16 @@ def update_profile(
 
 	doc = frappe.get_doc("User", user)
 	if full_name is not None:
-		doc.full_name = full_name
+		# User.validate() recomputes full_name from first_name/last_name on every
+		# save (set_full_name()), so assigning full_name directly here would be
+		# silently overwritten — split it into the fields that actually stick.
+		parts = full_name.strip().split(" ", 1)
+		doc.first_name = parts[0]
+		doc.last_name = parts[1] if len(parts) > 1 else ""
 	if bio is not None:
 		doc.bio = bio
+	if headline is not None:
+		doc.headline = headline
 	if user_image is not None:
 		doc.user_image = user_image
 	if location is not None:
@@ -467,6 +733,23 @@ def add_education(school, degree=None, field_of_study=None, start_year=None, end
 
 
 @frappe.whitelist()
+def update_education(name, school=None, degree=None, field_of_study=None, start_year=None, end_year=None):
+	doc = frappe.get_doc("Education Entry", name)
+	if school is not None:
+		doc.school = school
+	if degree is not None:
+		doc.degree = degree
+	if field_of_study is not None:
+		doc.field_of_study = field_of_study
+	if start_year is not None:
+		doc.start_year = start_year
+	if end_year is not None:
+		doc.end_year = end_year
+	doc.save()
+	return doc.as_dict()
+
+
+@frappe.whitelist()
 def delete_education(name):
 	frappe.delete_doc("Education Entry", name)
 	return "success"
@@ -486,6 +769,23 @@ def add_work(company, title=None, start_date=None, end_date=None, description=No
 	)
 	entry.insert()
 	return entry.as_dict()
+
+
+@frappe.whitelist()
+def update_work(name, company=None, title=None, start_date=None, end_date=None, description=None):
+	doc = frappe.get_doc("Work Entry", name)
+	if company is not None:
+		doc.company = company
+	if title is not None:
+		doc.title = title
+	if start_date is not None:
+		doc.start_date = start_date
+	if end_date is not None:
+		doc.end_date = end_date
+	if description is not None:
+		doc.description = description
+	doc.save()
+	return doc.as_dict()
 
 
 @frappe.whitelist()
@@ -525,7 +825,18 @@ def list_saved_posts():
 		post = frappe.db.get_value(
 			"Post",
 			row.post,
-			["name", "title", "content", "post_type", "attachment", "cover_image", "author_name", "author_image", "status"],
+			[
+				"name",
+				"title",
+				"display_title",
+				"content",
+				"post_type",
+				"attachment",
+				"cover_image",
+				"author_name",
+				"author_image",
+				"status",
+			],
 			as_dict=True,
 		)
 		if not post or post.status != "Published":

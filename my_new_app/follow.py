@@ -162,8 +162,11 @@ def list_notifications():
 	)
 	for r in rows:
 		if r.type == "Follow Request" and r.reference_doctype == "Follow Request":
-			status = frappe.db.get_value("Follow Request", r.reference_name, "status")
-			r.request_status = status
+			r.request_status = frappe.db.get_value("Follow Request", r.reference_name, "status")
+		elif r.type == "Group Invite" and r.reference_doctype == "Group Invite":
+			r.request_status = frappe.db.get_value("Group Invite", r.reference_name, "status")
+		elif r.type == "Publication Invite" and r.reference_doctype == "Publication Invite":
+			r.request_status = frappe.db.get_value("Publication Invite", r.reference_name, "status")
 	return rows
 
 

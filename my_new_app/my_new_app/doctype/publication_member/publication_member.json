@@ -32,7 +32,7 @@
    "fieldname": "role",
    "fieldtype": "Select",
    "label": "Role",
-   "options": "Editor\nMember",
+   "options": "Admin\nEditor\nMember",
    "reqd": 1
   }
  ],

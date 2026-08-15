@@ -1,12 +1,17 @@
 <template>
-  <PageHeader>
+  <PageHeader v-if="!isMobile">
     <Breadcrumbs :items="[{ label: APP_NAME, route: '/' }, { label: 'Settings' }]" />
-    <Button variant="ghost" icon-left="lucide-pencil" label="Write your story" route="/write" />
+    <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
+  <PageHeaderMobile v-else title="Settings">
+    <template #right>
+      <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+    </template>
+  </PageHeaderMobile>
 
-  <ScrollArea class="h-[calc(100vh-3rem)]">
-    <div class="mx-auto max-w-[760px] px-5 py-8">
-      <Tabs v-model="tab" :tabs="tabs">
+  <ScrollArea class="h-full">
+    <div class="mx-auto max-w-[760px] px-4 py-6 sm:px-5 sm:py-8">
+      <Tabs v-model="tab" :tabs="tabs" class="settings-tabs">
         <template #tab-panel="{ tab: activeTab }">
           <div v-if="activeTab.label === 'Account'" class="divide-y divide-outline-gray-1">
             <div class="flex items-center justify-between py-4">
@@ -49,32 +54,6 @@
             </button>
           </div>
 
-          <div v-else-if="activeTab.label === 'Publications'" class="pt-4">
-            <div v-if="publications.data && publications.data.length" class="mb-4 space-y-3">
-              <div
-                v-for="p in publications.data"
-                :key="p.publication"
-                class="flex items-center justify-between"
-              >
-                <router-link
-                  :to="{ name: 'PublicationDetail', params: { handle: p.publication } }"
-                  class="hover:underline"
-                >
-                  <div class="text-base-medium text-ink-gray-9">{{ p.title }}</div>
-                  <div class="text-sm text-ink-gray-5">{{ p.role }}</div>
-                </router-link>
-                <Button
-                  variant="ghost"
-                  theme="red"
-                  label="Leave"
-                  @click="handleLeave(p.publication)"
-                />
-              </div>
-            </div>
-            <p v-else class="mb-3 text-p-base text-ink-gray-6">No publications yet.</p>
-            <Button icon-left="lucide-plus" label="Create a new publication" @click="openCreatePublication" />
-          </div>
-
           <div v-else class="pt-4">
             <LoadingText v-if="savedPosts.loading && !savedPosts.data" :lines="4" />
             <p
@@ -89,7 +68,7 @@
                   :to="{ name: 'PostDetail', params: { postId: p.name } }"
                   class="block min-w-0 flex-1"
                 >
-                  <div class="truncate text-base-medium text-ink-gray-9">{{ p.title || 'Untitled' }}</div>
+                  <div class="truncate text-base-medium text-ink-gray-9">{{ p.display_title || p.title || 'Untitled' }}</div>
                   <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
                   <div class="mt-1 text-xs text-ink-gray-5">By {{ p.author_name }}</div>
                 </router-link>
@@ -116,6 +95,7 @@ import {
   Button,
   LoadingText,
   PageHeader,
+  PageHeaderMobile,
   ScrollArea,
   Switch,
   Tabs,
@@ -125,11 +105,14 @@ import {
 } from 'frappe-ui'
 import { logout, session } from '@/data/session'
 import { APP_NAME } from '@/utils/appName'
+import { useIsMobile } from '@/composables/useIsMobile'
+
+const isMobile = useIsMobile()
 
 const router = useRouter()
 
 const tab = ref(0)
-const tabs = [{ label: 'Account' }, { label: 'Publications' }, { label: 'Saved' }]
+const tabs = [{ label: 'Account' }, { label: 'Saved' }]
 
 const username = computed(() => (session.user || '').split('@')[0])
 const isPrivate = ref(false)
@@ -175,17 +158,35 @@ const deleteAccount = useCall({
   },
 })
 
-async function handleLogout() {
-  await logout()
-  router.replace('/login')
+function handleLogout() {
+  dialog.confirm({
+    title: 'Log out?',
+    message: 'You can always log back in.',
+    confirmLabel: 'Log out',
+    onConfirm: async () => {
+      await logout()
+      router.replace('/login')
+    },
+  })
 }
 
 function openChangePassword() {
   dialog.prompt({
     title: 'Change password',
-    fields: [{ name: 'new_password', label: 'New password', required: true }],
+    fields: [
+      { name: 'old_password', label: 'Current password', type: 'password', required: true },
+      { name: 'new_password', label: 'New password', type: 'password', required: true },
+      {
+        name: 'confirm_password',
+        label: 'Confirm new password',
+        type: 'password',
+        required: true,
+        validate: (value, allValues) =>
+          value !== allValues.new_password ? 'Passwords do not match' : undefined,
+      },
+    ],
     onConfirm: ({ values, close }) => {
-      changePassword.submit({ new_password: values.new_password })
+      changePassword.submit({ old_password: values.old_password, new_password: values.new_password })
       close()
     },
   })
@@ -198,52 +199,6 @@ function confirmDeleteAccount() {
     theme: 'red',
     confirmLabel: 'Delete',
     onConfirm: () => deleteAccount.submit({}),
-  })
-}
-
-const publications = useCall({
-  url: '/api/v2/method/my_new_app.api.list_my_publications',
-})
-
-const createPublication = useCall({
-  url: '/api/v2/method/my_new_app.api.create_publication',
-  method: 'POST',
-  immediate: false,
-  onSuccess: () => {
-    toast.success('Publication created')
-    publications.reload()
-  },
-  onError: (err) => toast.error(err.message),
-})
-
-const leavePublication = useCall({
-  url: '/api/v2/method/my_new_app.api.leave_publication',
-  method: 'POST',
-  immediate: false,
-  onSuccess: () => publications.reload(),
-})
-
-function openCreatePublication() {
-  dialog.prompt({
-    title: 'Create a new publication',
-    fields: [
-      { name: 'title', label: 'Title', required: true },
-      { name: 'handle', label: 'Handle', required: true },
-      { name: 'description', label: 'Description', type: 'textarea' },
-    ],
-    onConfirm: ({ values, close }) => {
-      createPublication.submit(values)
-      close()
-    },
-  })
-}
-
-function handleLeave(handle) {
-  dialog.confirm({
-    title: 'Leave publication?',
-    theme: 'red',
-    confirmLabel: 'Leave',
-    onConfirm: () => leavePublication.submit({ handle }),
   })
 }
 
@@ -273,3 +228,14 @@ function excerpt(content, length) {
   return text.length > length ? text.slice(0, length) + '…' : text
 }
 </script>
+
+<style scoped>
+/* Tabs' own tablist carries a built-in horizontal px-5, on top of this
+   page's container padding — so the tab labels sat further right than the
+   content rows below them, which have no padding of their own. Zeroing just
+   the tablist's left/right padding lines them back up. */
+.settings-tabs :deep([role='tablist']) {
+  padding-left: 0;
+  padding-right: 0;
+}
+</style>

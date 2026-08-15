@@ -17,6 +17,11 @@ def after_migrate():
 		if not frappe.db.exists("Category", title):
 			frappe.get_doc({"doctype": "Category", "title": title}).insert(ignore_permissions=True)
 
+	# "Text" was merged into "Blog" (identical rendering, no reason for both);
+	# reclassify any posts saved under the old type so the Select's remaining
+	# options ("Blog"/"Image"/"Video") stay valid for every row.
+	frappe.db.set_value("Post", {"post_type": "Text"}, "post_type", "Blog")
+
 	create_custom_fields(
 		{
 			"User": [
@@ -38,6 +43,14 @@ def after_migrate():
 					"fieldtype": "Check",
 					"insert_after": "company",
 					"default": "0",
+				},
+				{
+					# Short one-line tagline shown under the name/username row,
+					# distinct from the longer `bio` shown in the Introduction card.
+					"fieldname": "headline",
+					"label": "Headline",
+					"fieldtype": "Data",
+					"insert_after": "is_private",
 				},
 			]
 		}

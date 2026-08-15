@@ -27,6 +27,11 @@ const routes = [
         component: () => import('@/pages/Profile.vue'),
       },
       {
+        path: 'profile/:userId?/posts',
+        name: 'ProfilePosts',
+        component: () => import('@/pages/ProfilePosts.vue'),
+      },
+      {
         path: 'settings',
         name: 'Settings',
         component: () => import('@/pages/Settings.vue'),
@@ -52,14 +57,14 @@ const routes = [
         component: () => import('@/pages/PublicationDetail.vue'),
       },
       {
+        path: 'publications/:handle/members',
+        name: 'PublicationMembers',
+        component: () => import('@/pages/PublicationMembers.vue'),
+      },
+      {
         path: 'messages/:conversationId?',
         name: 'Messages',
         component: () => import('@/pages/Messages.vue'),
-      },
-      {
-        path: 'notifications',
-        name: 'Notifications',
-        component: () => import('@/pages/Notifications.vue'),
       },
     ],
   },

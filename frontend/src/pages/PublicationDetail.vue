@@ -7,7 +7,7 @@
         { label: pub.data?.title || 'Publication' },
       ]"
     />
-    <Button variant="ghost" icon-left="lucide-pencil" label="Write your story" route="/write" />
+    <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
 
   <ScrollArea class="h-[calc(100vh-3rem)]">
@@ -44,7 +44,10 @@
               {{ pub.data.description }}
             </p>
 
-            <div class="mt-3 flex items-center gap-2">
+            <router-link
+              :to="`/publications/${route.params.handle}/members`"
+              class="mt-3 flex items-center gap-2 hover:opacity-80"
+            >
               <div class="flex -space-x-2">
                 <Avatar
                   v-for="m in pub.data.members"
@@ -61,7 +64,7 @@
                 {{ pub.data.subscriber_count }} Subscriber{{ pub.data.subscriber_count === 1 ? '' : 's' }}
               </span>
               <span class="lucide-arrow-right size-4 text-ink-gray-5" aria-hidden="true" />
-            </div>
+            </router-link>
           </div>
         </div>
 
@@ -76,7 +79,7 @@
             class="flex items-start justify-between gap-4 py-5"
           >
             <div class="min-w-0 flex-1">
-              <div class="text-base-medium text-ink-gray-9">{{ post.title || excerpt(post.content, 60) }}</div>
+              <div class="text-base-medium text-ink-gray-9">{{ post.display_title || post.title || excerpt(post.content, 60) }}</div>
               <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(post.content, 160) }}</p>
               <div class="mt-2 text-xs text-ink-gray-5">
                 {{ formatDate(post.creation) }} · {{ readTime(post.content) }} min read

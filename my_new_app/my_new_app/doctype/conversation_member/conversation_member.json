@@ -9,7 +9,8 @@
   "conversation",
   "user",
   "muted",
-  "last_read"
+  "last_read",
+  "is_admin"
  ],
  "fields": [
   {
@@ -38,6 +39,13 @@
    "fieldname": "last_read",
    "fieldtype": "Datetime",
    "label": "Last Read"
+  },
+  {
+   "default": "0",
+   "description": "Group admins can add/remove members, promote or demote other admins, and rename the group. Meaningless outside a group conversation (is_group=0).",
+   "fieldname": "is_admin",
+   "fieldtype": "Check",
+   "label": "Is Admin"
   }
  ],
  "links": [],

@@ -41,12 +41,12 @@
   },
   {
    "fieldname": "start_year",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "Start Year"
   },
   {
    "fieldname": "end_year",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "End Year"
   }
  ],

@@ -36,12 +36,12 @@
   },
   {
    "fieldname": "start_date",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "Start Date"
   },
   {
    "fieldname": "end_date",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "End Date"
   },
   {

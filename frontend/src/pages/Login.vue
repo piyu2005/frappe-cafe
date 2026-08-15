@@ -1,7 +1,7 @@
 <template>
   <AuthCard
     :title="`Log in to ${APP_NAME}`"
-    subtitle="Write, share, and connect — without the noise."
+    subtitle="Write, share, and connect."
   >
     <form @submit.prevent="submit">
       <FormControl type="email" label="Email" placeholder="name@example.com" v-model="email" required />
