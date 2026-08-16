@@ -33,13 +33,17 @@ export function verifySession() {
       .then((user) => {
         session.user = user && user !== 'Guest' ? user : null
       })
-      // A failure here (most commonly a 403, since the endpoint isn't
-      // allow_guest) means whatever the client thought its session was is
-      // no longer valid server-side — clearing session.user lets the router
-      // guard redirect to Login cleanly, instead of leaving a stale cookie
-      // value in place that looks logged-in but 403s on every real request.
-      .catch(() => {
-        session.user = null
+      .catch((err) => {
+        // A 401/403 here means whatever the client thought its session was
+        // is no longer valid server-side — clearing session.user lets the
+        // router guard redirect to Login cleanly, instead of leaving a
+        // stale cookie value in place that looks logged-in but 403s on
+        // every real request. Anything else (network blip, a 502 during a
+        // deploy) is not evidence the session is actually invalid, so it's
+        // left untouched rather than bouncing a genuinely logged-in user.
+        if (err?.status === 401 || err?.status === 403) {
+          session.user = null
+        }
       })
   }
   return verifyPromise

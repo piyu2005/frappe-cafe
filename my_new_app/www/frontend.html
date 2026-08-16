@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Dev only (scoped to the Vite dev server's own port, so this is a
+      // no-op in any real deployment): the realtime socket server resolves
+      // "which site" from this page's own hostname, and rejects the
+      // connection if it doesn't match this app's actual site
+      // (mynewsite.localhost) — opening the app via plain "localhost"
+      // trips that check every time. Redirecting here, before anything
+      // else loads, means it's fixed regardless of which link/bookmark
+      // was used to get here.
+      if (location.hostname === 'localhost' && location.port === '8080') {
+        location.replace(location.href.replace('//localhost:8080', '//mynewsite.localhost:8080'))
+      }
+    </script>
+    <link rel="icon" href="/assets/my_new_app/frontend/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frappe Cafe</title>
+    <script type="module" crossorigin src="/assets/my_new_app/frontend/assets/index-ewgefxqr.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/my_new_app/frontend/assets/index-BizfPA-L.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="modals"></div>
+    <div id="popovers"></div>
+
+    <script>
+      window.csrf_token = '{{ csrf_token }}';
+      window.site_name = '{{ site_name }}';
+    </script>
+  </body>
+</html>

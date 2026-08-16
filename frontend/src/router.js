@@ -78,28 +78,31 @@ let router = createRouter({
 router.beforeEach(async (to) => {
   let isGuestPage = to.name === 'Login' || to.name === 'Signup'
 
-  // Guest pages only need the fast, synchronous cookie check, skipping the
-  // verifySession() round-trip entirely — the one thing that check buys is
-  // catching "cookie missing but session still valid" so a genuinely
-  // logged-in visitor lands on Home instead of Login, and on a guest page
-  // the worst case of skipping it is that same visitor briefly sees the
-  // login form instead of an auto-redirect, not worth a network round-trip
-  // (and the blank-screen wait for it) on every single /login or /signup load.
-  if (isGuestPage) {
-    if (session.isLoggedIn) {
-      return { name: 'Home' }
-    }
+  // The fast, synchronous-cookie-only path is only safe for the specific
+  // case of a guest page where the cookie *also* says logged out — skipping
+  // the round-trip there just means a genuinely logged-in visitor (missing
+  // cookie) briefly sees the login form instead of an auto-redirect, not
+  // worth a network round-trip (and the blank-screen wait for it) on every
+  // single /login or /signup load. It would NOT be safe to also skip this
+  // for a guest page where the cookie says logged in: redirecting to Home
+  // on that alone risks bouncing straight back to Login a moment later once
+  // a protected route's own verifySession() call discovers the cookie was
+  // stale — a visible Login → Home → Login flicker.
+  if (isGuestPage && !session.isLoggedIn) {
     return
   }
 
-  // Only the very first navigation to a protected page needs to wait on
-  // this — verifySession() resolves once and caches its promise, so every
-  // later navigation reads the already-settled session.isLoggedIn
-  // synchronously as before.
+  // Only the very first navigation needs to wait on this — verifySession()
+  // resolves once and caches its promise, so every later navigation reads
+  // the already-settled session.isLoggedIn synchronously as before.
   await verifySession()
 
-  if (!session.isLoggedIn) {
+  if (!session.isLoggedIn && !isGuestPage) {
     return { name: 'Login', query: { redirect: to.fullPath } }
+  }
+
+  if (session.isLoggedIn && isGuestPage) {
+    return { name: 'Home' }
   }
 })
 

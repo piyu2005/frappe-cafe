@@ -39,6 +39,14 @@ app_license = "mit"
 # webform_include_js = {"doctype": "public/js/doctype.js"}
 # webform_include_css = {"doctype": "public/css/doctype.css"}
 
+# The frontend is a Vue SPA — every sub-path (e.g. /frontend/settings,
+# /frontend/write/abc123) needs to resolve to the same www/frontend.html
+# entry point so Vue Router can take over client-side, not 404 on a direct
+# link or a page refresh.
+website_route_rules = [
+	{"from_route": "/frontend/<path:app_path>", "to_route": "frontend"},
+]
+
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 
