@@ -29,6 +29,7 @@
     </template>
     <template #right>
       <div class="flex items-center gap-1">
+        <MobileNotificationBell />
         <Dropdown v-if="mobileMoreOptions.length" :options="mobileMoreOptions">
           <Button icon="lucide-more-horizontal" />
         </Dropdown>
@@ -162,6 +163,7 @@ import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()
 import StoryPreviewDialog from '@/components/StoryPreviewDialog.vue'
+import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
 
 const route = useRoute()
 const router = useRouter()

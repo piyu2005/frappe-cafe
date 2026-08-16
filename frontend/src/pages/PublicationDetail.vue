@@ -1,5 +1,5 @@
 <template>
-  <PageHeader>
+  <PageHeader v-if="!isMobile">
     <Breadcrumbs
       :items="[
         { label: APP_NAME, route: '/' },
@@ -9,8 +9,16 @@
     />
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
+  <PageHeaderMobile v-else :title="pub.data?.title || 'Publication'">
+    <template #right>
+      <div class="flex items-center gap-1">
+        <MobileNotificationBell />
+        <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      </div>
+    </template>
+  </PageHeaderMobile>
 
-  <ScrollArea class="h-[calc(100vh-3rem)]">
+  <ScrollArea class="h-[calc(100vh-52px)] md:h-[calc(100vh-3rem)]">
     <div class="mx-auto max-w-[760px] px-5 py-8">
       <LoadingText v-if="pub.loading && !pub.data" :lines="6" />
 
@@ -99,9 +107,22 @@
 
 <script setup>
 import { useRoute } from 'vue-router'
-import { Avatar, Breadcrumbs, Button, LoadingText, PageHeader, ScrollArea, toast, useCall } from 'frappe-ui'
+import {
+  Avatar,
+  Breadcrumbs,
+  Button,
+  LoadingText,
+  PageHeader,
+  PageHeaderMobile,
+  ScrollArea,
+  toast,
+  useCall,
+} from 'frappe-ui'
 import { APP_NAME } from '@/utils/appName'
+import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
+import { useIsMobile } from '@/composables/useIsMobile'
 
+const isMobile = useIsMobile()
 const route = useRoute()
 
 const pub = useCall({

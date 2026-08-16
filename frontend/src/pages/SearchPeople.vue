@@ -14,7 +14,10 @@
       <PageHeaderBackButton :to="`/publications/${route.query.pub}`" />
     </template>
     <template v-else #right>
-      <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      <div class="flex items-center gap-1">
+        <MobileNotificationBell />
+        <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      </div>
     </template>
   </PageHeaderMobile>
 
@@ -122,6 +125,7 @@ import {
   useCall,
 } from 'frappe-ui'
 import { APP_NAME } from '@/utils/appName'
+import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()

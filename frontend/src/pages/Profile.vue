@@ -6,16 +6,7 @@
   <PageHeaderMobile v-else title="Profile">
     <template #right>
       <div class="flex items-center gap-1">
-        <button
-          type="button"
-          class="relative flex size-9 items-center justify-center text-ink-gray-6"
-          @click="notificationsOpen = true"
-        >
-          <span class="lucide-bell size-5" aria-hidden="true" />
-          <Badge v-if="unreadNotifCount.data" variant="solid" theme="red" size="sm" class="absolute -right-0.5 -top-0.5">
-            {{ unreadNotifCount.data }}
-          </Badge>
-        </button>
+        <MobileNotificationBell />
         <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
       </div>
     </template>
@@ -327,7 +318,6 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
-  Badge,
   Breadcrumbs,
   Button,
   Dialog,
@@ -342,7 +332,7 @@ import {
 } from 'frappe-ui'
 import { session } from '@/data/session'
 import { APP_NAME } from '@/utils/appName'
-import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
+import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()

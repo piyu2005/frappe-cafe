@@ -33,7 +33,14 @@ export function verifySession() {
       .then((user) => {
         session.user = user && user !== 'Guest' ? user : null
       })
-      .catch(() => {})
+      // A failure here (most commonly a 403, since the endpoint isn't
+      // allow_guest) means whatever the client thought its session was is
+      // no longer valid server-side — clearing session.user lets the router
+      // guard redirect to Login cleanly, instead of leaving a stale cookie
+      // value in place that looks logged-in but 403s on every real request.
+      .catch(() => {
+        session.user = null
+      })
   }
   return verifyPromise
 }

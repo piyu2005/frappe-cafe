@@ -16,7 +16,10 @@
        top of it. -->
   <PageHeaderMobile v-else-if="!activeConversationId" title="Messages">
     <template #right>
-      <Button variant="outline" theme="gray" icon="lucide-users" @click="showCreateGroupDialog = true" />
+      <div class="flex items-center gap-1">
+        <MobileNotificationBell />
+        <Button variant="outline" theme="gray" icon="lucide-users" @click="showCreateGroupDialog = true" />
+      </div>
     </template>
   </PageHeaderMobile>
 
@@ -704,6 +707,7 @@ import { unreadMessageCount } from '@/data/messages'
 import { APP_NAME } from '@/utils/appName'
 import { useIsMobile } from '@/composables/useIsMobile'
 import EmojiPicker from '@/components/EmojiPicker.vue'
+import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
 
 const isMobile = useIsMobile()
 import MentionChip from '@/components/MentionChip.vue'

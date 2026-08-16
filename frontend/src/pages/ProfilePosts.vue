@@ -1,9 +1,17 @@
 <template>
-  <PageHeader>
+  <PageHeader v-if="!isMobile">
     <Breadcrumbs :items="breadcrumbItems" />
   </PageHeader>
+  <PageHeaderMobile v-else :title="profile.data?.full_name ? `${profile.data.full_name}'s posts` : 'Posts'">
+    <template #left>
+      <PageHeaderBackButton :to="{ name: 'Profile', params: { userId: targetUser } }" />
+    </template>
+    <template #right>
+      <MobileNotificationBell />
+    </template>
+  </PageHeaderMobile>
 
-  <ScrollArea class="h-[calc(100vh-3rem)]">
+  <ScrollArea class="h-[calc(100vh-52px)] md:h-[calc(100vh-3rem)]">
     <div class="mx-auto max-w-[760px] px-5 py-8">
       <div class="flex items-center gap-3">
         <Avatar :image="profile.data?.user_image" :label="profile.data?.full_name" size="lg" />
@@ -89,12 +97,18 @@ import {
   FormControl,
   LoadingText,
   PageHeader,
+  PageHeaderBackButton,
+  PageHeaderMobile,
   ScrollArea,
   useCall,
   useList,
 } from 'frappe-ui'
 import { session } from '@/data/session'
 import { APP_NAME } from '@/utils/appName'
+import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
+import { useIsMobile } from '@/composables/useIsMobile'
+
+const isMobile = useIsMobile()
 
 const route = useRoute()
 const targetUser = computed(() => route.params.userId || session.user)

@@ -7,6 +7,9 @@
     <template #left>
       <PageHeaderBackButton to="/" />
     </template>
+    <template #right>
+      <MobileNotificationBell />
+    </template>
   </PageHeaderMobile>
 
   <ScrollArea class="h-full">
@@ -281,6 +284,7 @@ import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()
 import PostImageCarousel from '@/components/PostImageCarousel.vue'
+import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
 
 const router = useRouter()
 // Underline is already part of frappe-ui's own StarterKit (on by default),

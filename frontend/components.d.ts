@@ -19,6 +19,7 @@ declare module 'vue' {
     GroupMembersDialog: typeof import('./src/components/GroupMembersDialog.vue')['default']
     InvitePublicationDialog: typeof import('./src/components/InvitePublicationDialog.vue')['default']
     MentionChip: typeof import('./src/components/MentionChip.vue')['default']
+    MobileNotificationBell: typeof import('./src/components/MobileNotificationBell.vue')['default']
     NotificationsPanel: typeof import('./src/components/NotificationsPanel.vue')['default']
     PeoplePicker: typeof import('./src/components/PeoplePicker.vue')['default']
     PostImageCarousel: typeof import('./src/components/PostImageCarousel.vue')['default']
