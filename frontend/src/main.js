@@ -8,7 +8,14 @@ import App from './App.vue'
 let app = createApp(App)
 
 app.use(router)
-app.use(FrappeUI)
+// socketio: false — the app manages its own realtime connection via
+// data/socket.js's getSocket() (used for chat/notification events), which
+// works correctly regardless of which hostname the dev server was opened
+// through. frappe-ui's own auto-connected socket derives its namespace from
+// window.location.hostname and isn't used anywhere ($socket is never
+// referenced), so it's just a second, redundant connection that hits the
+// same hostname/namespace mismatch this app already works around.
+app.use(FrappeUI, { socketio: false })
 
 app.mount('#app')
 

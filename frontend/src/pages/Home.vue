@@ -3,20 +3,42 @@
     <Breadcrumbs :items="[{ label: APP_NAME, route: '/' }, { label: 'Explore' }]" />
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
-  <PageHeaderMobile v-else title="Explore">
-    <template #right>
-      <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
-    </template>
-  </PageHeaderMobile>
-
   <ScrollArea class="h-full">
+    <!-- Mobile-only header bar rendered in normal flow (not through
+         PageHeaderMobile's teleport) so it scrolls away with the rest of the
+         page instead of staying fixed at the top. Sits outside the padded
+         content wrapper below so it stays flush with the top of the screen,
+         while still living inside ScrollArea so it scrolls with everything else. -->
+    <div
+      v-if="isMobile"
+      class="flex h-[52px] items-center justify-between border-b border-outline-gray-1 px-4"
+    >
+      <div class="flex items-center gap-1.5">
+        <span class="lucide-feather size-5 text-ink-gray-9" aria-hidden="true" />
+        <span class="text-xl font-semibold text-ink-gray-9">{{ APP_NAME }}</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          class="relative flex size-9 items-center justify-center text-ink-gray-6"
+          @click="notificationsOpen = true"
+        >
+          <span class="lucide-bell size-5" aria-hidden="true" />
+          <Badge v-if="unreadNotifCount.data" variant="solid" theme="red" size="sm" class="absolute -right-0.5 -top-0.5">
+            {{ unreadNotifCount.data }}
+          </Badge>
+        </button>
+        <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      </div>
+    </div>
+
     <div class="mx-auto max-w-[760px] px-4 py-4 sm:px-5 sm:py-6">
       <div v-if="!myPostCount.loading && myPostCount.data === 0" class="mb-4 text-p-sm text-ink-gray-6">
         You haven't written anything yet.
         <router-link to="/write" class="text-ink-gray-9 underline">Write your first blog.</router-link>
       </div>
 
-      <h1 class="text-3xl font-semibold text-ink-gray-9">Writings from people on {{ APP_NAME }}</h1>
+      <h1 class="font-serif text-xl font-medium text-ink-gray-9 sm:text-7xl">Writings from people on {{ APP_NAME }}</h1>
 
       <TextInput
         v-model="searchQuery"
@@ -68,27 +90,29 @@
         </router-link>
       </div>
 
-      <button
-        v-if="posts.data && posts.data.length && posts.hasNextPage"
-        class="mt-6 block w-full text-center text-sm text-ink-gray-6 hover:text-ink-gray-9 hover:underline"
-        :disabled="posts.loading"
-        @click="pageLength += 10"
+      <!-- No button: the sentinel below is watched by an IntersectionObserver
+           that bumps pageLength itself once it scrolls into view, so more
+           posts just keep appearing as the user scrolls. -->
+      <div ref="loadMoreSentinelRef" class="h-1" />
+      <p
+        v-if="posts.data && posts.data.length && posts.hasNextPage && posts.loading"
+        class="mt-6 text-center text-sm text-ink-gray-5"
       >
-        {{ posts.loading ? 'Loading...' : 'Load more' }}
-      </button>
+        Loading more...
+      </p>
     </div>
   </ScrollArea>
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   Avatar,
+  Badge,
   Breadcrumbs,
   Button,
   LoadingText,
   PageHeader,
-  PageHeaderMobile,
   ScrollArea,
   TextInput,
   useCall,
@@ -96,6 +120,7 @@ import {
 } from 'frappe-ui'
 import { session } from '@/data/session'
 import { APP_NAME } from '@/utils/appName'
+import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
 import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()
@@ -129,6 +154,40 @@ const posts = useList({
   filters,
   limit: pageLength,
   refetch: true,
+})
+
+// Infinite scroll: a sentinel just past the last post is watched instead of
+// a "Load more" button — once it scrolls into view, bump pageLength the same
+// way the button used to on click. `root: null` (the browser viewport)
+// rather than trying to target a specific scroll container — this page's
+// content actually sits inside *two* nested ScrollAreas (this page's own,
+// plus DesktopShell's own wrapper around all page content, which is the one
+// that actually scrolls), and viewport-relative intersection tracks
+// visibility correctly either way without needing to know which of the two
+// is the real one.
+const loadMoreSentinelRef = ref(null)
+let loadMoreObserver = null
+
+function canLoadMore() {
+  return Boolean(posts.data && posts.data.length && posts.hasNextPage && !posts.loading)
+}
+
+onMounted(async () => {
+  await nextTick()
+  if (!loadMoreSentinelRef.value) return
+  loadMoreObserver = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting && canLoadMore()) {
+        pageLength.value += 10
+      }
+    },
+    { rootMargin: '400px' },
+  )
+  loadMoreObserver.observe(loadMoreSentinelRef.value)
+})
+
+onBeforeUnmount(() => {
+  loadMoreObserver?.disconnect()
 })
 
 const commentCounts = useCall({

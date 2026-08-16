@@ -31,27 +31,7 @@
               </span>
             </template>
           </MobileNavItem>
-          <MobileNavItem label="Alerts" icon="lucide-bell" :active="notificationsOpen" @click="notificationsOpen = !notificationsOpen">
-            <template #default="{ active }">
-              <span class="relative">
-                <span class="lucide-bell size-6" :class="active ? 'text-ink-gray-8' : 'text-ink-gray-5'" aria-hidden="true" />
-                <Badge
-                  v-if="unreadNotifCount.data"
-                  variant="solid"
-                  theme="red"
-                  size="sm"
-                  class="absolute -right-2 -top-1.5"
-                >
-                  {{ unreadNotifCount.data }}
-                </Badge>
-              </span>
-            </template>
-          </MobileNavItem>
-          <MobileNavItem label="Profile" :active="!notificationsOpen && route.name === 'Profile'" :to="{ name: 'Profile' }">
-            <template #default>
-              <Avatar :image="myProfile.data?.user_image" :label="myProfile.data?.full_name || session.user" size="sm" />
-            </template>
-          </MobileNavItem>
+          <MobileNavItem label="Profile" icon="lucide-user" :active="!notificationsOpen && route.name === 'Profile'" :to="{ name: 'Profile' }" />
           <MobileNavItem label="Settings" icon="lucide-settings" :active="!notificationsOpen && route.name === 'Settings'" :to="{ name: 'Settings' }" />
         </MobileNav>
       </template>
@@ -104,11 +84,10 @@
             <RailItem
               label="Profile"
               variant="ghost"
+              icon="lucide-user"
               :active="!notificationsOpen && route.name === 'Profile'"
               :to="{ name: 'Profile' }"
-            >
-              <Avatar :image="myProfile.data?.user_image" :label="myProfile.data?.full_name || session.user" size="md" />
-            </RailItem>
+            />
             <RailItem
               label="Settings"
               variant="ghost"
@@ -169,16 +148,12 @@
                 </div>
               </template>
             </SidebarItem>
-            <SidebarItem label="Profile" :active="!notificationsOpen && route.name === 'Profile'" :to="{ name: 'Profile' }">
-              <template #prefix>
-                <Avatar
-                  :image="myProfile.data?.user_image"
-                  :label="myProfile.data?.full_name || session.user"
-                  size="sm"
-                />
-              </template>
-              <span class="flex-1 truncate text-sm">Profile</span>
-            </SidebarItem>
+            <SidebarItem
+              label="Profile"
+              icon="lucide-user"
+              :active="!notificationsOpen && route.name === 'Profile'"
+              :to="{ name: 'Profile' }"
+            />
             <SidebarItem
               label="Settings"
               icon="lucide-settings"
@@ -200,7 +175,6 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
-  Avatar,
   Badge,
   DesktopShell,
   MobileNav,
@@ -211,11 +185,9 @@ import {
   Sidebar,
   SidebarItem,
   toast,
-  useCall,
 } from 'frappe-ui'
-import { session } from '@/data/session'
 import { getSocket } from '@/data/socket'
-import { unreadNotifCount } from '@/data/notifications'
+import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
 import { unreadMessageCount } from '@/data/messages'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { APP_NAME } from '@/utils/appName'
@@ -223,7 +195,6 @@ import NotificationsPanel from './NotificationsPanel.vue'
 
 const route = useRoute()
 const isMobile = useIsMobile()
-const notificationsOpen = ref(false)
 const sidebarOpen = ref(false)
 // Matches the rail's fixed w-[50px] and the sidebar's explicit width prop
 // below, so the panel sits next to whichever is currently showing instead of
@@ -239,10 +210,6 @@ watch(
     notificationsOpen.value = false
   },
 )
-
-const myProfile = useCall({
-  url: '/api/v2/method/my_new_app.api.get_profile',
-})
 
 function handleNewMessage(payload) {
   unreadMessageCount.reload()
@@ -272,3 +239,15 @@ onBeforeUnmount(() => {
   }
 })
 </script>
+
+<style scoped>
+/* Icon-only bottom nav on mobile — MobileNavItem has no prop to omit its
+   label (only "under the icon"), so hide it visually here while leaving the
+   label prop itself (and the aria-label it drives) untouched, keeping the
+   bar accessible to screen readers even without the visible text. Scoped to
+   `[data-slot="mobile-nav"]` specifically, so it can't ever reach the
+   desktop rail/sidebar's own labels. */
+:deep([data-slot='mobile-nav'] .text-xs-medium) {
+  display: none;
+}
+</style>

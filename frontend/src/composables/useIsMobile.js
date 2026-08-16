@@ -6,32 +6,30 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 // component markup and this check never disagree about where the line is.
 const QUERY = '(max-width: 767px)'
 
-// Module-level singleton: every component calling this shares one
-// matchMedia listener instead of each page wiring its own.
-const isMobile = ref(typeof window !== 'undefined' ? window.matchMedia(QUERY).matches : false)
-let listenerCount = 0
-let mql = null
-
-function handleChange(e) {
-  isMobile.value = e.matches
-}
-
+// Each caller owns its own matchMedia listener rather than sharing one
+// module-level singleton — a shared listener-refcount is exactly the kind of
+// mutable module state that can end up out of sync with what's actually
+// mounted after enough Vite HMR reloads in a long dev session (a component
+// re-running setup() without its old instance's unmount ever firing first).
+// A plain per-call listener has no shared state to drift, at the cost of one
+// extra matchMedia listener per component using it — a non-issue in practice.
 export function useIsMobile() {
+  const isMobile = ref(typeof window !== 'undefined' ? window.matchMedia(QUERY).matches : false)
+
+  let mql = null
+  function handleChange(e) {
+    isMobile.value = e.matches
+  }
+
   onMounted(() => {
-    if (listenerCount === 0) {
-      mql = window.matchMedia(QUERY)
-      isMobile.value = mql.matches
-      mql.addEventListener('change', handleChange)
-    }
-    listenerCount++
+    mql = window.matchMedia(QUERY)
+    isMobile.value = mql.matches
+    mql.addEventListener('change', handleChange)
   })
 
   onBeforeUnmount(() => {
-    listenerCount--
-    if (listenerCount === 0 && mql) {
-      mql.removeEventListener('change', handleChange)
-      mql = null
-    }
+    mql?.removeEventListener('change', handleChange)
+    mql = null
   })
 
   return isMobile

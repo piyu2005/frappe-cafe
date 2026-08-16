@@ -145,6 +145,8 @@ import {
   EditorContent,
   EditorFixedMenu,
   HeadingGroup,
+  ImageGroup,
+  ImageViewer,
   InsertImage,
   InsertLink,
   Italic,
@@ -185,6 +187,11 @@ const existingDoc = useDoc({
   name: () => postId.value || '',
 })
 
+// Declared before the immediate watch below, which can run synchronously
+// during setup (if existingDoc.doc is already populated, e.g. cached from
+// an earlier SPA navigation to the same doc) and assigns to it right away.
+const lastSavedAt = ref(null)
+
 watch(
   () => existingDoc.doc,
   (doc) => {
@@ -224,7 +231,6 @@ watch(
 // "Last saved Xm ago" needs to keep advancing on its own, not just when
 // something in `form` happens to change — a light tick is enough to keep it
 // honest without recomputing on every keystroke.
-const lastSavedAt = ref(null)
 const now = ref(Date.now())
 let nowInterval = null
 onMounted(() => {
@@ -256,9 +262,14 @@ const lastSavedLabel = computed(() => {
 // Underline is already part of frappe-ui's own StarterKit (on by default),
 // which RichTextKit builds on — the toolbar just needs the button below
 // (there's no ready-made one), not a second copy of the mark itself.
-// PositionableImage comes after RichTextKit so it wins TipTap's same-name
-// resolution and replaces its plain 'image' node — RichTextKit's own
-// ImageGroup/ImageViewer still work since they reference the node by name.
+// `image: false` stops RichTextKit registering its own base Image node, so
+// PositionableImage (Image.extend(...), same node name) is the only 'image'
+// node in the list — TipTap warns on same-name duplicates otherwise. That
+// also skips RichTextKit's own ImageGroup/ImageViewer (they're gated behind
+// the same option, since ImageGroup nodes contain Image nodes), so both are
+// added back explicitly below — they reference the 'image' node by name,
+// not by instance, so they work the same with PositionableImage standing in
+// for the base Image node.
 // `color: false` — there's no color-picker button in this toolbar, but
 // RichTextKit's TextStyle/Color marks are still active by default, which
 // means pasting content that carries inline `style="color: ..."` (common
@@ -267,8 +278,10 @@ const lastSavedLabel = computed(() => {
 // Disabling the marks entirely means pasted text always falls back to the
 // editor's own text color, regardless of the source's inline styling.
 const extensions = [
-  RichTextKit.configure({ mention: false, tag: false, color: false }),
+  RichTextKit.configure({ mention: false, tag: false, color: false, image: false }),
   PositionableImage,
+  ImageGroup,
+  ImageViewer,
 ]
 
 // frappe-ui doesn't ship ready-made toolbar buttons for underline or task

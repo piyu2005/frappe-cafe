@@ -272,7 +272,7 @@ import {
   toast,
   useCall,
 } from 'frappe-ui'
-import { Editor, EditorContent, RichTextKit } from 'frappe-ui/editor'
+import { Editor, EditorContent, ImageGroup, ImageViewer, RichTextKit } from 'frappe-ui/editor'
 import { session } from '@/data/session'
 import { ensureHtmlContent } from '@/utils/content'
 import { APP_NAME } from '@/utils/appName'
@@ -285,16 +285,19 @@ import PostImageCarousel from '@/components/PostImageCarousel.vue'
 const router = useRouter()
 // Underline is already part of frappe-ui's own StarterKit (on by default),
 // which RichTextKit builds on — no need to add a second copy of the mark
-// just to render posts that use it. PositionableImage (after RichTextKit,
-// same override-by-name rule as WritePost.vue) is what lets a focal point
-// chosen while writing actually render here.
+// just to render posts that use it. `image: false` + explicit
+// ImageGroup/ImageViewer matches WritePost.vue's editor setup (see its own
+// comment for the full rationale) — PositionableImage is what lets a focal
+// point chosen while writing actually render here.
 // `color: false` matches WritePost.vue's editor — keeps this read-only render
 // consistent with what was actually written, and means any content saved
 // before that fix (with a stray pasted-in color) now falls back to the
 // normal text color here too, instead of keeping the parsed Color mark.
 const readExtensions = [
-  RichTextKit.configure({ mention: false, tag: false, color: false }),
+  RichTextKit.configure({ mention: false, tag: false, color: false, image: false }),
   PositionableImage,
+  ImageGroup,
+  ImageViewer,
 ]
 
 const route = useRoute()

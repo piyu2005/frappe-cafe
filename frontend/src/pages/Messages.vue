@@ -134,7 +134,12 @@
         </div>
 
         <div v-if="searchOpen" class="border-b border-outline-gray-1 p-3">
-          <TextInput v-model="messageSearchQuery" placeholder="Search in this conversation" @input="onSearchInput" />
+          <TextInput
+            ref="messageSearchInputRef"
+            v-model="messageSearchQuery"
+            placeholder="Search in this conversation"
+            @input="onSearchInput"
+          />
           <div v-if="searchResults.data && searchResults.data.length" class="mt-2 space-y-1">
             <button
               v-for="r in searchResults.data"
@@ -167,7 +172,18 @@
               :class="m.sender === session.user ? 'flex-row-reverse' : ''"
             >
               <Avatar v-if="m.sender !== session.user" :image="m.sender_image" :label="m.sender_name" size="sm" />
-              <div class="max-w-[70%]">
+              <!-- The 70% cap is for open-ended text; a multi-image grid is a
+                   fixed, deterministic width (2 columns of size-28 + gap —
+                   see the grid below), so it's given `w-fit` with no percent
+                   cap instead. Capping it too would re-trigger the very
+                   problem this fixes: `fit-content` on a box wrapping a
+                   flex-wrap descendant doesn't "discover" the descendant's
+                   natural post-wrap width — it clamps to whatever ambient
+                   width is offered (here, 70% of the row), and if that
+                   happens to land narrower than two columns' width, the
+                   grid re-wraps down to one column instead of rendering at
+                   its intended fixed size. -->
+              <div :class="imageAttachments(m).length > 1 ? 'w-fit' : 'max-w-[70%]'">
                 <div
                   class="relative rounded-lg bg-surface-gray-2 px-3 py-2 text-sm text-ink-gray-9 transition-colors duration-500"
                   :class="highlightedMessageId === m.name ? 'bg-surface-amber-2' : ''"
@@ -200,7 +216,16 @@
                       <template v-else>{{ t.value }}</template>
                     </template>
                   </div>
-                  <div v-if="m.attachments && m.attachments.length" class="mt-1 flex flex-wrap gap-1.5">
+                  <!-- A committed w-[230px] (2 × size-28 + one gap-1.5), not
+                       max-w — an ambient/percentage-derived width here is
+                       exactly what caused the wrap to collapse to one column
+                       (see the wrapper's comment above); a fixed width makes
+                       the 2-column wrap unconditional. -->
+                  <div
+                    v-if="m.attachments && m.attachments.length"
+                    class="mt-1 flex flex-wrap gap-1.5"
+                    :class="imageAttachments(m).length > 1 ? 'w-[230px]' : ''"
+                  >
                     <button
                       v-for="(a, i) in imageAttachments(m).slice(0, IMAGE_PREVIEW_LIMIT)"
                       :key="'img-' + i"
@@ -694,6 +719,13 @@ const pendingAttachments = ref([])
 const typingUser = ref(null)
 const searchOpen = ref(false)
 const messageSearchQuery = ref('')
+const messageSearchInputRef = ref(null)
+
+watch(searchOpen, async (open) => {
+  if (!open) return
+  await nextTick()
+  messageSearchInputRef.value?.el?.focus()
+})
 const highlightedMessageId = ref(null)
 const scrollAreaRef = ref(null)
 const composerEditorRef = ref(null)

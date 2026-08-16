@@ -5,7 +5,19 @@
   </PageHeader>
   <PageHeaderMobile v-else title="Settings">
     <template #right>
-      <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          class="relative flex size-9 items-center justify-center text-ink-gray-6"
+          @click="notificationsOpen = true"
+        >
+          <span class="lucide-bell size-5" aria-hidden="true" />
+          <Badge v-if="unreadNotifCount.data" variant="solid" theme="red" size="sm" class="absolute -right-0.5 -top-0.5">
+            {{ unreadNotifCount.data }}
+          </Badge>
+        </button>
+        <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      </div>
     </template>
   </PageHeaderMobile>
 
@@ -54,7 +66,7 @@
             </button>
           </div>
 
-          <div v-else class="pt-4">
+          <div v-else-if="activeTab.label === 'Saved'" class="pt-4">
             <LoadingText v-if="savedPosts.loading && !savedPosts.data" :lines="4" />
             <p
               v-else-if="savedPosts.data && savedPosts.data.length === 0"
@@ -66,11 +78,18 @@
               <div v-for="p in savedPosts.data" :key="p.name" class="flex items-center gap-3 py-4">
                 <router-link
                   :to="{ name: 'PostDetail', params: { postId: p.name } }"
-                  class="block min-w-0 flex-1"
+                  class="flex min-w-0 flex-1 items-stretch gap-4"
                 >
-                  <div class="truncate text-base-medium text-ink-gray-9">{{ p.display_title || p.title || 'Untitled' }}</div>
-                  <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
-                  <div class="mt-1 text-xs text-ink-gray-5">By {{ p.author_name }}</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="truncate text-base-medium text-ink-gray-9">{{ p.display_title || p.title || 'Untitled' }}</div>
+                    <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
+                    <div class="mt-1 text-xs text-ink-gray-5">By {{ p.author_name }}</div>
+                  </div>
+                  <img
+                    v-if="coverImageFor(p)"
+                    :src="coverImageFor(p)"
+                    class="h-20 w-24 shrink-0 rounded-md object-cover"
+                  />
                 </router-link>
                 <Button
                   icon="lucide-bookmark-minus"
@@ -81,6 +100,35 @@
               </div>
             </div>
           </div>
+
+          <div v-else class="pt-4">
+            <LoadingText v-if="draftArchivePosts.loading && !draftArchivePosts.data" :lines="4" />
+            <p
+              v-else-if="!draftArchivePosts.data || draftArchivePosts.data.length === 0"
+              class="text-p-base text-ink-gray-6"
+            >
+              {{ activeTab.label === 'Drafts' ? "You don't have any drafts." : "You don't have any archived posts." }}
+            </p>
+            <div v-else class="divide-y divide-outline-gray-1">
+              <router-link
+                v-for="p in draftArchivePosts.data"
+                :key="p.name"
+                :to="{ name: 'WritePost', params: { postId: p.name } }"
+                class="flex items-stretch justify-between gap-4 py-4"
+              >
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-base-medium text-ink-gray-9">{{ p.display_title || p.title || 'Untitled' }}</div>
+                  <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
+                  <div class="mt-1 text-xs text-ink-gray-5">{{ formatDate(p.modified) }}</div>
+                </div>
+                <img
+                  v-if="coverImageFor(p)"
+                  :src="coverImageFor(p)"
+                  class="h-20 w-24 shrink-0 rounded-md object-cover"
+                />
+              </router-link>
+            </div>
+          </div>
         </template>
       </Tabs>
     </div>
@@ -88,9 +136,10 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import {
+  Badge,
   Breadcrumbs,
   Button,
   LoadingText,
@@ -102,17 +151,42 @@ import {
   dialog,
   toast,
   useCall,
+  useList,
 } from 'frappe-ui'
 import { logout, session } from '@/data/session'
 import { APP_NAME } from '@/utils/appName'
+import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
 import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()
 
+const route = useRoute()
 const router = useRouter()
 
-const tab = ref(0)
-const tabs = [{ label: 'Account' }, { label: 'Saved' }]
+const tabs = [{ label: 'Account' }, { label: 'Saved' }, { label: 'Drafts' }, { label: 'Archived' }]
+
+// Which tab was open lives in the URL (?tab=drafts) rather than plain local
+// state — clicking into a post navigates away and destroys this component,
+// so a local ref alone would always come back on the default "Account" tab
+// when the browser's back button returns here, regardless of which tab was
+// actually open. router.replace (not push) so switching tabs doesn't add
+// its own back-button stops — only the tab active when you navigate away
+// needs to be the one restored.
+function tabIndexFromQuery() {
+  const idx = tabs.findIndex((t) => t.label.toLowerCase() === route.query.tab)
+  return idx === -1 ? 0 : idx
+}
+
+const tab = ref(tabIndexFromQuery())
+
+watch(tab, (idx) => {
+  const slug = idx === 0 ? undefined : tabs[idx].label.toLowerCase()
+  if ((route.query.tab || undefined) === slug) return
+  const query = { ...route.query }
+  if (slug) query.tab = slug
+  else delete query.tab
+  router.replace({ query })
+})
 
 const username = computed(() => (session.user || '').split('@')[0])
 const isPrivate = ref(false)
@@ -215,6 +289,45 @@ const unsavePost = useCall({
 
 function unsave(postId) {
   unsavePost.submit({ post: postId })
+}
+
+const draftArchiveFilters = computed(() => ({
+  author: session.user,
+  status: tabs[tab.value]?.label === 'Drafts' ? 'Draft' : 'Archived',
+}))
+
+const draftArchivePosts = useList({
+  doctype: 'Post',
+  fields: [
+    'name',
+    'title',
+    'display_title',
+    'content',
+    'excerpt',
+    'status',
+    'modified',
+    'post_type',
+    'cover_image',
+    'attachment',
+  ],
+  filters: draftArchiveFilters,
+  orderBy: 'modified desc',
+  refetch: true,
+})
+
+function coverImageFor(post) {
+  if (post.cover_image) return post.cover_image
+  if (post.post_type !== 'Video') return post.attachment
+  return null
+}
+
+function formatDate(value) {
+  if (!value) return ''
+  return new Date(value).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
 }
 
 function stripHtml(html) {

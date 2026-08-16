@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { session } from '@/data/session'
+import { session, verifySession } from '@/data/session'
 
 const routes = [
   {
@@ -75,7 +75,12 @@ let router = createRouter({
   routes,
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
+  // Only the very first navigation needs to wait on this — verifySession()
+  // resolves once and caches its promise, so every later navigation reads
+  // the already-settled session.isLoggedIn synchronously as before.
+  await verifySession()
+
   let isGuestPage = to.name === 'Login' || to.name === 'Signup'
 
   if (!session.isLoggedIn && !isGuestPage) {

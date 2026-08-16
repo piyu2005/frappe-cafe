@@ -5,7 +5,19 @@
   </PageHeader>
   <PageHeaderMobile v-else title="Profile">
     <template #right>
-      <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          class="relative flex size-9 items-center justify-center text-ink-gray-6"
+          @click="notificationsOpen = true"
+        >
+          <span class="lucide-bell size-5" aria-hidden="true" />
+          <Badge v-if="unreadNotifCount.data" variant="solid" theme="red" size="sm" class="absolute -right-0.5 -top-0.5">
+            {{ unreadNotifCount.data }}
+          </Badge>
+        </button>
+        <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
+      </div>
     </template>
   </PageHeaderMobile>
 
@@ -71,9 +83,9 @@
 
         <div class="mt-6 space-y-4">
           <div class="rounded-md border border-outline-gray-1 p-4">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2 text-base-medium text-ink-gray-8">
-                <span class="lucide-user size-4" aria-hidden="true" />
+            <div class="flex items-center justify-between pb-3">
+              <div class="flex items-center gap-2 text-lg-semibold text-ink-gray-9">
+                <span class="lucide-user size-5" aria-hidden="true" />
                 Introduction
               </div>
             </div>
@@ -167,7 +179,7 @@
               >
                 <div>
                   <div class="text-base-semibold text-ink-gray-9">{{ job.company }}</div>
-                  <div class="mt-1 flex items-center gap-1.5 text-base text-ink-gray-8">
+                  <div class="mt-1 flex flex-wrap items-center gap-1.5 text-base text-ink-gray-8">
                     <span v-if="job.title">{{ job.title }}</span>
                     <span v-if="job.title && (job.start_date || job.end_date)" class="text-ink-gray-4">·</span>
                     <span v-if="job.start_date || job.end_date" class="text-base text-ink-gray-8">
@@ -210,7 +222,7 @@
                   <div class="text-base-semibold text-ink-gray-9">{{ edu.school }}</div>
                   <div
                     v-if="edu.degree || edu.field_of_study || edu.start_year || edu.end_year"
-                    class="mt-1 flex items-center gap-1.5 text-base text-ink-gray-8"
+                    class="mt-1 flex flex-wrap items-center gap-1.5 text-base text-ink-gray-8"
                   >
                     <span v-if="edu.degree || edu.field_of_study">
                       {{ edu.degree }}<template v-if="edu.degree && edu.field_of_study">, </template>{{ edu.field_of_study }}
@@ -240,9 +252,10 @@
 
       <Dialog
         v-model="editWorkOpen"
-        :options="{ title: editWorkForm.name ? 'Edit work experience' : 'Add work experience', size: 'md' }"
+        :title="editWorkForm.name ? 'Edit work experience' : 'Add work experience'"
+        size="md"
       >
-        <template #body-content>
+        <template #default>
           <div class="space-y-4">
             <FormControl v-model="editWorkForm.company" label="Company" required />
             <FormControl v-model="editWorkForm.title" label="Title" />
@@ -271,9 +284,10 @@
 
       <Dialog
         v-model="editEducationOpen"
-        :options="{ title: editEducationForm.name ? 'Edit education' : 'Add education', size: 'md' }"
+        :title="editEducationForm.name ? 'Edit education' : 'Add education'"
+        size="md"
       >
-        <template #body-content>
+        <template #default>
           <div class="space-y-4">
             <FormControl v-model="editEducationForm.school" label="School" required />
             <FormControl v-model="editEducationForm.degree" label="Degree" />
@@ -313,6 +327,7 @@
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
+  Badge,
   Breadcrumbs,
   Button,
   Dialog,
@@ -327,6 +342,7 @@ import {
 } from 'frappe-ui'
 import { session } from '@/data/session'
 import { APP_NAME } from '@/utils/appName'
+import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
 import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()
