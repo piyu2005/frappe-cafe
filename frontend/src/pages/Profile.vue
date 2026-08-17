@@ -161,10 +161,17 @@
               >
                 <div>
                   <div class="text-base-semibold text-ink-gray-9">{{ job.company }}</div>
-                  <div class="mt-1 flex flex-wrap items-center gap-1.5 text-base text-ink-gray-8">
+                  <!-- Plain inline flow, not flex-wrap: flex-wrap only wraps
+                       whole items as opaque boxes, so once the title alone
+                       is long enough to wrap onto two lines by itself, the
+                       date range gets pushed to a new flex line even when
+                       there's visibly leftover room on the title's second
+                       line — inline spans wrap word-by-word like normal
+                       text, filling that room instead. -->
+                  <div class="mt-1 text-base text-ink-gray-8">
                     <span v-if="job.title">{{ job.title }}</span>
-                    <span v-if="job.title && (job.start_date || job.end_date)" class="text-ink-gray-4">·</span>
-                    <span v-if="job.start_date || job.end_date" class="text-base text-ink-gray-8">
+                    <span v-if="job.title && (job.start_date || job.end_date)" class="text-ink-gray-4"> · </span>
+                    <span v-if="job.start_date || job.end_date">
                       {{ formatMonthYear(job.start_date) }} — {{ job.end_date ? formatMonthYear(job.end_date) : 'Present' }}
                     </span>
                   </div>
@@ -202,9 +209,16 @@
               >
                 <div>
                   <div class="text-base-semibold text-ink-gray-9">{{ edu.school }}</div>
+                  <!-- Plain inline flow, not flex-wrap: flex-wrap only wraps
+                       whole items as opaque boxes, so once degree+field
+                       alone is long enough to wrap onto two lines by
+                       itself, the date range gets pushed to a new flex line
+                       even when there's visibly leftover room on that
+                       second line — inline spans wrap word-by-word like
+                       normal text, filling that room instead. -->
                   <div
                     v-if="edu.degree || edu.field_of_study || edu.start_year || edu.end_year"
-                    class="mt-1 flex flex-wrap items-center gap-1.5 text-base text-ink-gray-8"
+                    class="mt-1 text-base text-ink-gray-8"
                   >
                     <span v-if="edu.degree || edu.field_of_study">
                       {{ edu.degree }}<template v-if="edu.degree && edu.field_of_study">, </template>{{ edu.field_of_study }}
@@ -212,9 +226,9 @@
                     <span
                       v-if="(edu.degree || edu.field_of_study) && (edu.start_year || edu.end_year)"
                       class="text-ink-gray-4"
-                      >·</span
+                      > · </span
                     >
-                    <span v-if="edu.start_year || edu.end_year" class="text-base text-ink-gray-8">
+                    <span v-if="edu.start_year || edu.end_year">
                       {{ formatMonthYear(edu.start_year) }} — {{ edu.end_year ? formatMonthYear(edu.end_year) : 'Present' }}
                     </span>
                   </div>
