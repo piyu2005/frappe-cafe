@@ -73,10 +73,17 @@
               {{ commentCounts.data?.[post.name] ?? 0 }} comment{{ (commentCounts.data?.[post.name] ?? 0) === 1 ? '' : 's' }}
             </div>
           </div>
+          <!-- 1.91:1 matches the exact ratio StoryPreviewDialog's "Adjust
+               image" crops cover images to (baked into the saved file
+               itself) — any other box ratio here would crop the image a
+               second time on top of a crop the author already composed.
+               self-start: the row above is items-stretch, which would
+               otherwise stretch the image to match the text block's height
+               and override aspect-ratio's own sizing entirely. -->
           <img
             v-if="coverImageFor(post)"
             :src="coverImageFor(post)"
-            class="h-20 w-24 shrink-0 rounded-md object-cover"
+            class="aspect-[1.91/1] w-24 shrink-0 self-start rounded-md object-cover"
           />
         </router-link>
       </div>

@@ -76,10 +76,11 @@
                     <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
                     <div class="mt-1 text-xs text-ink-gray-5">By {{ p.author_name }}</div>
                   </div>
+                  <!-- 1.91:1 matches StoryPreviewDialog's cover-image crop ratio (see Home.vue) -->
                   <img
                     v-if="coverImageFor(p)"
                     :src="coverImageFor(p)"
-                    class="h-20 w-24 shrink-0 rounded-md object-cover"
+                    class="aspect-[1.91/1] w-24 shrink-0 self-start rounded-md object-cover"
                   />
                 </router-link>
                 <Button
@@ -112,10 +113,11 @@
                   <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
                   <div class="mt-1 text-xs text-ink-gray-5">{{ formatDate(p.modified) }}</div>
                 </div>
+                <!-- 1.91:1 matches StoryPreviewDialog's cover-image crop ratio (see Home.vue) -->
                 <img
                   v-if="coverImageFor(p)"
                   :src="coverImageFor(p)"
-                  class="h-20 w-24 shrink-0 rounded-md object-cover"
+                  class="aspect-[1.91/1] w-24 shrink-0 self-start rounded-md object-cover"
                 />
               </router-link>
             </div>
