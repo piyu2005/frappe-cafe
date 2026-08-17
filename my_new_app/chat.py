@@ -761,27 +761,24 @@ def send_message(conversation, content=None, attachments=None, shared_post=None)
 	for other in others:
 		frappe.publish_realtime("chat:new_message", payload, user=other, after_commit=True)
 
-	# Mentions can name anyone, not just conversation members — but still
-	# verify each id is a real, enabled user before notifying (never trust
-	# "any id the client sent" on its own).
-	mentioned_ids = set(_extract_mentions(content))
+	# @mentions in the composer can autocomplete to anyone (see
+	# list_mentionable_users), including people not in this conversation —
+	# but only notify ones who actually are: someone outside the chat has no
+	# way to open it, so a notification for a mention they can't see or act
+	# on is just confusing noise, not something worth alerting them to.
+	mentioned_ids = set(_extract_mentions(content)) & set(others)
 	if mentioned_ids:
 		valid_mentions = frappe.db.get_all(
 			"User", filters={"name": ["in", list(mentioned_ids)], "enabled": 1}, pluck="name"
 		)
-		others_set = set(others)
 		for user in valid_mentions:
-			# Only link back to the conversation if they can actually open it —
-			# a mention of someone outside this chat still notifies them, but
-			# routes to the mentioner's profile instead of a chat they can't see.
-			is_member = user in others_set
 			_notify(
 				recipient=user,
 				actor=frappe.session.user,
 				notif_type="Mention",
 				message="mentioned you in a message",
-				reference_doctype="Conversation" if is_member else None,
-				reference_name=conversation if is_member else None,
+				reference_doctype="Conversation",
+				reference_name=conversation,
 			)
 
 	return payload
