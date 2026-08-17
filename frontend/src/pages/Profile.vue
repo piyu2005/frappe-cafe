@@ -3,15 +3,6 @@
     <Breadcrumbs :items="[{ label: APP_NAME, route: '/' }, { label: 'Profile' }]" />
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
-  <PageHeaderMobile v-else title="Profile">
-    <template #right>
-      <div class="flex items-center gap-1">
-        <MobileNotificationBell />
-        <Button variant="solid" theme="gray" icon="lucide-plus" route="/write" />
-      </div>
-    </template>
-  </PageHeaderMobile>
-
   <ScrollArea class="h-full">
     <div class="mx-auto max-w-[760px] px-4 py-6 sm:px-5 sm:py-8">
       <LoadingText v-if="profile.loading && !profile.data" :lines="6" />
@@ -324,7 +315,6 @@ import {
   FormControl,
   LoadingText,
   PageHeader,
-  PageHeaderMobile,
   ScrollArea,
   dialog,
   toast,
@@ -332,7 +322,6 @@ import {
 } from 'frappe-ui'
 import { session } from '@/data/session'
 import { APP_NAME } from '@/utils/appName'
-import MobileNotificationBell from '@/components/MobileNotificationBell.vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 
 const isMobile = useIsMobile()
