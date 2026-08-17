@@ -92,6 +92,11 @@ jobs:
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
           bench --site test_site install-app my_new_app
+          # install-app alone doesn't run after_migrate, so the custom User
+          # fields it creates (is_private, job_title, company, headline —
+          # see my_new_app/setup.py) wouldn't exist on a fresh site without
+          # this, same as a first-time production deploy.
+          bench --site test_site migrate
           bench build
         env:
           CI: 'Yes'
