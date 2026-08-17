@@ -76,11 +76,10 @@
               {{ formatDate(post.creation) }} · {{ readTime(post.content) }} min read
             </div>
           </div>
-          <!-- 1.91:1 matches StoryPreviewDialog's cover-image crop ratio -->
           <img
             v-if="thumbnailFor(post)"
             :src="thumbnailFor(post)"
-            class="aspect-[1.91/1] w-36 shrink-0 self-center rounded-md object-cover"
+            class="h-20 w-24 shrink-0 rounded-md object-cover"
           />
         </router-link>
       </div>
