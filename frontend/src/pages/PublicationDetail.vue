@@ -97,7 +97,7 @@
             <img
               v-if="coverImageFor(post)"
               :src="coverImageFor(post)"
-              class="aspect-[1.91/1] w-32 shrink-0 rounded-md object-cover"
+              class="aspect-[1.91/1] w-36 shrink-0 self-center rounded-md object-cover"
             />
           </router-link>
         </div>

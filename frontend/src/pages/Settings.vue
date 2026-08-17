@@ -80,7 +80,7 @@
                   <img
                     v-if="coverImageFor(p)"
                     :src="coverImageFor(p)"
-                    class="aspect-[1.91/1] w-32 shrink-0 self-start rounded-md object-cover"
+                    class="aspect-[1.91/1] w-36 shrink-0 self-center rounded-md object-cover"
                   />
                 </router-link>
                 <Button
@@ -117,7 +117,7 @@
                 <img
                   v-if="coverImageFor(p)"
                   :src="coverImageFor(p)"
-                  class="aspect-[1.91/1] w-32 shrink-0 self-start rounded-md object-cover"
+                  class="aspect-[1.91/1] w-36 shrink-0 self-center rounded-md object-cover"
                 />
               </router-link>
             </div>

@@ -77,13 +77,15 @@
                image" crops cover images to (baked into the saved file
                itself) — any other box ratio here would crop the image a
                second time on top of a crop the author already composed.
-               self-start: the row above is items-stretch, which would
+               self-center: the row above is items-stretch, which would
                otherwise stretch the image to match the text block's height
-               and override aspect-ratio's own sizing entirely. -->
+               and override aspect-ratio's own sizing entirely — self-center
+               also keeps the space above/below the image equal when the
+               text block is taller than the image. -->
           <img
             v-if="coverImageFor(post)"
             :src="coverImageFor(post)"
-            class="aspect-[1.91/1] w-32 shrink-0 self-start rounded-md object-cover"
+            class="aspect-[1.91/1] w-36 shrink-0 self-center rounded-md object-cover"
           />
         </router-link>
       </div>
