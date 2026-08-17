@@ -2,7 +2,7 @@ import ipaddress
 import re
 import socket
 import urllib.request
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 import frappe
 from frappe.utils import now_datetime
@@ -669,6 +669,23 @@ def list_mentionable_users(conversation):
 	)
 
 
+def _attachment_url(file_url):
+	# Attachments are private files linked to the Message they were shared
+	# in (see send_message) — but Frappe's own /private/files/ route can't
+	# serve them to anyone but the uploader: its permission check for
+	# *listing* files (a stricter, earlier gate than has_permission) hard-
+	# restricts any account without the System User role to files it
+	# personally owns, with no way to delegate through attached_to_doctype —
+	# and every real account here is a Website User, deliberately, since
+	# granting System User would also hand out desk/backend access. Routing
+	# through download_attachment (which checks conversation membership
+	# itself, bypassing that route entirely) is what actually lets other
+	# participants see images shared with them.
+	if not file_url:
+		return file_url
+	return f"/api/method/my_new_app.chat.download_attachment?file_url={quote(file_url, safe='')}"
+
+
 def _attachments_by_message(names):
 	rows = frappe.db.get_all(
 		"Message Attachment",
@@ -679,9 +696,32 @@ def _attachments_by_message(names):
 	grouped = {}
 	for r in rows:
 		grouped.setdefault(r.parent, []).append(
-			{"file_url": r.file_url, "file_name": r.file_name, "file_size": r.file_size}
+			{"file_url": _attachment_url(r.file_url), "file_name": r.file_name, "file_size": r.file_size}
 		)
 	return grouped
+
+
+@frappe.whitelist()
+def download_attachment(file_url):
+	file_name = frappe.db.get_value("File", {"file_url": file_url})
+	if not file_name:
+		raise frappe.DoesNotExistError
+	file_doc = frappe.get_doc("File", file_name)
+
+	allowed = not file_doc.is_private or file_doc.owner == frappe.session.user
+	if not allowed and file_doc.attached_to_doctype == "Message" and file_doc.attached_to_name:
+		conversation = frappe.db.get_value("Message", file_doc.attached_to_name, "conversation")
+		allowed = bool(conversation and _is_member(conversation))
+	if not allowed:
+		raise frappe.PermissionError
+
+	frappe.local.response.filename = file_doc.file_name
+	frappe.local.response.filecontent = file_doc.get_content()
+	frappe.local.response.type = "download"
+	# Without this, Content-Disposition defaults to "attachment", which
+	# makes the browser download the file instead of rendering it — useless
+	# for an <img src> that's supposed to display inline in the chat.
+	frappe.local.response["display_content_as"] = "inline"
 
 
 @frappe.whitelist()
@@ -717,7 +757,13 @@ def get_messages(conversation, start=0, limit=50):
 		# Older messages only have the single legacy `attachment` field;
 		# surface it the same way so the frontend only ever deals with a list.
 		row.attachments = grouped.get(row.name) or (
-			[{"file_url": row.attachment, "file_name": row.attachment.rsplit("/", 1)[-1], "file_size": None}]
+			[
+				{
+					"file_url": _attachment_url(row.attachment),
+					"file_name": row.attachment.rsplit("/", 1)[-1],
+					"file_size": None,
+				}
+			]
 			if row.attachment
 			else []
 		)
@@ -756,8 +802,29 @@ def send_message(conversation, content=None, attachments=None, shared_post=None)
 
 	doc.insert(ignore_permissions=True)
 
+	# Attachments upload as private files (FileUploader's own default) with
+	# no doctype/docname set — linking each one to this Message is what lets
+	# download_attachment (below) work out which conversation it belongs to
+	# and check membership. Scoped to files this sender owns, so a message
+	# can't be used to hijack access to someone else's unrelated private
+	# file by name.
+	for a in attachments:
+		file_url = a.get("file_url")
+		if not file_url:
+			continue
+		file_name = frappe.db.get_value("File", {"file_url": file_url, "owner": frappe.session.user}, "name")
+		if file_name:
+			frappe.db.set_value(
+				"File",
+				file_name,
+				{"attached_to_doctype": "Message", "attached_to_name": doc.name},
+				update_modified=False,
+			)
+
 	payload = doc.as_dict()
 	payload["reactions"] = []
+	for a in payload.get("attachments") or []:
+		a["file_url"] = _attachment_url(a.get("file_url"))
 	for other in others:
 		frappe.publish_realtime("chat:new_message", payload, user=other, after_commit=True)
 
