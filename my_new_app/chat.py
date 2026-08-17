@@ -1,4 +1,5 @@
 import ipaddress
+import mimetypes
 import re
 import socket
 import urllib.request
@@ -736,10 +737,25 @@ def download_attachment(file_url):
 	frappe.local.response.filename = file_doc.file_name
 	frappe.local.response.filecontent = file_doc.get_content()
 	frappe.local.response.type = "download"
-	# Without this, Content-Disposition defaults to "attachment", which
-	# makes the browser download the file instead of rendering it — useless
-	# for an <img src> that's supposed to display inline in the chat.
-	frappe.local.response["display_content_as"] = "inline"
+	# Content-Disposition defaults to "attachment" (a real download) unless
+	# told otherwise — needed as "inline" for the chat image-preview grid's
+	# <img src>, but only for an allowlist of genuinely-raster image types.
+	# Chat attachments accept any file type (no upload restriction), and
+	# Frappe's as_raw() — what this response type renders through — doesn't
+	# apply its own FORCE_DOWNLOAD_EXTENSIONS safeguard the way the normal
+	# private-file route does. Without this check, a malicious .svg/.html
+	# "image" sent in a chat would render same-origin (not download) the
+	# moment its recipient opens the link, running any embedded <script>
+	# with their session — a stored-XSS attachment. Anything not on this
+	# list downloads instead, exactly like clicking a plain file attachment.
+	if mimetypes.guess_type(file_doc.file_name)[0] in (
+		"image/jpeg",
+		"image/png",
+		"image/gif",
+		"image/webp",
+		"image/bmp",
+	):
+		frappe.local.response["display_content_as"] = "inline"
 
 
 @frappe.whitelist()
