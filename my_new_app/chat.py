@@ -1,5 +1,8 @@
+import ipaddress
 import re
+import socket
 import urllib.request
+from urllib.parse import urlparse
 
 import frappe
 from frappe.utils import now_datetime
@@ -84,10 +87,62 @@ def _group_reactions(message):
 	]
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+	# A URL that passes _is_public_http_url can still 30x to an internal
+	# address — urllib follows redirects by default with no re-validation of
+	# the new target, which would silently undo the check below. Refusing to
+	# follow at all (rather than re-validating each hop) keeps this simple;
+	# redirect_request() returning None makes urlopen raise HTTPError, which
+	# _unfurl's caller already treats as "no preview available".
+	def redirect_request(self, *args, **kwargs):
+		return None
+
+
+def _is_public_http_url(url):
+	"""Rejects anything that isn't a plain http(s) URL resolving to an
+	ordinary public address — the guard against using link previews to make
+	this server fetch internal/cloud-metadata/loopback addresses. Checked
+	against the actually-resolved IP (not just parsed from the string), so a
+	hostname can't be used to talk around it. Doesn't defend against DNS
+	rebinding (the name resolving differently a moment later, at connect
+	time) — a determined attacker with control of a DNS record could still
+	work around this; full protection needs connecting to a pinned IP
+	directly, which urllib doesn't make straightforward."""
+	try:
+		parsed = urlparse(url)
+	except ValueError:
+		return False
+	if parsed.scheme not in ("http", "https") or not parsed.hostname:
+		return False
+
+	try:
+		resolved = socket.getaddrinfo(parsed.hostname, None)
+	except OSError:
+		return False
+
+	for *_rest, sockaddr in resolved:
+		ip = ipaddress.ip_address(sockaddr[0])
+		if (
+			ip.is_private
+			or ip.is_loopback
+			or ip.is_link_local
+			or ip.is_reserved
+			or ip.is_multicast
+			or ip.is_unspecified
+		):
+			return False
+
+	return True
+
+
 def _unfurl(url):
 	try:
+		if not _is_public_http_url(url):
+			return {"link_url": url, "link_title": url, "link_description": None, "link_image": None}
+
+		opener = urllib.request.build_opener(_NoRedirect)
 		req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-		with urllib.request.urlopen(req, timeout=3) as resp:
+		with opener.open(req, timeout=3) as resp:
 			html = resp.read(200000).decode("utf-8", errors="ignore")
 
 		def meta(prop):

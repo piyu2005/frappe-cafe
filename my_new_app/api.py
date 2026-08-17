@@ -1,8 +1,14 @@
 import frappe
 from frappe.auth import LoginManager
+from frappe.rate_limiter import rate_limit
 
 
 @frappe.whitelist(allow_guest=True)
+# Public + no email verification on signup, so without this an unauthenticated
+# script could hammer it to enumerate registered emails (via the "already
+# exists" error) or mass-create accounts. IP-based, matching frappe core's own
+# guest-facing endpoints (e.g. User.clear_session).
+@rate_limit(limit=10, seconds=60 * 60)
 def signup(email, password, username):
 	email = email.strip().lower()
 	if frappe.db.exists("User", email):
