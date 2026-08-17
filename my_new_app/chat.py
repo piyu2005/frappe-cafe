@@ -115,10 +115,19 @@ def _is_public_http_url(url):
 	if parsed.scheme not in ("http", "https") or not parsed.hostname:
 		return False
 
+	# getaddrinfo has no timeout parameter of its own — a hostname whose DNS
+	# server stalls or never responds would otherwise block this well past
+	# the 3s budget _unfurl gives the actual fetch, tying up the request
+	# worker. socket.setdefaulttimeout applies process-wide for the duration
+	# of the call, so it's restored in finally regardless of outcome.
+	previous_timeout = socket.getdefaulttimeout()
 	try:
+		socket.setdefaulttimeout(3)
 		resolved = socket.getaddrinfo(parsed.hostname, None)
 	except OSError:
 		return False
+	finally:
+		socket.setdefaulttimeout(previous_timeout)
 
 	for *_rest, sockaddr in resolved:
 		ip = ipaddress.ip_address(sockaddr[0])
@@ -712,6 +721,15 @@ def download_attachment(file_url):
 	if not allowed and file_doc.attached_to_doctype == "Message" and file_doc.attached_to_name:
 		conversation = frappe.db.get_value("Message", file_doc.attached_to_name, "conversation")
 		allowed = bool(conversation and _is_member(conversation))
+	# Matches the one other way File.has_permission (which this function
+	# otherwise stands in for — see _attachment_url) can grant access: an
+	# explicit frappe.share.add_docshare("File", ...) on this exact file.
+	# Nothing in this app creates one today, but honoring it costs nothing
+	# and avoids silently ignoring Frappe's own native sharing feature.
+	if not allowed:
+		allowed = bool(
+			frappe.share.get_shared("File", filters=[["share_name", "=", file_doc.name]], rights=["read"], user=frappe.session.user)
+		)
 	if not allowed:
 		raise frappe.PermissionError
 

@@ -140,7 +140,6 @@ permission_query_conditions = {
 
 has_permission = {
 	"Post": "my_new_app.my_new_app.doctype.post.post.has_permission",
-	"Message": "my_new_app.my_new_app.doctype.message.message.has_permission",
 }
 
 # Document Events

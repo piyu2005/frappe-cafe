@@ -9,6 +9,15 @@
     />
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
+  <!-- Only invite mode gets a mobile header — it's the one place on this
+       page a back button is the only way out (the bottom nav's own
+       "Explore" tab doesn't go back to the publication); plain search has
+       no header at all here, per an explicit request to remove it. -->
+  <PageHeaderMobile v-else-if="inviteMode" title="Invite">
+    <template #left>
+      <PageHeaderBackButton :to="`/publications/${route.query.pub}`" />
+    </template>
+  </PageHeaderMobile>
   <ScrollArea class="h-full">
     <div class="mx-auto max-w-[760px] px-4 py-6 sm:px-5 sm:py-8">
       <h1 class="text-3xl font-semibold text-ink-gray-9">
@@ -105,6 +114,8 @@ import {
   FormControl,
   LoadingText,
   PageHeader,
+  PageHeaderBackButton,
+  PageHeaderMobile,
   ScrollArea,
   TextInput,
   toast,
