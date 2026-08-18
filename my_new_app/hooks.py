@@ -68,9 +68,17 @@ website_route_rules = [
 # home_page = "login"
 
 # website user home page (by Role)
-# role_home_page = {
-# 	"Role": "home_page"
-# }
+# Every real account here is a Website User with no role beyond "All"/"Guest"
+# (see my_new_app/chat.py's _attachment_url comment for why — granting
+# System User would also hand out desk/backend access). Without this, login
+# falls through Frappe's default resolution with nothing configured and
+# lands on /desk — the backend admin UI, not this app. Administrator/System
+# User accounts are unaffected: frappe/www/login.py only consults
+# role_home_page for user_type == "Website User", they're hardcoded to
+# /desk regardless.
+role_home_page = {
+	"All": "frontend",
+}
 
 # Generators
 # ----------
