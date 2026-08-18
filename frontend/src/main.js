@@ -46,7 +46,17 @@ function dismissFloatingUI() {
 
   // Escape is the accessibility-mandated way to dismiss floating UI
   // (tooltips/popovers/menus) — a backstop for anything the above missed.
-  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+  // But it's indistinguishable, to any listener, from a real Escape press —
+  // and frappe-ui's actual <Dialog> modals (CreateGroupDialog,
+  // GroupMembersDialog, StoryPreviewDialog, etc. all use it) close on
+  // Escape too. Firing this while one's open would silently close it the
+  // moment the tab loses visibility, so it'd just be gone by the time the
+  // user comes back. `.dialog-content` is the class frappe-ui's Dialog.vue
+  // renders only while a dialog is actually open — skip the synthetic key
+  // there so a real modal survives a tab switch.
+  if (!document.querySelector('.dialog-content')) {
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+  }
 }
 
 document.addEventListener('visibilitychange', () => {
