@@ -36,6 +36,12 @@ venv.bak/
 node_modules/
 jspm_packages/
 
+# This project uses yarn (frontend/yarn.lock is the real, committed lockfile)
+# - an npm lockfile here means someone ran `npm install` instead at some
+# point, and npm/yarn resolving the same package.json independently can
+# silently disagree on transitive versions.
+frontend/package-lock.json
+
 # IDEs and editors
 .vscode/
 .vs/
