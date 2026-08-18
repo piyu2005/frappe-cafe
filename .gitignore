@@ -54,5 +54,10 @@ jspm_packages/
 # Aider AI Chat
 .aider*
 
-# Frontend build output (regenerate with: cd frontend && npm install && npm run build)
-my_new_app/public/frontend/
+# Frontend build output is committed (see my_new_app/public/frontend/) rather
+# than gitignored — Frappe Cloud wasn't running the `yarn build` step on
+# deploy, leaving the site referencing asset files that never existed on the
+# server. Committing the actual build makes the site work regardless of
+# whether that step ever runs there. Re-run `cd frontend && yarn build`
+# and commit the result after any frontend change.
+my_new_app/public/frontend/assets/*.map
