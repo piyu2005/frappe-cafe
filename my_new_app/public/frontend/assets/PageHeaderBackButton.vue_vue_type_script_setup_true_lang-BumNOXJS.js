@@ -1,0 +1,2 @@
+import{p as c,a as n,o as s,c as l,h as r}from"./index-BQCzVobI.js";const f=c({__name:"PageHeaderBackButton",props:{to:{},label:{default:"Back"}},setup(e){const a=e,o=n();function t(){a.to?o.push(a.to):o.back()}return(u,i)=>(s(),l(r,{variant:"ghost",size:"md",icon:"lucide-chevron-left",label:e.label,onClick:t},null,8,["label"]))}});export{f as _};
+//# sourceMappingURL=PageHeaderBackButton.vue_vue_type_script_setup_true_lang-BumNOXJS.js.map

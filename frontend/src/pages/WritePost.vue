@@ -2,7 +2,6 @@
   <PageHeader v-if="!isMobile">
     <Breadcrumbs :items="breadcrumbItems" />
     <div class="flex items-center gap-2">
-      <Badge v-if="isEditing" :label="form.status" theme="gray" :variant="statusVariant" />
       <Button
         variant="outline"
         theme="gray"
@@ -116,7 +115,6 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  Badge,
   Breadcrumbs,
   Button,
   Dropdown,
@@ -592,12 +590,6 @@ const breadcrumbItems = computed(() => [
   { label: APP_NAME, route: '/' },
   { label: isEditing.value ? 'Edit' : 'Write' },
 ])
-
-const statusVariant = computed(() => {
-  if (form.status === 'Published') return 'solid'
-  if (form.status === 'Archived') return 'subtle'
-  return 'outline'
-})
 
 const primaryLabel = computed(() => (form.status === 'Published' ? 'Update' : 'Publish'))
 const draftButtonLabel = computed(() => (form.status === 'Archived' ? 'Restore to Draft' : 'Save Draft'))
