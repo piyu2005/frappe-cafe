@@ -6,8 +6,8 @@
         variant="outline"
         theme="gray"
         :label="draftButtonLabel"
-        :loading="saving === 'Draft'"
-        @click="save('Draft')"
+        :loading="saving === secondaryActionStatus"
+        @click="save(secondaryActionStatus)"
       />
       <Button
         variant="solid"
@@ -600,7 +600,13 @@ const breadcrumbItems = computed(() => [
 ])
 
 const primaryLabel = computed(() => (form.status === 'Published' ? 'Update' : 'Publish'))
-const draftButtonLabel = computed(() => (form.status === 'Archived' ? 'Restore to Draft' : 'Save Draft'))
+// Archiving is a one-way trip out of the normal Draft->Published flow, not a
+// state to bounce back out of into Draft - an archived post can only be
+// edited and re-published, or left archived. The secondary button reflects
+// that: for an already-archived post it just re-saves the edits without
+// changing its status, it doesn't offer "Restore to Draft" at all.
+const secondaryActionStatus = computed(() => (form.status === 'Archived' ? 'Archived' : 'Draft'))
+const draftButtonLabel = computed(() => (form.status === 'Archived' ? 'Save' : 'Save Draft'))
 
 const saving = ref(null)
 // Set right before createPost.submit() specifically for the fork case (see
@@ -610,7 +616,7 @@ const saving = ref(null)
 // post's id would otherwise be a confusing, unexplained surprise.
 const savingAsFork = ref(false)
 
-function handleSaveSuccess(name, targetStatus, { isNewDoc = false, isFork = false } = {}) {
+function handleSaveSuccess(name, targetStatus, { isNewDoc = false, isFork = false, previousStatus = null } = {}) {
   saving.value = null
   form.status = targetStatus
   lastSavedAt.value = new Date()
@@ -621,8 +627,13 @@ function handleSaveSuccess(name, targetStatus, { isNewDoc = false, isFork = fals
   }
   if (isFork) {
     toast.success("Saved as a new draft — your published post wasn't changed")
+  } else if (targetStatus === 'Archived') {
+    // Same wording either way from the reader's perspective the post just
+    // stopped being visible - but re-saving edits to an already-archived
+    // post shouldn't claim to have *just* archived it.
+    toast.success(previousStatus === 'Archived' ? 'Changes saved' : 'Post archived')
   } else {
-    toast.success(targetStatus === 'Archived' ? 'Post archived' : 'Draft saved')
+    toast.success('Draft saved')
   }
   if (isNewDoc) {
     router.replace({ name: 'WritePost', params: { postId: name } })
@@ -653,6 +664,7 @@ function save(status) {
     return
   }
 
+  const previousStatus = form.status
   saving.value = status
   const payload = { ...form, status }
 
@@ -661,12 +673,12 @@ function save(status) {
   // tweaking wording) - fork the edit into a brand-new, independent draft
   // instead. Publishing that draft later is then just publishing its own,
   // separate document - it was never the same row as the original.
-  const forkAsNewDraft = isEditing.value && status === 'Draft' && form.status === 'Published'
+  const forkAsNewDraft = isEditing.value && status === 'Draft' && previousStatus === 'Published'
 
   if (isEditing.value && !forkAsNewDraft) {
     existingDoc.setValue
       .submit(payload)
-      .then(() => handleSaveSuccess(postId.value, status))
+      .then(() => handleSaveSuccess(postId.value, status, { previousStatus }))
       .catch(() => {
         saving.value = null
       })
@@ -678,7 +690,9 @@ function save(status) {
 
 const moreOptions = computed(() => {
   const opts = []
-  if (form.status !== 'Archived') {
+  // Archiving only makes sense as a way to take a *live* post down - a
+  // draft was never up, so there's nothing to archive it from.
+  if (form.status === 'Published') {
     opts.push({ label: 'Archive', icon: 'lucide-archive', onClick: () => save('Archived') })
   }
   opts.push({
@@ -707,7 +721,9 @@ const moreOptions = computed(() => {
 // actions — folds "Save Draft" (its own always-visible button on desktop) in
 // alongside archive/delete rather than dropping it.
 const mobileMoreOptions = computed(() => {
-  const opts = [{ label: draftButtonLabel.value, icon: 'lucide-save', onClick: () => save('Draft') }]
+  const opts = [
+    { label: draftButtonLabel.value, icon: 'lucide-save', onClick: () => save(secondaryActionStatus.value) },
+  ]
   if (isEditing.value) opts.push(...moreOptions.value)
   return opts
 })
