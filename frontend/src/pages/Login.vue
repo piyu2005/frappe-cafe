@@ -15,6 +15,13 @@
         required
       />
 
+      <router-link
+        class="mt-1.5 block text-right text-sm text-ink-gray-5 underline"
+        :to="{ name: 'ForgotPassword' }"
+      >
+        Forgot password?
+      </router-link>
+
       <ErrorMessage class="mt-3" :message="error" />
 
       <Button
