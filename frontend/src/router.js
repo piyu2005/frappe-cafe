@@ -13,6 +13,11 @@ const routes = [
     component: () => import('@/pages/Signup.vue'),
   },
   {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('@/pages/ForgotPassword.vue'),
+  },
+  {
     path: '/',
     component: () => import('@/components/AppLayout.vue'),
     children: [
@@ -76,7 +81,7 @@ let router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-  let isGuestPage = to.name === 'Login' || to.name === 'Signup'
+  let isGuestPage = to.name === 'Login' || to.name === 'Signup' || to.name === 'ForgotPassword'
 
   // The fast, synchronous-cookie-only path is only safe for the specific
   // case of a guest page where the cookie *also* says logged out — skipping
