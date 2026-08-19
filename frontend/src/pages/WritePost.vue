@@ -2,7 +2,6 @@
   <PageHeader v-if="!isMobile">
     <Breadcrumbs :items="breadcrumbItems" />
     <div class="flex items-center gap-2">
-      <Badge v-if="isEditing" :label="form.status" theme="gray" :variant="statusVariant" />
       <Button
         variant="outline"
         theme="gray"
@@ -74,6 +73,7 @@
             v-model="form.title"
             placeholder="Give your story a title"
             class="mt-8 w-full border-0 bg-transparent p-0 text-2xl font-semibold text-ink-gray-9 placeholder:text-ink-gray-4 focus:outline-none focus:ring-0 sm:text-3xl"
+            @keydown.enter.prevent="focusContentStart"
           />
 
           <EditorBubbleMenu :items="bubbleToolbar" />
@@ -116,7 +116,6 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
-  Badge,
   Breadcrumbs,
   Button,
   Dropdown,
@@ -228,6 +227,13 @@ watch(
   },
   { immediate: true },
 )
+
+// Enter in the title is a deliberate "done with the title, on to the story"
+// signal (Medium does the same) - the title is a single-line <input>, so
+// without this Enter would otherwise just do nothing at all.
+function focusContentStart() {
+  editorRef.value?.editor?.chain().focus('start').run()
+}
 
 // "Last saved Xm ago" needs to keep advancing on its own, not just when
 // something in `form` happens to change — a light tick is enough to keep it
@@ -592,12 +598,6 @@ const breadcrumbItems = computed(() => [
   { label: APP_NAME, route: '/' },
   { label: isEditing.value ? 'Edit' : 'Write' },
 ])
-
-const statusVariant = computed(() => {
-  if (form.status === 'Published') return 'solid'
-  if (form.status === 'Archived') return 'subtle'
-  return 'outline'
-})
 
 const primaryLabel = computed(() => (form.status === 'Published' ? 'Update' : 'Publish'))
 const draftButtonLabel = computed(() => (form.status === 'Archived' ? 'Restore to Draft' : 'Save Draft'))
