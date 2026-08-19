@@ -4,7 +4,6 @@
     <div class="flex items-center gap-2">
       <Badge v-if="isEditing" :label="form.status" theme="gray" :variant="statusVariant" />
       <Button
-        v-if="form.status !== 'Published'"
         variant="outline"
         theme="gray"
         :label="draftButtonLabel"
@@ -604,8 +603,14 @@ const primaryLabel = computed(() => (form.status === 'Published' ? 'Update' : 'P
 const draftButtonLabel = computed(() => (form.status === 'Archived' ? 'Restore to Draft' : 'Save Draft'))
 
 const saving = ref(null)
+// Set right before createPost.submit() specifically for the fork case (see
+// `forkAsNewDraft` in save() below) so its onSuccess can tell "saved a
+// genuinely new post" apart from "forked edits off a still-live published
+// one" and say so explicitly - the URL silently changing to a different
+// post's id would otherwise be a confusing, unexplained surprise.
+const savingAsFork = ref(false)
 
-function handleSaveSuccess(name, targetStatus) {
+function handleSaveSuccess(name, targetStatus, { isNewDoc = false, isFork = false } = {}) {
   saving.value = null
   form.status = targetStatus
   lastSavedAt.value = new Date()
@@ -614,8 +619,12 @@ function handleSaveSuccess(name, targetStatus) {
     router.push({ name: 'PostDetail', params: { postId: name } })
     return
   }
-  toast.success(targetStatus === 'Archived' ? 'Post archived' : 'Draft saved')
-  if (!isEditing.value) {
+  if (isFork) {
+    toast.success("Saved as a new draft — your published post wasn't changed")
+  } else {
+    toast.success(targetStatus === 'Archived' ? 'Post archived' : 'Draft saved')
+  }
+  if (isNewDoc) {
     router.replace({ name: 'WritePost', params: { postId: name } })
   }
 }
@@ -625,10 +634,12 @@ const createPost = useCall({
   method: 'POST',
   immediate: false,
   onSuccess(doc) {
-    handleSaveSuccess(doc.name, saving.value)
+    handleSaveSuccess(doc.name, saving.value, { isNewDoc: true, isFork: savingAsFork.value })
+    savingAsFork.value = false
   },
   onError() {
     saving.value = null
+    savingAsFork.value = false
   },
 })
 
@@ -645,7 +656,14 @@ function save(status) {
   saving.value = status
   const payload = { ...form, status }
 
-  if (isEditing.value) {
+  // Saving a currently-published post as a draft must never touch the live
+  // post itself (readers shouldn't see it vanish because someone was just
+  // tweaking wording) - fork the edit into a brand-new, independent draft
+  // instead. Publishing that draft later is then just publishing its own,
+  // separate document - it was never the same row as the original.
+  const forkAsNewDraft = isEditing.value && status === 'Draft' && form.status === 'Published'
+
+  if (isEditing.value && !forkAsNewDraft) {
     existingDoc.setValue
       .submit(payload)
       .then(() => handleSaveSuccess(postId.value, status))
@@ -653,6 +671,7 @@ function save(status) {
         saving.value = null
       })
   } else {
+    savingAsFork.value = forkAsNewDraft
     createPost.submit(payload)
   }
 }
@@ -686,13 +705,9 @@ const moreOptions = computed(() => {
 
 // Mobile's header only has room for one icon-button's worth of secondary
 // actions — folds "Save Draft" (its own always-visible button on desktop) in
-// alongside archive/delete rather than dropping it, so it's still reachable
-// with the post not yet published.
+// alongside archive/delete rather than dropping it.
 const mobileMoreOptions = computed(() => {
-  const opts = []
-  if (form.status !== 'Published') {
-    opts.push({ label: draftButtonLabel.value, icon: 'lucide-save', onClick: () => save('Draft') })
-  }
+  const opts = [{ label: draftButtonLabel.value, icon: 'lucide-save', onClick: () => save('Draft') }]
   if (isEditing.value) opts.push(...moreOptions.value)
   return opts
 })
