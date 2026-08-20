@@ -255,8 +255,8 @@
           <div class="space-y-4">
             <FormControl v-model="editWorkForm.company" label="Company" required />
             <FormControl v-model="editWorkForm.title" label="Title" />
-            <FormControl v-model="workStartMonth" type="month" label="Start date" />
-            <FormControl v-model="workEndMonth" type="month" label="End date" />
+            <FormControl v-model="editWorkForm.start_date" type="date" label="Start date" />
+            <FormControl v-model="editWorkForm.end_date" type="date" label="End date" />
             <FormControl v-model="editWorkForm.description" type="textarea" label="Description" />
           </div>
         </template>
@@ -288,8 +288,8 @@
             <FormControl v-model="editEducationForm.school" label="School" required />
             <FormControl v-model="editEducationForm.degree" label="Degree" />
             <FormControl v-model="editEducationForm.field_of_study" label="Field of study" />
-            <FormControl v-model="eduStartMonth" type="month" label="Start date" />
-            <FormControl v-model="eduEndMonth" type="month" label="End date" />
+            <FormControl v-model="editEducationForm.start_year" type="date" label="Start date" />
+            <FormControl v-model="editEducationForm.end_year" type="date" label="End date" />
           </div>
         </template>
         <template #actions>
@@ -398,20 +398,6 @@ function formatMonthYear(value) {
   const date = new Date(value)
   if (isNaN(date)) return value
   return date.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })
-}
-
-// The underlying field is still a full Date (day-of-month is never shown,
-// see formatMonthYear above, and never asked for — a native <input type="month">
-// only ever collects year+month) - this proxies that in and out of the
-// "YYYY-MM" the month input actually works in, defaulting to the 1st of
-// whichever month is picked.
-function monthYearProxy(form, field) {
-  return computed({
-    get: () => (form[field] ? String(form[field]).slice(0, 7) : ''),
-    set: (monthYear) => {
-      form[field] = monthYear ? `${monthYear}-01` : ''
-    },
-  })
 }
 
 const updateProfile = useCall({
@@ -526,9 +512,6 @@ const editEducationForm = reactive({
   start_year: '',
   end_year: '',
 })
-const eduStartMonth = monthYearProxy(editEducationForm, 'start_year')
-const eduEndMonth = monthYearProxy(editEducationForm, 'end_year')
-
 function openAddEducation() {
   Object.assign(editEducationForm, {
     name: '',
@@ -585,9 +568,6 @@ const editWorkForm = reactive({
   end_date: '',
   description: '',
 })
-const workStartMonth = monthYearProxy(editWorkForm, 'start_date')
-const workEndMonth = monthYearProxy(editWorkForm, 'end_date')
-
 function openAddWork() {
   Object.assign(editWorkForm, {
     name: '',
