@@ -77,6 +77,25 @@ def _other_members(conversation, exclude=None):
 	return [r.user for r in rows if r.user != exclude]
 
 
+def _dm_display_info(other_user):
+	"""Resolve a DM's "other person" for display — a Conversation Member row
+	is never cleaned up if that User is later deleted directly (e.g. via
+	Desk; this app's own account deletion only disables, never hard-deletes,
+	precisely to avoid this), so `other_user` here can be a dangling id with
+	no actual User behind it. Treating that id as still-valid would show a
+	blank name/avatar and, worse, link to a profile that 404s - `other_user`
+	comes back None here (same convention already used for group chats,
+	where there's no single other person to link to) so the frontend has
+	nothing broken to link, while the conversation and its history stay
+	intact and visibly say what happened.
+	"""
+	if not other_user or not frappe.db.exists("User", other_user):
+		return None, "Deleted user", None
+	display_name = frappe.db.get_value("User", other_user, "full_name")
+	display_image = frappe.db.get_value("User", other_user, "user_image")
+	return other_user, display_name, display_image
+
+
 def _group_reactions(message):
 	reactions = frappe.db.get_all("Message Reaction", filters={"message": message}, fields=["emoji", "user"])
 	grouped = {}
@@ -331,9 +350,7 @@ def list_conversations():
 			display_image = None
 			other_user = None
 		else:
-			other_user = others[0] if others else None
-			display_name = frappe.db.get_value("User", other_user, "full_name") if other_user else "Unknown"
-			display_image = frappe.db.get_value("User", other_user, "user_image") if other_user else None
+			other_user, display_name, display_image = _dm_display_info(others[0] if others else None)
 
 		last_message = frappe.db.get_value(
 			"Message",
@@ -430,9 +447,7 @@ def get_conversation(conversation):
 		display_image = None
 		other_user = None
 	else:
-		other_user = others[0] if others else None
-		display_name = frappe.db.get_value("User", other_user, "full_name") if other_user else "Unknown"
-		display_image = frappe.db.get_value("User", other_user, "user_image") if other_user else None
+		other_user, display_name, display_image = _dm_display_info(others[0] if others else None)
 
 	other_last_read = None
 	if other_user:
