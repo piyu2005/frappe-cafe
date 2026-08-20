@@ -4,13 +4,26 @@
       <router-view />
       <template #nav>
         <MobileNav>
-          <MobileNavItem label="Home" icon="lucide-house" :active="!notificationsOpen && route.name === 'Home'" :to="{ name: 'Home' }" />
-          <MobileNavItem label="Explore" icon="lucide-search" :active="!notificationsOpen && route.name === 'SearchPeople'" :to="{ name: 'SearchPeople' }" />
+          <MobileNavItem
+            label="Home"
+            icon="lucide-house"
+            :active="!notificationsOpen && route.name === 'Home'"
+            :to="{ name: 'Home' }"
+            @click="notificationsOpen = false"
+          />
+          <MobileNavItem
+            label="Explore"
+            icon="lucide-search"
+            :active="!notificationsOpen && route.name === 'SearchPeople'"
+            :to="{ name: 'SearchPeople' }"
+            @click="notificationsOpen = false"
+          />
           <MobileNavItem
             label="Messages"
             icon="lucide-message-circle"
             :active="!notificationsOpen && route.name === 'Messages'"
             :to="{ name: 'Messages' }"
+            @click="notificationsOpen = false"
           >
             <template #default="{ active }">
               <span class="relative">
@@ -31,8 +44,20 @@
               </span>
             </template>
           </MobileNavItem>
-          <MobileNavItem label="Profile" icon="lucide-user" :active="!notificationsOpen && route.name === 'Profile'" :to="{ name: 'Profile' }" />
-          <MobileNavItem label="Settings" icon="lucide-settings" :active="!notificationsOpen && route.name === 'Settings'" :to="{ name: 'Settings' }" />
+          <MobileNavItem
+            label="Profile"
+            icon="lucide-user"
+            :active="!notificationsOpen && route.name === 'Profile'"
+            :to="{ name: 'Profile' }"
+            @click="notificationsOpen = false"
+          />
+          <MobileNavItem
+            label="Settings"
+            icon="lucide-settings"
+            :active="!notificationsOpen && route.name === 'Settings'"
+            :to="{ name: 'Settings' }"
+            @click="notificationsOpen = false"
+          />
         </MobileNav>
       </template>
     </MobileShell>
@@ -55,6 +80,7 @@
               icon="lucide-house"
               :active="!notificationsOpen && route.name === 'Home'"
               to="/"
+              @click="notificationsOpen = false"
             />
             <RailItem
               label="Search"
@@ -62,6 +88,7 @@
               icon="lucide-search"
               :active="!notificationsOpen && route.name === 'SearchPeople'"
               :to="{ name: 'SearchPeople' }"
+              @click="notificationsOpen = false"
             />
             <RailItem
               label="Messages"
@@ -71,6 +98,7 @@
               :badge="unreadMessageCount.data || 0"
               badge-style="count"
               :to="{ name: 'Messages' }"
+              @click="notificationsOpen = false"
             />
             <RailItem
               label="Notifications"
@@ -87,6 +115,7 @@
               icon="lucide-user"
               :active="!notificationsOpen && route.name === 'Profile'"
               :to="{ name: 'Profile' }"
+              @click="notificationsOpen = false"
             />
             <RailItem
               label="Settings"
@@ -94,6 +123,7 @@
               icon="lucide-settings"
               :active="!notificationsOpen && route.name === 'Settings'"
               :to="{ name: 'Settings' }"
+              @click="notificationsOpen = false"
             />
           </div>
         </Rail>
@@ -117,18 +147,26 @@
           </div>
 
           <nav class="mt-0.5 space-y-3 px-2">
-            <SidebarItem label="Feed" icon="lucide-house" :active="!notificationsOpen && route.name === 'Home'" to="/" />
+            <SidebarItem
+              label="Feed"
+              icon="lucide-house"
+              :active="!notificationsOpen && route.name === 'Home'"
+              to="/"
+              @click="notificationsOpen = false"
+            />
             <SidebarItem
               label="Explore"
               icon="lucide-search"
               :active="!notificationsOpen && route.name === 'SearchPeople'"
               :to="{ name: 'SearchPeople' }"
+              @click="notificationsOpen = false"
             />
             <SidebarItem
               label="Messages"
               icon="lucide-message-circle"
               :active="!notificationsOpen && route.name === 'Messages'"
               :to="{ name: 'Messages' }"
+              @click="notificationsOpen = false"
             >
               <template v-if="unreadMessageCount.data" #suffix>
                 <div class="relative mr-1 flex size-7 shrink-0 items-center justify-end">
@@ -153,12 +191,14 @@
               icon="lucide-user"
               :active="!notificationsOpen && route.name === 'Profile'"
               :to="{ name: 'Profile' }"
+              @click="notificationsOpen = false"
             />
             <SidebarItem
               label="Settings"
               icon="lucide-settings"
               :active="!notificationsOpen && route.name === 'Settings'"
               :to="{ name: 'Settings' }"
+              @click="notificationsOpen = false"
             />
           </nav>
         </Sidebar>
