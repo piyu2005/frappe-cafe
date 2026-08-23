@@ -490,6 +490,7 @@
                 <EditorContent
                   class="prose-sm max-h-32 overflow-y-auto px-3 pb-1 pt-2.5 text-ink-gray-9"
                   @keydown.enter.exact="onComposerEnter"
+                  @paste="onComposerPaste"
                 />
 
                 <div class="flex items-center justify-between px-1.5 pb-1.5">
@@ -741,6 +742,7 @@ import {
   formatBytes,
   toast,
   useCall,
+  useFileUpload,
 } from 'frappe-ui'
 import {
   Blockquote,
@@ -1279,6 +1281,33 @@ function onFileUploaded(file) {
   ]
   const inputEl = fileUploaderRef.value?.inputRef?.()
   if (inputEl) inputEl.value = ''
+}
+
+// Screenshots/copied images arrive as clipboard files, not text — same
+// upload path as the paperclip button (FileUploader), just without a file
+// picker in between. Only image items are intercepted; a plain text paste
+// (the common case) is left alone to fall through to the editor's own
+// default handling.
+const { upload: uploadPastedFile } = useFileUpload()
+
+async function onComposerPaste(event) {
+  if (conversation.data?.is_blocked) return
+
+  const items = Array.from(event.clipboardData?.items || [])
+  const imageItems = items.filter((item) => item.kind === 'file' && item.type.startsWith('image/'))
+  if (!imageItems.length) return
+
+  event.preventDefault()
+  for (const item of imageItems) {
+    const file = item.getAsFile()
+    if (!file) continue
+    try {
+      const uploaded = await uploadPastedFile(file, { private: true })
+      onFileUploaded(uploaded)
+    } catch (err) {
+      toast.error(err?.message || 'Error uploading image')
+    }
+  }
 }
 
 function clearPendingAttachment(index) {

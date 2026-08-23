@@ -219,13 +219,12 @@ def change_password(old_password, new_password):
 
 @frappe.whitelist()
 def delete_account():
-	user = frappe.session.user
-	if user == "Guest":
-		frappe.throw("Not permitted", frappe.PermissionError)
-	frappe.db.set_value("User", user, "enabled", 0)
-	frappe.db.commit()
-	frappe.local.login_manager.logout()
-	return "success"
+	# Paused: this only disabled the User rather than actually deleting it,
+	# which left people locked out with no way back in on their own (a
+	# disabled User blocks both a fresh signup and a fresh Google login with
+	# the same email). Re-enable once there's a real account-deletion flow
+	# (or at least a clear message on what "deleted" means) to replace this.
+	frappe.throw("Account deletion is temporarily unavailable. Please contact support.")
 
 
 @frappe.whitelist()
