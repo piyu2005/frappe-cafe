@@ -39,13 +39,13 @@
               <span class="text-base-medium text-ink-gray-8">Log out</span>
               <span class="lucide-log-out size-4 text-ink-gray-5" aria-hidden="true" />
             </button>
-            <button
-              class="flex w-full items-center justify-between py-4 text-left"
-              @click="confirmDeleteAccount"
-            >
-              <span class="text-base-medium text-ink-red-6">Delete account</span>
-              <span class="lucide-trash-2 size-4 text-ink-red-6" aria-hidden="true" />
-            </button>
+            <div class="flex w-full items-center justify-between py-4 text-left opacity-50">
+              <div>
+                <span class="text-base-medium text-ink-gray-8">Delete account</span>
+                <p class="text-sm text-ink-gray-5">Temporarily unavailable — contact support if you need this.</p>
+              </div>
+              <span class="lucide-trash-2 size-4 text-ink-gray-5" aria-hidden="true" />
+            </div>
           </div>
 
           <div v-else-if="activeTab.label === 'Saved'" class="pt-4">
@@ -201,16 +201,6 @@ const changePassword = useCall({
   onError: (err) => toast.error(err.message),
 })
 
-const deleteAccount = useCall({
-  url: '/api/v2/method/my_new_app.api.delete_account',
-  method: 'POST',
-  immediate: false,
-  onSuccess: async () => {
-    await logout()
-    router.replace('/login')
-  },
-})
-
 function handleLogout() {
   dialog.confirm({
     title: 'Log out?',
@@ -242,16 +232,6 @@ function openChangePassword() {
       changePassword.submit({ old_password: values.old_password, new_password: values.new_password })
       close()
     },
-  })
-}
-
-function confirmDeleteAccount() {
-  dialog.confirm({
-    title: 'Delete account?',
-    message: 'This will disable your account and log you out. This cannot be undone.',
-    theme: 'red',
-    confirmLabel: 'Delete',
-    onConfirm: () => deleteAccount.submit({}),
   })
 }
 
