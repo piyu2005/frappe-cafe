@@ -191,6 +191,21 @@
                   class="relative rounded-lg bg-surface-gray-2 px-3 py-2 text-sm text-ink-gray-9 transition-colors duration-500"
                   :class="highlightedMessageId === m.name ? 'bg-surface-amber-2' : ''"
                 >
+                  <div v-if="m.is_deleted" class="italic text-ink-gray-5">This message was deleted</div>
+
+                  <template v-else>
+                  <button
+                    v-if="m.reply_to_preview"
+                    type="button"
+                    class="mb-1.5 block w-full rounded border-l-2 border-outline-gray-4 bg-black/5 px-2 py-1 text-left"
+                    @click="jumpToMessage(m.reply_to_preview.name)"
+                  >
+                    <div class="truncate text-xs font-medium text-ink-gray-7">{{ m.reply_to_preview.sender_name }}</div>
+                    <div class="truncate text-xs text-ink-gray-5">
+                      {{ m.reply_to_preview.is_deleted ? 'This message was deleted' : m.reply_to_preview.content }}
+                    </div>
+                  </button>
+
                   <!-- Messages written with the rich-text composer store HTML;
                        older messages sent before it existed are plain text
                        with light markdown, still parsed the original way. -->
@@ -359,9 +374,31 @@
                       <EmojiPicker @select="(e) => (toggleReaction(m.name, e), close())" />
                     </template>
                   </Popover>
+
+                  <button
+                    type="button"
+                    class="absolute -top-3 size-6 items-center justify-center rounded-full border border-outline-gray-1 bg-surface-base text-ink-gray-6"
+                    :class="[m.sender === session.user ? '-left-10' : '-right-10', 'hidden group-hover:flex']"
+                    @click="startReply(m)"
+                  >
+                    <span class="lucide-reply size-3.5" aria-hidden="true" />
+                  </button>
+
+                  <Dropdown v-if="m.sender === session.user" :options="messageOptions(m)" placement="right">
+                    <template #default="{ open }">
+                      <button
+                        type="button"
+                        class="absolute -top-3 -left-16 size-6 items-center justify-center rounded-full border border-outline-gray-1 bg-surface-base text-ink-gray-6"
+                        :class="open ? 'flex' : 'hidden group-hover:flex'"
+                      >
+                        <span class="lucide-more-horizontal size-3.5" aria-hidden="true" />
+                      </button>
+                    </template>
+                  </Dropdown>
+                  </template>
                 </div>
 
-                <div v-if="m.reactions && m.reactions.length" class="mt-1 flex flex-wrap gap-1" :class="m.sender === session.user ? 'justify-end' : ''">
+                <div v-if="!m.is_deleted && m.reactions && m.reactions.length" class="mt-1 flex flex-wrap gap-1" :class="m.sender === session.user ? 'justify-end' : ''">
                   <button
                     v-for="r in m.reactions"
                     :key="r.emoji"
@@ -374,7 +411,7 @@
                 </div>
 
                 <div class="mt-0.5 text-xs text-ink-gray-4" :class="m.sender === session.user ? 'text-right' : ''">
-                  {{ formatTime(m.creation) }}
+                  {{ formatTime(m.creation) }}<span v-if="m.is_edited && !m.is_deleted"> · edited</span>
                 </div>
                 <div
                   v-if="m.name === lastOwnMessage?.name && isSeenByOther"
@@ -397,6 +434,27 @@
           >
             <template #default>
               <div class="rounded-lg border border-outline-gray-2 bg-surface-base focus-within:border-outline-gray-4">
+                <div
+                  v-if="replyingTo || editingMessage"
+                  class="flex items-center justify-between gap-2 border-b border-outline-gray-1 px-3 py-2"
+                >
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs font-medium text-ink-gray-7">
+                      {{ editingMessage ? 'Editing message' : `Replying to ${replyingTo.sender_name}` }}
+                    </div>
+                    <div v-if="replyingTo" class="truncate text-xs text-ink-gray-5">
+                      {{ messagePreviewText(replyingTo) }}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="flex size-6 shrink-0 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8"
+                    @click="editingMessage ? cancelEdit() : cancelReply()"
+                  >
+                    <span class="lucide-x size-3.5" aria-hidden="true" />
+                  </button>
+                </div>
+
                 <div v-if="pendingAttachments.length" class="flex flex-wrap gap-2 p-2 pb-0">
                   <div
                     v-for="(a, i) in pendingAttachments"
@@ -443,7 +501,7 @@
                             <button
                               type="button"
                               class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                              :disabled="uploading || conversation.data.is_blocked"
+                              :disabled="uploading || conversation.data.is_blocked || !!editingMessage"
                               @click="openFileSelector"
                             >
                               <span class="lucide-paperclip size-4" aria-hidden="true" />
@@ -497,7 +555,7 @@
                         <button
                           type="button"
                           class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                          :disabled="conversation.data.is_blocked"
+                          :disabled="conversation.data.is_blocked || !!editingMessage"
                           @click="openPollDialog"
                         >
                           <span class="lucide-bar-chart-2 size-4" aria-hidden="true" />
@@ -508,8 +566,8 @@
                   <Button
                     variant="solid"
                     theme="gray"
-                    icon="lucide-send"
-                    :loading="sendMessage.loading"
+                    :icon="editingMessage ? 'lucide-check' : 'lucide-send'"
+                    :loading="editingMessage ? editMessageCall.loading : sendMessage.loading"
                     :disabled="conversation.data.is_blocked"
                     @click="submitMessage"
                   />
@@ -731,6 +789,8 @@ watch(searchOpen, async (open) => {
   messageSearchInputRef.value?.el?.focus()
 })
 const highlightedMessageId = ref(null)
+const replyingTo = ref(null)
+const editingMessage = ref(null)
 const scrollAreaRef = ref(null)
 const composerEditorRef = ref(null)
 const fileUploaderRef = ref(null)
@@ -844,6 +904,20 @@ const composerExtensions = [
 
 function isHtmlContent(text) {
   return /<[a-z][\s\S]*>/i.test(text || '')
+}
+
+// Used for the "Replying to …" preview above the composer, where the source
+// is a full message from messageList (possibly rich-text HTML) rather than
+// the already-plain-text reply_to_preview the backend sends with each
+// message — that one is rendered as-is in the message bubble.
+function messagePreviewText(m) {
+  if (!m) return ''
+  if (m.is_deleted) return 'This message was deleted'
+  if (m.content) return isHtmlContent(m.content) ? m.content.replace(/<[^>]+>/g, ' ').trim() : m.content
+  if (m.attachments && m.attachments.length) return 'Attachment'
+  if (m.shared_post) return 'Shared post'
+  if (m.poll_data) return 'Poll'
+  return ''
 }
 
 let typingClearTimer = null
@@ -969,6 +1043,8 @@ async function openConversationData(id) {
   searchOpen.value = false
   messageSearchQuery.value = ''
   messagesFetchLimit.value = 50
+  replyingTo.value = null
+  editingMessage.value = null
   if (!id) return
   await Promise.all([conversation.reload(), messages.reload(), mentionableUsers.reload()])
   markRead.submit({ conversation: id })
@@ -1014,15 +1090,115 @@ const sendMessage = useCall({
     messageList.value = [...messageList.value, msg]
     newMessageText.value = ''
     pendingAttachments.value = []
+    replyingTo.value = null
     conversations.reload()
     scrollToBottom()
   },
   onError: (err) => toast.error(err.message),
 })
 
+const editMessageCall = useCall({
+  url: '/api/v2/method/my_new_app.chat.edit_message',
+  method: 'POST',
+  immediate: false,
+  onSuccess: (result) => {
+    const target = messageList.value.find((m) => m.name === editingMessage.value?.name)
+    if (target) {
+      target.content = result.content
+      target.is_edited = result.is_edited
+    }
+    cancelEdit()
+  },
+  onError: (err) => toast.error(err.message),
+})
+
+function startReply(m) {
+  editingMessage.value = null
+  replyingTo.value = m
+  composerEditorRef.value?.editor?.chain().focus().run()
+}
+
+function cancelReply() {
+  replyingTo.value = null
+}
+
+// Content is applied via editor.commands.setContent() rather than just
+// setting the newMessageText ref: the Editor's internal v-model watcher skips
+// re-applying a value that matches the *last value it emitted*, to avoid
+// bouncing a user's own keystroke back through setContent. Since the message
+// being edited was typically typed in this same composer moments earlier,
+// its content usually still matches that last-emitted value one-for-one — so
+// setting the ref alone silently no-ops and leaves the composer looking
+// empty. Calling setContent() directly bypasses that guard entirely.
+function startEdit(m) {
+  replyingTo.value = null
+  editingMessage.value = m
+  nextTick(() => {
+    const editor = composerEditorRef.value?.editor
+    editor?.commands.setContent(m.content || '')
+    editor?.chain().focus('end').run()
+  })
+}
+
+function cancelEdit() {
+  editingMessage.value = null
+  composerEditorRef.value?.editor?.commands.setContent('')
+}
+
+function messageOptions(m) {
+  return [
+    { label: 'Edit', icon: 'lucide-pencil', onClick: () => startEdit(m) },
+    { label: 'Delete', icon: 'lucide-trash-2', onClick: () => confirmDeleteMessage(m) },
+  ]
+}
+
+const deleteMessageCall = useCall({
+  url: '/api/v2/method/my_new_app.chat.delete_message',
+  method: 'POST',
+  immediate: false,
+  onSuccess: () => {
+    markMessageDeletedLocally(deleteMessageCall.params?.message)
+    conversations.reload()
+  },
+  onError: (err) => toast.error(err.message),
+})
+
+function markMessageDeletedLocally(messageId) {
+  const target = messageList.value.find((m) => m.name === messageId)
+  if (!target) return
+  target.is_deleted = 1
+  target.content = null
+  target.attachments = []
+  target.shared_post = null
+  target.poll = null
+  target.poll_data = null
+  target.link_url = null
+  target.link_title = null
+  target.link_description = null
+  target.link_image = null
+  target.reactions = []
+}
+
+function confirmDeleteMessage(m) {
+  dialog.confirm({
+    title: 'Delete message?',
+    message: "This can't be undone. This message will be removed for everyone in this conversation.",
+    theme: 'red',
+    confirmLabel: 'Delete',
+    onConfirm: () => deleteMessageCall.submit({ message: m.name }),
+  })
+}
+
 function submitMessage() {
   const editor = composerEditorRef.value?.editor
   const isEmpty = !editor || editor.isEmpty
+
+  if (editingMessage.value) {
+    if (isEmpty) return
+    editMessageCall.submit({ message: editingMessage.value.name, content: newMessageText.value })
+    return
+  }
+
   if ((isEmpty && !pendingAttachments.value.length) || !activeConversationId.value) return
   sendMessage.submit({
     conversation: activeConversationId.value,
@@ -1032,6 +1208,7 @@ function submitMessage() {
       file_name: a.file_name,
       file_size: a.file_size,
     })),
+    reply_to: replyingTo.value?.name || null,
   })
 }
 
@@ -1324,6 +1501,19 @@ function handlePollUpdate(payload) {
   if (msg) msg.poll_data = payload.poll_data
 }
 
+function handleMessageEdited(payload) {
+  const msg = messageList.value.find((m) => m.name === payload.message)
+  if (msg) {
+    msg.content = payload.content
+    msg.is_edited = payload.is_edited
+  }
+}
+
+function handleMessageDeleted(payload) {
+  markMessageDeletedLocally(payload.message)
+  conversations.reload()
+}
+
 let socket = null
 onMounted(() => {
   socket = getSocket()
@@ -1332,6 +1522,8 @@ onMounted(() => {
   socket.on('chat:read', handleRead)
   socket.on('chat:reaction', handleReaction)
   socket.on('chat:poll_update', handlePollUpdate)
+  socket.on('chat:message_edited', handleMessageEdited)
+  socket.on('chat:message_deleted', handleMessageDeleted)
 })
 
 onBeforeUnmount(() => {
@@ -1341,6 +1533,8 @@ onBeforeUnmount(() => {
     socket.off('chat:read', handleRead)
     socket.off('chat:reaction', handleReaction)
     socket.off('chat:poll_update', handlePollUpdate)
+    socket.off('chat:message_edited', handleMessageEdited)
+    socket.off('chat:message_deleted', handleMessageDeleted)
   }
   clearTimeout(typingClearTimer)
 })

@@ -96,6 +96,26 @@ def _dm_display_info(other_user):
 	return other_user, display_name, display_image
 
 
+def _reply_preview(reply_to):
+	"""Small quoted-preview payload for a message's reply_to, used both when
+	sending a new reply and when loading history. Reads sender_name/content
+	directly rather than checking membership again - reply_to is only ever
+	set by send_message, which already validated the target belongs to this
+	same conversation (see there), so anyone able to see this message is
+	already someone who was allowed to see the one it's quoting."""
+	if not reply_to:
+		return None
+	msg = frappe.db.get_value("Message", reply_to, ["sender_name", "content", "is_deleted"], as_dict=True)
+	if not msg:
+		return None
+	return {
+		"name": reply_to,
+		"sender_name": msg.sender_name,
+		"content": None if msg.is_deleted else _preview_text(msg.content),
+		"is_deleted": msg.is_deleted,
+	}
+
+
 def _group_reactions(message):
 	reactions = frappe.db.get_all("Message Reaction", filters={"message": message}, fields=["emoji", "user"])
 	grouped = {}
@@ -355,7 +375,7 @@ def list_conversations():
 		last_message = frappe.db.get_value(
 			"Message",
 			{"conversation": m.conversation},
-			["content", "creation", "sender"],
+			["content", "creation", "sender", "is_deleted"],
 			order_by="creation desc",
 			as_dict=True,
 		)
@@ -376,7 +396,13 @@ def list_conversations():
 				"other_user": other_user,
 				"is_group": conv.is_group,
 				"muted": m.muted,
-				"last_message": _preview_text(last_message.content) if last_message else None,
+				"last_message": (
+					"This message was deleted"
+					if last_message and last_message.is_deleted
+					else _preview_text(last_message.content)
+					if last_message
+					else None
+				),
 				"last_message_at": last_message.creation if last_message else None,
 				"unread_count": 0 if m.muted else unread_count,
 			}
@@ -733,6 +759,13 @@ def download_attachment(file_url):
 		raise frappe.DoesNotExistError
 	file_doc = frappe.get_doc("File", file_name)
 
+	if file_doc.attached_to_doctype == "Message" and file_doc.attached_to_name:
+		if frappe.db.get_value("Message", file_doc.attached_to_name, "is_deleted"):
+			# get_messages() already stops sending this URL out once the
+			# message is deleted - this covers whoever already has it
+			# (an open tab, a cached page) from still being able to fetch it.
+			raise frappe.DoesNotExistError
+
 	allowed = not file_doc.is_private or file_doc.owner == frappe.session.user
 	if not allowed and file_doc.attached_to_doctype == "Message" and file_doc.attached_to_name:
 		conversation = frappe.db.get_value("Message", file_doc.attached_to_name, "conversation")
@@ -785,6 +818,9 @@ def get_messages(conversation, start=0, limit=50):
 			"sender_name",
 			"sender_image",
 			"content",
+			"reply_to",
+			"is_edited",
+			"is_deleted",
 			"attachment",
 			"shared_post",
 			"poll",
@@ -800,8 +836,28 @@ def get_messages(conversation, start=0, limit=50):
 	)
 	rows.reverse()
 
-	grouped = _attachments_by_message([r.name for r in rows])
+	# Deleted messages never had their attachments looked up here - nothing
+	# left to show once content is scrubbed below, and no point paying for
+	# the query.
+	grouped = _attachments_by_message([r.name for r in rows if not r.is_deleted])
 	for row in rows:
+		row.reply_to_preview = _reply_preview(row.reply_to)
+		if row.is_deleted:
+			# Row stays in history (so reply_to references elsewhere still
+			# resolve, and the thread doesn't visibly jump) but nothing of
+			# its actual content is ever sent back out again.
+			row.content = None
+			row.attachment = None
+			row.attachments = []
+			row.shared_post = None
+			row.poll = None
+			row.poll_data = None
+			row.link_url = None
+			row.link_title = None
+			row.link_description = None
+			row.link_image = None
+			row.reactions = []
+			continue
 		row.reactions = _group_reactions(row.name)
 		# Older messages only have the single legacy `attachment` field;
 		# surface it the same way so the frontend only ever deals with a list.
@@ -821,7 +877,7 @@ def get_messages(conversation, start=0, limit=50):
 
 
 @frappe.whitelist()
-def send_message(conversation, content=None, attachments=None, shared_post=None):
+def send_message(conversation, content=None, attachments=None, shared_post=None, reply_to=None):
 	_require_member(conversation)
 	if isinstance(attachments, str):
 		attachments = frappe.parse_json(attachments)
@@ -834,7 +890,18 @@ def send_message(conversation, content=None, attachments=None, shared_post=None)
 	if len(others) == 1 and _is_blocked(frappe.session.user, others[0]):
 		frappe.throw("You can't message this user")
 
-	doc = frappe.get_doc({"doctype": "Message", "conversation": conversation, "content": content})
+	if reply_to:
+		# Reply previews expose sender_name/content straight off the target
+		# row with no membership check of its own (see _reply_preview) - this
+		# is what actually enforces that a client can't set reply_to to some
+		# other conversation's message and use the preview to peek at it.
+		reply_conversation = frappe.db.get_value("Message", reply_to, "conversation")
+		if reply_conversation != conversation:
+			frappe.throw("Invalid reply", frappe.PermissionError)
+
+	doc = frappe.get_doc(
+		{"doctype": "Message", "conversation": conversation, "content": content, "reply_to": reply_to}
+	)
 	for a in attachments:
 		doc.append(
 			"attachments",
@@ -872,6 +939,7 @@ def send_message(conversation, content=None, attachments=None, shared_post=None)
 
 	payload = doc.as_dict()
 	payload["reactions"] = []
+	payload["reply_to_preview"] = _reply_preview(reply_to)
 	for a in payload.get("attachments") or []:
 		a["file_url"] = _attachment_url(a.get("file_url"))
 	for other in others:
@@ -898,6 +966,53 @@ def send_message(conversation, content=None, attachments=None, shared_post=None)
 			)
 
 	return payload
+
+
+@frappe.whitelist()
+def edit_message(message, content):
+	doc = frappe.get_doc("Message", message)
+	if doc.sender != frappe.session.user:
+		frappe.throw("You can only edit your own messages", frappe.PermissionError)
+	if doc.is_deleted:
+		frappe.throw("Can't edit a deleted message")
+	if not content or not content.strip():
+		frappe.throw("Message cannot be empty")
+
+	# Deliberately narrow: only the text changes. Editing doesn't re-run link
+	# unfurling or re-notify newly-added @mentions - those are first-send
+	# behaviors, not something a quiet text fix should retrigger.
+	doc.content = content
+	doc.is_edited = 1
+	doc.save(ignore_permissions=True)
+
+	for other in _other_members(doc.conversation):
+		frappe.publish_realtime(
+			"chat:message_edited",
+			{"message": doc.name, "content": doc.content, "is_edited": 1},
+			user=other,
+			after_commit=True,
+		)
+	return {"content": doc.content, "is_edited": 1}
+
+
+@frappe.whitelist()
+def delete_message(message):
+	doc = frappe.get_doc("Message", message)
+	if doc.sender != frappe.session.user:
+		frappe.throw("You can only delete your own messages", frappe.PermissionError)
+	if doc.is_deleted:
+		return "success"
+
+	# Soft delete: the row (and its name) stays put so any reply_to pointing
+	# at it still resolves - _reply_preview and get_messages both already
+	# know to show "deleted" instead of real content wherever this id
+	# appears, rather than a dangling reference or a hole in the thread.
+	doc.is_deleted = 1
+	doc.save(ignore_permissions=True)
+
+	for other in _other_members(doc.conversation):
+		frappe.publish_realtime("chat:message_deleted", {"message": doc.name}, user=other, after_commit=True)
+	return "success"
 
 
 @frappe.whitelist()
