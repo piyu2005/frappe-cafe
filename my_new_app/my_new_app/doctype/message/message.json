@@ -10,7 +10,10 @@
   "sender",
   "sender_name",
   "sender_image",
+  "reply_to",
   "content",
+  "is_edited",
+  "is_deleted",
   "attachment",
   "attachments",
   "shared_post",
@@ -50,9 +53,27 @@
    "read_only": 1
   },
   {
+   "fieldname": "reply_to",
+   "fieldtype": "Link",
+   "label": "Reply To",
+   "options": "Message"
+  },
+  {
    "fieldname": "content",
    "fieldtype": "Small Text",
    "label": "Content"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_edited",
+   "fieldtype": "Check",
+   "label": "Is Edited"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_deleted",
+   "fieldtype": "Check",
+   "label": "Is Deleted"
   },
   {
    "fieldname": "attachment",
