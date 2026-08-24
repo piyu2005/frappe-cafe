@@ -143,12 +143,9 @@
             placeholder="Search in this conversation"
             @input="onSearchInput"
           />
-          <!-- Gated on messageSearchQuery (cleared on every conversation switch), not just
-               searchResults.data - useCall's data isn't reset when the query is, so without
-               this the previous conversation's results would flash before a new search runs. -->
-          <div v-if="messageSearchQuery && searchResults.data && searchResults.data.length" class="mt-2 space-y-1">
+          <div v-if="searchResultsData && searchResultsData.length" class="mt-2 space-y-1">
             <button
-              v-for="r in searchResults.data"
+              v-for="r in searchResultsData"
               :key="r.name"
               type="button"
               class="block w-full rounded px-2 py-1 text-left text-sm text-ink-gray-7 hover:bg-surface-gray-1"
@@ -993,6 +990,19 @@ const searchResults = useCall({
   immediate: false,
 })
 
+// What's actually rendered - never bound directly to searchResults.data.
+// reload() is async, so switching conversations (or clearing the query)
+// doesn't stop an in-flight request for the old one from resolving later and
+// overwriting .data with results that no longer apply; searchRequestId lets
+// onSearchInput/invalidateSearchResults discard any response that isn't the
+// most recently issued one before it ever reaches the screen.
+const searchResultsData = ref(null)
+let searchRequestId = 0
+function invalidateSearchResults() {
+  searchRequestId++
+  searchResultsData.value = null
+}
+
 const markRead = useCall({
   url: '/api/v2/method/my_new_app.chat.mark_read',
   method: 'POST',
@@ -1054,6 +1064,7 @@ async function openConversationData(id) {
   typingUser.value = null
   searchOpen.value = false
   messageSearchQuery.value = ''
+  invalidateSearchResults()
   messagesFetchLimit.value = 50
   replyingTo.value = null
   editingMessage.value = null
@@ -1533,8 +1544,17 @@ watch(newMessageText, () => {
   setTimeout(() => (typingThrottled = false), 2000)
 })
 
-function onSearchInput() {
-  if (messageSearchQuery.value.trim()) searchResults.reload()
+async function onSearchInput() {
+  if (!messageSearchQuery.value.trim()) {
+    invalidateSearchResults()
+    return
+  }
+  const requestId = ++searchRequestId
+  const data = await searchResults.reload()
+  // A newer search (new keystroke, or a conversation switch) may have been
+  // issued while this one was in flight - only apply the response if
+  // nothing has superseded it since.
+  if (requestId === searchRequestId) searchResultsData.value = data
 }
 
 const toggleReactionCall = useCall({
