@@ -143,7 +143,10 @@
             placeholder="Search in this conversation"
             @input="onSearchInput"
           />
-          <div v-if="searchResults.data && searchResults.data.length" class="mt-2 space-y-1">
+          <!-- Gated on messageSearchQuery (cleared on every conversation switch), not just
+               searchResults.data - useCall's data isn't reset when the query is, so without
+               this the previous conversation's results would flash before a new search runs. -->
+          <div v-if="messageSearchQuery && searchResults.data && searchResults.data.length" class="mt-2 space-y-1">
             <button
               v-for="r in searchResults.data"
               :key="r.name"
