@@ -537,21 +537,27 @@
                         </button>
                       </Tooltip>
 
-                      <Popover>
-                        <template #trigger>
-                          <button
-                            type="button"
-                            title="Emoji"
-                            class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                            :disabled="conversation.data.is_blocked"
-                          >
-                            <span class="lucide-smile-plus size-4" aria-hidden="true" />
-                          </button>
-                        </template>
-                        <template #default="{ close }">
-                          <EmojiPicker @select="(e) => (selectEmoji(e), close())" />
-                        </template>
-                      </Popover>
+                      <div ref="emojiPickerWrapperRef" class="relative">
+                        <button
+                          type="button"
+                          title="Emoji"
+                          class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
+                          :disabled="conversation.data.is_blocked"
+                          @click="emojiPickerOpen = !emojiPickerOpen"
+                        >
+                          <span class="lucide-smile-plus size-4" aria-hidden="true" />
+                        </button>
+                        <!-- Plain CSS "open upward" instead of <Popover>: the composer sits at
+                             the bottom of the page, and the floating-ui-based Popover was
+                             mispositioning this trigger's panel off the bottom of the viewport
+                             (its collision/flip math wasn't correcting for it). -->
+                        <div
+                          v-if="emojiPickerOpen"
+                          class="absolute bottom-full left-0 z-[100] mb-1 overflow-hidden rounded-lg bg-surface-elevation-2 shadow-2xl ring-1 ring-black ring-opacity-5"
+                        >
+                          <EmojiPicker @select="(e) => (selectEmoji(e), (emojiPickerOpen = false))" />
+                        </div>
+                      </div>
 
                       <span class="mx-1 h-4 w-px bg-outline-gray-2" aria-hidden="true" />
 
@@ -1500,6 +1506,16 @@ const setTypingCall = useCall({
 function selectEmoji(e) {
   composerEditorRef.value?.editor?.chain().focus().insertContent(e).run()
 }
+
+const emojiPickerOpen = ref(false)
+const emojiPickerWrapperRef = ref(null)
+function onDocumentMousedownForEmojiPicker(event) {
+  if (emojiPickerOpen.value && !emojiPickerWrapperRef.value?.contains(event.target)) {
+    emojiPickerOpen.value = false
+  }
+}
+onMounted(() => document.addEventListener('mousedown', onDocumentMousedownForEmojiPicker))
+onBeforeUnmount(() => document.removeEventListener('mousedown', onDocumentMousedownForEmojiPicker))
 
 // Same trigger a typed "@" would produce — the suggestion plugin matches on
 // document content, not the keystroke itself, so inserting the character
