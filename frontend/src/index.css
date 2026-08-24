@@ -2,3 +2,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* frappe-ui's own editor stylesheet sets `.ProseMirror { outline: none }` -
+   the text cursor is the editor's own focus indicator, so a browser outline
+   around the whole box is redundant. But Tailwind's global :focus-visible
+   ring (same specificity, imported after) wins on source order and puts a
+   grey outline box around the entire editor the moment it's clicked into.
+   Affects every rich-text Editor in the app (WritePost, chat composer). */
+.ProseMirror:focus-visible {
+  outline: none;
+}
