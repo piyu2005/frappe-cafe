@@ -424,7 +424,7 @@
           </div>
         </ScrollArea>
 
-        <div class="border-t border-outline-gray-1 p-3">
+        <div ref="composerWrapperRef" class="border-t border-outline-gray-1 p-3">
           <Editor
             ref="composerEditorRef"
             v-model="newMessageText"
@@ -795,6 +795,7 @@ const replyingTo = ref(null)
 const editingMessage = ref(null)
 const scrollAreaRef = ref(null)
 const composerEditorRef = ref(null)
+const composerWrapperRef = ref(null)
 const fileUploaderRef = ref(null)
 const showFormatting = ref(false)
 const showPollDialog = ref(false)
@@ -1692,7 +1693,69 @@ onBeforeUnmount(() => {
     socket.off('chat:message_deleted', handleMessageDeleted)
   }
   clearTimeout(typingClearTimer)
+  mentionPopupObserver?.disconnect()
 })
+
+// frappe-ui's @-mention suggestion popup always opens *below* the cursor,
+// flipping above only when the viewport has literally no room underneath -
+// not configurable from outside (hardcoded inside frappe-ui's own mention
+// extension). Wrong fit for a chat composer pinned to the bottom of the
+// screen, where "below" is cramped at best and hidden under the on-screen
+// keyboard on mobile at worst. This repositions the popup - still entirely
+// frappe-ui's own SuggestionList/EditorPopover, untouched - to sit just
+// above the composer instead, matching the convention Raven (and other
+// Frappe chat products) use.
+//
+// Identified via the fixed `z-index: 100` inline style frappe-ui's
+// suggestion renderer always sets on the popup it appends to <body> -
+// unique to tiptap suggestion popups (mention/slash-commands/emoji/tag; see
+// frappe-ui's createSuggestionRenderer). Only mention is enabled in this
+// composer (emoji/tag are off, slash-commands isn't part of this kit), so
+// within this page it's an unambiguous signature - this observer is only
+// ever alive while Messages.vue is mounted, so it can't affect any other
+// page's popovers/dropdowns/tooltips either.
+let mentionPopupObserver = null
+
+function isMentionPopup(node) {
+  return node.nodeType === 1 && node.parentElement === document.body && node.style.zIndex === '100'
+}
+
+function repositionMentionPopup(popupEl) {
+  const wrapper = composerWrapperRef.value
+  if (!wrapper) return
+  const desiredTop = Math.max(8, wrapper.getBoundingClientRect().top - popupEl.offsetHeight - 8)
+  const desiredTopPx = `${desiredTop}px`
+  if (popupEl.style.top === desiredTopPx) return
+  // Setting `top` below is itself a style mutation this same observer
+  // watches for - disconnect around the write so it doesn't immediately
+  // re-trigger on its own change, then start a fresh observer whose
+  // observation window begins strictly after the write.
+  mentionPopupObserver?.disconnect()
+  popupEl.style.top = desiredTopPx
+  startMentionPopupObserver()
+}
+
+function startMentionPopupObserver() {
+  mentionPopupObserver = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === 'childList') {
+        mutation.addedNodes.forEach((added) => {
+          if (isMentionPopup(added)) repositionMentionPopup(added)
+        })
+      } else if (isMentionPopup(mutation.target)) {
+        repositionMentionPopup(mutation.target)
+      }
+    }
+  })
+  mentionPopupObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['style'],
+  })
+}
+
+onMounted(startMentionPopupObserver)
 
 function formatTime(value) {
   if (!value) return ''
