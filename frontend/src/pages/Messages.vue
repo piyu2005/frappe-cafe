@@ -1088,16 +1088,45 @@ const sendMessage = useCall({
   url: '/api/v2/method/my_new_app.chat.send_message',
   method: 'POST',
   immediate: false,
-  onSuccess: (msg) => {
-    messageList.value = [...messageList.value, msg]
-    newMessageText.value = ''
-    pendingAttachments.value = []
-    replyingTo.value = null
-    conversations.reload()
-    scrollToBottom()
-  },
   onError: (err) => toast.error(err.message),
 })
+
+// Own messages never show sender_name/sender_image (see the template's
+// `v-if="m.sender !== session.user"` on the avatar) - so a placeholder needs
+// no real profile fetch, unlike PostDetail.vue's optimistic comments, which
+// stay inline in a shared list and do need to show a name.
+let tempMessageSeq = 0
+function buildOptimisticMessage({ content, attachments, replyTo }) {
+  tempMessageSeq += 1
+  return {
+    name: `temp-${Date.now()}-${tempMessageSeq}`,
+    sender: session.user,
+    sender_name: null,
+    sender_image: null,
+    content,
+    reply_to: replyTo?.name || null,
+    reply_to_preview: replyTo
+      ? {
+          name: replyTo.name,
+          sender_name: replyTo.sender_name,
+          content: messagePreviewText(replyTo),
+          is_deleted: replyTo.is_deleted ? 1 : 0,
+        }
+      : null,
+    is_edited: 0,
+    is_deleted: 0,
+    attachments,
+    shared_post: null,
+    poll: null,
+    poll_data: null,
+    link_url: null,
+    link_title: null,
+    link_description: null,
+    link_image: null,
+    creation: new Date().toISOString(),
+    reactions: [],
+  }
+}
 
 const editMessageCall = useCall({
   url: '/api/v2/method/my_new_app.chat.edit_message',
@@ -1202,16 +1231,57 @@ function submitMessage() {
   }
 
   if ((isEmpty && !pendingAttachments.value.length) || !activeConversationId.value) return
-  sendMessage.submit({
-    conversation: activeConversationId.value,
-    content: isEmpty ? null : newMessageText.value,
-    attachments: pendingAttachments.value.map((a) => ({
-      file_url: a.file_url,
-      file_name: a.file_name,
-      file_size: a.file_size,
-    })),
-    reply_to: replyingTo.value?.name || null,
-  })
+
+  const content = isEmpty ? null : newMessageText.value
+  const attachmentsPayload = pendingAttachments.value.map((a) => ({
+    file_url: a.file_url,
+    file_name: a.file_name,
+    file_size: a.file_size,
+  }))
+  const replyTo = replyingTo.value
+  const conversationId = activeConversationId.value
+
+  const optimistic = buildOptimisticMessage({ content, attachments: attachmentsPayload, replyTo })
+  messageList.value = [...messageList.value, optimistic]
+  newMessageText.value = ''
+  pendingAttachments.value = []
+  replyingTo.value = null
+  scrollToBottom()
+
+  sendMessage
+    .submit({
+      conversation: conversationId,
+      content,
+      attachments: attachmentsPayload,
+      reply_to: replyTo?.name || null,
+    })
+    .then((result) => {
+      const idx = messageList.value.findIndex((m) => m.name === optimistic.name)
+      if (idx === -1) return
+      if (result) {
+        // Swap the placeholder for the server-confirmed message in place,
+        // same idea as PostDetail.vue's optimistic comments - keeps its
+        // position rather than a reload reshuffling the whole list.
+        const updated = [...messageList.value]
+        updated[idx] = result
+        messageList.value = updated
+        conversations.reload()
+      } else {
+        // Failed - drop the placeholder and hand everything back so nothing
+        // typed is lost. Restoring via editor.commands.setContent() rather
+        // than just the newMessageText ref: the Editor's v-model watcher
+        // skips re-applying a value that matches the *last value it
+        // emitted* (see startEdit's comment above for the full mechanism),
+        // and the content being restored here is exactly what was last
+        // typed - setting the ref alone would silently no-op and leave the
+        // composer looking empty even though newMessageText itself is
+        // correct.
+        messageList.value = messageList.value.filter((m) => m.name !== optimistic.name)
+        if (content) composerEditorRef.value?.editor?.commands.setContent(content)
+        pendingAttachments.value = attachmentsPayload
+        replyingTo.value = replyTo
+      }
+    })
 }
 
 function isImageFile(fileName) {
@@ -1368,12 +1438,47 @@ const votePoll = useCall({
   onError: (err) => toast.error(err.message),
 })
 
+// Mirrors toggle_poll_vote's own logic (chat.py): unvoting removes exactly
+// one vote from the clicked option; voting adds one - and for a single-
+// choice poll, also removes whatever other option this user had previously
+// voted for, netting zero change to total_votes rather than +1.
+function withToggledVote(pollData, optionName) {
+  const clicked = pollData.options.find((o) => o.name === optionName)
+  if (!clicked) return pollData
+  const wasVoted = clicked.voted_by_me
+  const previousVote = pollData.allow_multiple
+    ? null
+    : pollData.options.find((o) => o.name !== optionName && o.voted_by_me)
+
+  let totalDelta = 0
+  const options = pollData.options.map((o) => {
+    if (o.name === optionName) {
+      totalDelta += wasVoted ? -1 : 1
+      return { ...o, voted_by_me: !wasVoted, vote_count: o.vote_count + (wasVoted ? -1 : 1) }
+    }
+    if (previousVote && o.name === previousVote.name) {
+      totalDelta -= 1
+      return { ...o, voted_by_me: false, vote_count: Math.max(0, o.vote_count - 1) }
+    }
+    return o
+  })
+
+  return { ...pollData, options, total_votes: pollData.total_votes + totalDelta }
+}
+
 function votePollOption(message, option) {
   if (message.poll_data?.is_closed) return
+  const target = messageList.value.find((m) => m.name === message.name)
+  if (!target?.poll_data) return
+  const previousPollData = target.poll_data
+  target.poll_data = withToggledVote(previousPollData, option.name)
+
   votePoll.submit({ option: option.name }).then((result) => {
-    if (!result) return
-    const target = messageList.value.find((m) => m.name === message.name)
-    if (target) target.poll_data = result
+    if (result) {
+      target.poll_data = result
+    } else {
+      target.poll_data = previousPollData
+    }
   })
 }
 
@@ -1416,15 +1521,36 @@ const toggleReactionCall = useCall({
   url: '/api/v2/method/my_new_app.chat.toggle_reaction',
   method: 'POST',
   immediate: false,
-  onSuccess(reactions) {
-    const messageId = toggleReactionCall.params?.message
-    const msg = messageList.value.find((m) => m.name === messageId)
-    if (msg) msg.reactions = reactions
-  },
 })
 
+// Flips the tapped emoji's count/reacted_by_me the same way the backend's
+// _group_reactions would - used to show the change immediately, before the
+// server confirms it.
+function withToggledReaction(reactions, emoji) {
+  const existing = reactions.find((r) => r.emoji === emoji)
+  if (existing?.reacted_by_me) {
+    if (existing.count <= 1) return reactions.filter((r) => r.emoji !== emoji)
+    return reactions.map((r) => (r.emoji === emoji ? { ...r, count: r.count - 1, reacted_by_me: false } : r))
+  }
+  if (existing) {
+    return reactions.map((r) => (r.emoji === emoji ? { ...r, count: r.count + 1, reacted_by_me: true } : r))
+  }
+  return [...reactions, { emoji, count: 1, reacted_by_me: true }]
+}
+
 function toggleReaction(message, emoji) {
-  toggleReactionCall.submit({ message, emoji })
+  const msg = messageList.value.find((m) => m.name === message)
+  if (!msg) return
+  const previousReactions = msg.reactions
+  msg.reactions = withToggledReaction(previousReactions, emoji)
+
+  toggleReactionCall.submit({ message, emoji }).then((result) => {
+    if (result) {
+      msg.reactions = result
+    } else {
+      msg.reactions = previousReactions
+    }
+  })
 }
 
 const muteCall = useCall({
