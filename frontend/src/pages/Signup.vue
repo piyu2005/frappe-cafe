@@ -1,5 +1,27 @@
 <template>
   <AuthCard
+    v-if="signupSubmittedTo"
+    title="Check your email"
+    :subtitle="`We sent a verification link to ${signupSubmittedTo}. Click it to finish creating your account.`"
+  >
+    <Button
+      class="w-full justify-center"
+      variant="outline"
+      theme="gray"
+      label="Use a different email"
+      @click="signupSubmittedTo = null"
+    />
+
+    <template #footer>
+      Already verified?
+      <router-link class="font-medium text-ink-gray-9 underline" :to="{ name: 'Login' }">
+        Log in.
+      </router-link>
+    </template>
+  </AuthCard>
+
+  <AuthCard
+    v-else
     title="Create your account"
     subtitle="Write, share, and connect — without the noise."
   >
@@ -55,16 +77,17 @@
 <script setup>
 import { ref } from 'vue'
 import { Button, ErrorMessage, FormControl, toast, useCall } from 'frappe-ui'
-import { useRouter } from 'vue-router'
-import { session } from '@/data/session'
 import AuthCard from '@/components/AuthCard.vue'
 import GoogleIcon from '@/components/GoogleIcon.vue'
-
-const router = useRouter()
 
 const username = ref('')
 const email = ref('')
 const password = ref('')
+// Set once signup succeeds, to the address the link was actually sent to -
+// switches the card over to "check your email" instead of logging straight
+// in, since the account doesn't exist yet at this point (see api.signup:
+// nothing is created until the emailed link is clicked).
+const signupSubmittedTo = ref(null)
 
 const googleLoginUrl = useCall({
   url: '/api/v2/method/my_new_app.api.get_google_login_url',
@@ -84,8 +107,7 @@ const signup = useCall({
   method: 'POST',
   immediate: false,
   onSuccess() {
-    session.refresh()
-    router.replace('/')
+    signupSubmittedTo.value = email.value
   },
 })
 

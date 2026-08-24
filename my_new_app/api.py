@@ -3,21 +3,11 @@ from frappe.auth import LoginManager
 from frappe.rate_limiter import rate_limit
 
 
-@frappe.whitelist(allow_guest=True)
-# Public + no email verification on signup, so without this an unauthenticated
-# script could hammer it to enumerate registered emails (via the "already
-# exists" error) or mass-create accounts. IP-based, matching frappe core's own
-# guest-facing endpoints (e.g. User.clear_session).
-@rate_limit(limit=10, seconds=60 * 60)
-def signup(email, password, username):
-	email = email.strip().lower()
-	if frappe.db.exists("User", email):
-		frappe.throw("An account with this email already exists. Please log in instead.")
+SIGNUP_CACHE_PREFIX = "pending_signup:"
+SIGNUP_LINK_EXPIRY_SEC = 24 * 60 * 60
 
-	username = username.strip()
-	if frappe.db.exists("User", {"username": username}):
-		frappe.throw("This username is already taken. Please choose another.")
 
+def _create_verified_user(email, username, password):
 	user = frappe.get_doc(
 		{
 			"doctype": "User",
@@ -32,9 +22,80 @@ def signup(email, password, username):
 	)
 	user.flags.ignore_permissions = True
 	user.insert()
+	return user
+
+
+@frappe.whitelist(allow_guest=True)
+# Public, so without this an unauthenticated script could hammer it to
+# enumerate registered emails (via the "already exists" error) or queue up
+# mass account-creation attempts. IP-based, matching frappe core's own
+# guest-facing endpoints (e.g. User.clear_session).
+@rate_limit(limit=10, seconds=60 * 60)
+def signup(email, password, username):
+	email = email.strip().lower()
+	if frappe.db.exists("User", email):
+		frappe.throw("An account with this email already exists. Please log in instead.")
+
+	username = username.strip()
+	if frappe.db.exists("User", {"username": username}):
+		frappe.throw("This username is already taken. Please choose another.")
+
+	# No User is created yet - anyone could otherwise type in someone else's
+	# real email address and be logged in immediately as "them", with nothing
+	# ever confirming they actually own that inbox. The submitted details sit
+	# in cache under a one-time token until the emailed link proves it;
+	# _create_verified_user() (verify_email, below) is the only thing that
+	# ever actually inserts the User doc.
+	token = frappe.generate_hash(length=32)
+	frappe.cache.set_value(
+		f"{SIGNUP_CACHE_PREFIX}{token}",
+		frappe.as_json({"email": email, "username": username, "password": password}),
+		expires_in_sec=SIGNUP_LINK_EXPIRY_SEC,
+	)
+
+	verify_url = frappe.utils.get_url(f"/frontend/verify-email?key={token}")
+	frappe.sendmail(
+		recipients=email,
+		subject="Verify your email for Frappe Cafe",
+		message=f"""
+			<p>Welcome to Frappe Cafe! Click the link below to verify your email and finish creating your account.</p>
+			<p><a href="{verify_url}">Verify your email</a></p>
+			<p>This link expires in 24 hours. If you didn't try to sign up, you can ignore this email.</p>
+		""",
+		now=True,
+	)
+	return "success"
+
+
+@frappe.whitelist(allow_guest=True)
+# Token is a 32-char cryptographically random hash - not realistically
+# guessable - but rate-limited anyway as cheap defense-in-depth, matching
+# frappe core's own treatment of its equivalent key-based endpoint
+# (frappe.www.login.login_via_key).
+@rate_limit(limit=20, seconds=60 * 60)
+def verify_email(key):
+	cache_key = f"{SIGNUP_CACHE_PREFIX}{key}"
+	cached = frappe.cache.get_value(cache_key)
+	if not cached:
+		frappe.throw("This verification link is invalid or has expired. Please sign up again.")
+
+	data = frappe.parse_json(cached)
+
+	# Re-check uniqueness rather than trusting the check already done at
+	# signup time - someone else could have registered (and verified) the
+	# same email or username while this link sat unused.
+	if frappe.db.exists("User", data["email"]):
+		frappe.cache.delete_value(cache_key)
+		frappe.throw("An account with this email already exists. Please log in instead.")
+	if frappe.db.exists("User", {"username": data["username"]}):
+		frappe.cache.delete_value(cache_key)
+		frappe.throw("This username was taken while your verification was pending. Please sign up again with a different username.")
+
+	_create_verified_user(data["email"], data["username"], data["password"])
+	frappe.cache.delete_value(cache_key)
 
 	login_manager = LoginManager()
-	login_manager.login_as(email)
+	login_manager.login_as(data["email"])
 	return "success"
 
 
