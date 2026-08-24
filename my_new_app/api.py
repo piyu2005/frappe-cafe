@@ -325,15 +325,28 @@ def get_publication(handle):
 		filters={"publication": handle},
 		fields=["user", "role"],
 	)
-	for m in members:
-		m.full_name = frappe.db.get_value("User", m.user, "full_name")
-		m.user_image = frappe.db.get_value("User", m.user, "user_image")
 
 	# "Editors" here matches the Members page's grouping — Admins are editors
 	# too, just badged distinctly, not a separate headline tier.
 	pub.editor_count = len([m for m in members if m.role in ("Admin", "Editor")])
 	pub.member_count = len(members)
-	pub.members = members[:3]
+
+	# Only the first 3 are ever shown here — enriching every member with 2
+	# User lookups each (previously done for the whole list) meant a large
+	# publication paid for names/avatars that were immediately thrown away.
+	top_members = members[:3]
+	if top_members:
+		users_by_id = {
+			u.name: u
+			for u in frappe.db.get_all(
+				"User", filters={"name": ["in", [m.user for m in top_members]]}, fields=["name", "full_name", "user_image"]
+			)
+		}
+		for m in top_members:
+			u = users_by_id.get(m.user)
+			m.full_name = u.full_name if u else None
+			m.user_image = u.user_image if u else None
+	pub.members = top_members
 	pub.subscriber_count = _subscriber_count("Publication", handle)
 	pub.subscribed_by_me = _subscribed_by_me("Publication", handle)
 
@@ -358,20 +371,35 @@ def list_publication_members(publication):
 		fields=["name", "user", "role", "creation"],
 		order_by="creation asc",
 	)
-	for r in rows:
-		r.full_name = frappe.db.get_value("User", r.user, "full_name")
-		r.user_image = frappe.db.get_value("User", r.user, "user_image")
-		r.username = frappe.db.get_value("User", r.user, "username")
-
 	pending_invites = frappe.db.get_all(
 		"Publication Invite",
 		filters={"publication": publication, "status": "Pending"},
 		fields=["name", "invited_user", "role", "creation"],
 		order_by="creation desc",
 	)
+
+	user_ids = list({r.user for r in rows} | {p.invited_user for p in pending_invites})
+	users_by_id = (
+		{
+			u.name: u
+			for u in frappe.db.get_all(
+				"User", filters={"name": ["in", user_ids]}, fields=["name", "full_name", "user_image", "username"]
+			)
+		}
+		if user_ids
+		else {}
+	)
+
+	for r in rows:
+		u = users_by_id.get(r.user)
+		r.full_name = u.full_name if u else None
+		r.user_image = u.user_image if u else None
+		r.username = u.username if u else None
+
 	for p in pending_invites:
-		p.full_name = frappe.db.get_value("User", p.invited_user, "full_name")
-		p.user_image = frappe.db.get_value("User", p.invited_user, "user_image")
+		u = users_by_id.get(p.invited_user)
+		p.full_name = u.full_name if u else None
+		p.user_image = u.user_image if u else None
 
 	return {
 		# Admins are shown grouped in with editors ("Editors" section in the
@@ -626,8 +654,17 @@ def list_comments(post):
 			)
 		)
 
+	like_counts = {}
+	if rows:
+		for reference_name in frappe.db.get_all(
+			"Like",
+			filters={"reference_type": "Post Comment", "reference_name": ["in", [r.name for r in rows]]},
+			pluck="reference_name",
+		):
+			like_counts[reference_name] = like_counts.get(reference_name, 0) + 1
+
 	for row in rows:
-		row.like_count = frappe.db.count("Like", {"reference_type": "Post Comment", "reference_name": row.name})
+		row.like_count = like_counts.get(row.name, 0)
 		row.liked_by_me = row.name in liked_names
 	return rows
 
@@ -825,12 +862,15 @@ def list_saved_posts():
 		fields=["name", "post", "creation"],
 		order_by="creation desc",
 	)
-	result = []
-	for row in rows:
-		post = frappe.db.get_value(
+	if not rows:
+		return []
+
+	posts_by_name = {
+		p.name: p
+		for p in frappe.db.get_all(
 			"Post",
-			row.post,
-			[
+			filters={"name": ["in", [r.post for r in rows]]},
+			fields=[
 				"name",
 				"title",
 				"display_title",
@@ -842,8 +882,12 @@ def list_saved_posts():
 				"author_image",
 				"status",
 			],
-			as_dict=True,
 		)
+	}
+
+	result = []
+	for row in rows:
+		post = posts_by_name.get(row.post)
 		if not post or post.status != "Published":
 			continue
 		post.saved_name = row.name

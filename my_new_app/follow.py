@@ -96,9 +96,19 @@ def list_follow_requests():
 		fields=["name", "from_user", "creation"],
 		order_by="creation desc",
 	)
+	if not rows:
+		return rows
+
+	users_by_id = {
+		u.name: u
+		for u in frappe.db.get_all(
+			"User", filters={"name": ["in", [r.from_user for r in rows]]}, fields=["name", "full_name", "user_image"]
+		)
+	}
 	for r in rows:
-		r.from_user_name = frappe.db.get_value("User", r.from_user, "full_name")
-		r.from_user_image = frappe.db.get_value("User", r.from_user, "user_image")
+		u = users_by_id.get(r.from_user)
+		r.from_user_name = u.full_name if u else None
+		r.from_user_image = u.user_image if u else None
 	return rows
 
 

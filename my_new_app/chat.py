@@ -127,6 +127,48 @@ def _group_reactions(message):
 	]
 
 
+def _reactions_by_message(names):
+	"""Batched form of _group_reactions for a whole message list (get_messages)
+	- one query for every message's reactions instead of one query per
+	message, same idea as _attachments_by_message just below."""
+	if not names:
+		return {}
+	rows = frappe.db.get_all(
+		"Message Reaction", filters={"message": ["in", names]}, fields=["message", "emoji", "user"]
+	)
+	by_message = {}
+	for r in rows:
+		by_message.setdefault(r.message, {}).setdefault(r.emoji, []).append(r.user)
+	return {
+		name: [
+			{"emoji": emoji, "count": len(users), "reacted_by_me": frappe.session.user in users}
+			for emoji, users in emojis.items()
+		]
+		for name, emojis in by_message.items()
+	}
+
+
+def _reply_previews_by_ids(reply_to_ids):
+	"""Batched form of _reply_preview for a whole message list (get_messages)
+	- one query for every quoted message instead of one query per reply."""
+	if not reply_to_ids:
+		return {}
+	rows = frappe.db.get_all(
+		"Message",
+		filters={"name": ["in", reply_to_ids]},
+		fields=["name", "sender_name", "content", "is_deleted"],
+	)
+	return {
+		r.name: {
+			"name": r.name,
+			"sender_name": r.sender_name,
+			"content": None if r.is_deleted else _preview_text(r.content),
+			"is_deleted": r.is_deleted,
+		}
+		for r in rows
+	}
+
+
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
 	# A URL that passes _is_public_http_url can still 30x to an internal
 	# address — urllib follows redirects by default with no re-validation of
@@ -359,26 +401,91 @@ def list_conversations():
 	memberships = frappe.db.get_all(
 		"Conversation Member", filters={"user": user}, fields=["conversation", "muted", "last_read"]
 	)
+	if not memberships:
+		return []
+
+	# Previously one round of Conversation / Conversation Member / User /
+	# last-Message lookups *per conversation* (a user with 20 conversations
+	# meant ~80 extra queries just to render the list) — batched into one
+	# query per kind instead, each grouped/dict-keyed below so the loop that
+	# builds `result` does no DB work of its own beyond the per-conversation
+	# unread count (kept as a plain, cheap indexed `count()` rather than
+	# batched too, since a fully-batched version would need to fetch every
+	# unread message row up front to apply each conversation's own
+	# last-read cutoff in Python — fine normally, but unbounded for a new
+	# member of a long-lived, never-opened conversation).
+	conv_ids = [m.conversation for m in memberships]
+
+	conversations = {
+		c.name: c
+		for c in frappe.db.get_all("Conversation", filters={"name": ["in", conv_ids]}, fields=["name", "is_group", "title"])
+	}
+
+	members_by_conv = {}
+	for row in frappe.db.get_all(
+		"Conversation Member", filters={"conversation": ["in", conv_ids]}, fields=["conversation", "user"]
+	):
+		members_by_conv.setdefault(row.conversation, []).append(row.user)
+
+	other_user_ids = list(
+		{
+			u
+			for conv_id in conv_ids
+			if not (conversations.get(conv_id) and conversations[conv_id].is_group)
+			for u in members_by_conv.get(conv_id, [])
+			if u != user
+		}
+	)
+	users_by_id = {
+		u.name: u
+		for u in frappe.db.get_all(
+			"User", filters={"name": ["in", other_user_ids]}, fields=["name", "full_name", "user_image"]
+		)
+	}
+
+	last_message_by_conv = {}
+	placeholders = ", ".join(["%s"] * len(conv_ids))
+	for row in frappe.db.sql(
+		f"""
+		SELECT m.conversation, m.content, m.creation, m.sender, m.is_deleted
+		FROM `tabMessage` m
+		INNER JOIN (
+			SELECT conversation, MAX(creation) AS max_creation
+			FROM `tabMessage`
+			WHERE conversation IN ({placeholders})
+			GROUP BY conversation
+		) latest ON m.conversation = latest.conversation AND m.creation = latest.max_creation
+		""",
+		conv_ids,
+		as_dict=True,
+	):
+		# A conversation could in principle have two messages sharing the
+		# exact same creation timestamp — first one wins, any is fine here.
+		last_message_by_conv.setdefault(row.conversation, row)
 
 	result = []
 	for m in memberships:
-		conv = frappe.db.get_value("Conversation", m.conversation, ["is_group", "title"], as_dict=True)
-		others = _other_members(m.conversation, exclude=user)
+		conv = conversations.get(m.conversation)
+		if not conv:
+			continue
+		others = [u for u in members_by_conv.get(m.conversation, []) if u != user]
 
 		if conv.is_group:
 			display_name = conv.title or "Group"
 			display_image = None
 			other_user = None
 		else:
-			other_user, display_name, display_image = _dm_display_info(others[0] if others else None)
+			other = users_by_id.get(others[0]) if others else None
+			if other:
+				other_user, display_name, display_image = other.name, other.full_name, other.user_image
+			else:
+				# Same "dangling member id" case _dm_display_info handles -
+				# either there was never another member, or their User was
+				# deleted directly and this Conversation Member row was
+				# never cleaned up.
+				other_user, display_name, display_image = None, "Deleted user", None
 
-		last_message = frappe.db.get_value(
-			"Message",
-			{"conversation": m.conversation},
-			["content", "creation", "sender", "is_deleted"],
-			order_by="creation desc",
-			as_dict=True,
-		)
+		last_message = last_message_by_conv.get(m.conversation)
 		unread_count = frappe.db.count(
 			"Message",
 			{
@@ -418,20 +525,28 @@ def list_conversations():
 
 @frappe.whitelist()
 def unread_message_count():
+	user = frappe.session.user
 	memberships = frappe.db.get_all(
-		"Conversation Member", filters={"user": frappe.session.user, "muted": 0}, fields=["conversation", "last_read"]
+		"Conversation Member", filters={"user": user, "muted": 0}, fields=["conversation", "last_read"]
 	)
-	total = 0
+	if not memberships:
+		return 0
+
+	# One query per conversation (a `count()` each) previously meant one DB
+	# round-trip per conversation, on a call that fires on every app-shell
+	# mount *and* every realtime chat:new_message event for every connected
+	# user - the single highest-frequency call in this file. Each count stays
+	# a plain, cheap indexed COUNT (unlike list_conversations' unread count,
+	# this never fetches full rows), just combined into one round-trip via a
+	# single UNION ALL query instead of N separate ones.
+	subqueries = []
+	params = []
 	for m in memberships:
-		total += frappe.db.count(
-			"Message",
-			{
-				"conversation": m.conversation,
-				"sender": ["!=", frappe.session.user],
-				"creation": [">", m.last_read or "1900-01-01"],
-			},
-		)
-	return total
+		subqueries.append("SELECT COUNT(*) AS cnt FROM `tabMessage` WHERE conversation = %s AND sender != %s AND creation > %s")
+		params.extend([m.conversation, user, m.last_read or "1900-01-01"])
+
+	rows = frappe.db.sql(" UNION ALL ".join(subqueries), params, as_dict=True)
+	return sum(r.cnt for r in rows)
 
 
 @frappe.whitelist()
@@ -839,9 +954,12 @@ def get_messages(conversation, start=0, limit=50):
 	# Deleted messages never had their attachments looked up here - nothing
 	# left to show once content is scrubbed below, and no point paying for
 	# the query.
-	grouped = _attachments_by_message([r.name for r in rows if not r.is_deleted])
+	live_names = [r.name for r in rows if not r.is_deleted]
+	grouped = _attachments_by_message(live_names)
+	reactions_by_message = _reactions_by_message(live_names)
+	reply_previews = _reply_previews_by_ids([r.reply_to for r in rows if r.reply_to])
 	for row in rows:
-		row.reply_to_preview = _reply_preview(row.reply_to)
+		row.reply_to_preview = reply_previews.get(row.reply_to) if row.reply_to else None
 		if row.is_deleted:
 			# Row stays in history (so reply_to references elsewhere still
 			# resolve, and the thread doesn't visibly jump) but nothing of
@@ -858,7 +976,7 @@ def get_messages(conversation, start=0, limit=50):
 			row.link_image = None
 			row.reactions = []
 			continue
-		row.reactions = _group_reactions(row.name)
+		row.reactions = reactions_by_message.get(row.name, [])
 		# Older messages only have the single legacy `attachment` field;
 		# surface it the same way so the frontend only ever deals with a list.
 		row.attachments = grouped.get(row.name) or (
@@ -1093,9 +1211,19 @@ def list_blocked_users():
 	rows = frappe.db.get_all(
 		"Blocked User", filters={"blocker": frappe.session.user}, fields=["name", "blocked"]
 	)
+	if not rows:
+		return rows
+
+	users_by_id = {
+		u.name: u
+		for u in frappe.db.get_all(
+			"User", filters={"name": ["in", [r.blocked for r in rows]]}, fields=["name", "full_name", "user_image"]
+		)
+	}
 	for r in rows:
-		r.full_name = frappe.db.get_value("User", r.blocked, "full_name")
-		r.user_image = frappe.db.get_value("User", r.blocked, "user_image")
+		u = users_by_id.get(r.blocked)
+		r.full_name = u.full_name if u else None
+		r.user_image = u.user_image if u else None
 	return rows
 
 
