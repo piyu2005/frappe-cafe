@@ -52,10 +52,9 @@
             </template>
             <template v-else>
               <Button
-                :variant="profile.data.following_by_me || profile.data.follow_pending ? 'outline' : 'solid'"
+                :variant="followingByMe || followPending ? 'outline' : 'solid'"
                 theme="gray"
                 :label="followLabel"
-                :loading="followUser.loading || unfollowUser.loading"
                 @click="handleFollowClick"
               />
             </template>
@@ -354,6 +353,22 @@ const profile = useCall({
   refetch: true,
 })
 
+// Follow state needs to flip the instant it's clicked, before the server
+// confirms — but profile.data is useCall's read-only computed, so this lives
+// in its own local refs (same pattern as PostDetail.vue's like/save/follow),
+// kept in sync with profile.data whenever a real fetch lands.
+const followingByMe = ref(false)
+const followPending = ref(false)
+watch(
+  () => profile.data,
+  (data) => {
+    if (!data) return
+    followingByMe.value = !!data.following_by_me
+    followPending.value = !!data.follow_pending
+  },
+  { immediate: true },
+)
+
 const postsLimit = ref(3)
 const recentPosts = useCall({
   url: '/api/v2/method/my_new_app.api.list_profile_posts',
@@ -411,30 +426,47 @@ const followUser = useCall({
   url: '/api/v2/method/my_new_app.follow.follow_user',
   method: 'POST',
   immediate: false,
-  onSuccess: (data) => {
-    profile.reload()
-    if (data.status === 'requested') toast.info('Follow request sent')
-  },
 })
 
 const unfollowUser = useCall({
   url: '/api/v2/method/my_new_app.follow.unfollow_user',
   method: 'POST',
   immediate: false,
-  onSuccess: () => profile.reload(),
 })
 
 const followLabel = computed(() => {
-  if (profile.data?.following_by_me) return 'Following'
-  if (profile.data?.follow_pending) return 'Requested'
+  if (followingByMe.value) return 'Following'
+  if (followPending.value) return 'Requested'
   return 'Follow'
 })
 
 function handleFollowClick() {
-  if (profile.data.following_by_me || profile.data.follow_pending) {
-    unfollowUser.submit({ user: targetUser.value })
+  const wasFollowing = followingByMe.value
+  const wasPending = followPending.value
+
+  if (wasFollowing || wasPending) {
+    followingByMe.value = false
+    followPending.value = false
+    unfollowUser.submit({ user: targetUser.value }).then((result) => {
+      if (!result) {
+        followingByMe.value = wasFollowing
+        followPending.value = wasPending
+      }
+    })
   } else {
-    followUser.submit({ user: targetUser.value })
+    // A private account's follow always lands as "requested" - see
+    // PostDetail.vue's identical handler for why that's the safe optimistic
+    // guess rather than "following".
+    followPending.value = true
+    followUser.submit({ user: targetUser.value }).then((result) => {
+      if (result) {
+        followingByMe.value = result.status === 'following'
+        followPending.value = result.status === 'requested'
+        if (result.status === 'requested') toast.info('Follow request sent')
+      } else {
+        followPending.value = false
+      }
+    })
   }
 }
 

@@ -46,10 +46,9 @@
           </div>
           <Button
             v-if="post.data.author !== session.user"
-            :variant="post.data.author_following_by_me || post.data.author_follow_pending ? 'outline' : 'solid'"
+            :variant="authorFollowingByMe || authorFollowPending ? 'outline' : 'solid'"
             theme="gray"
             :label="authorFollowLabel"
-            :loading="followUser.loading || unfollowUser.loading"
             @click="handleFollowClick"
           />
           <Dropdown :options="moreOptions">
@@ -84,15 +83,15 @@
           <div class="flex items-center gap-4">
             <button
               class="flex items-center gap-1.5 text-sm"
-              :class="post.data.liked_by_me ? 'text-ink-red-6' : 'text-ink-gray-6'"
+              :class="likedByMe ? 'text-ink-red-6' : 'text-ink-gray-6'"
               @click="like"
             >
               <span
-                :class="post.data.liked_by_me ? 'lucide-heart fill-current' : 'lucide-heart'"
+                :class="likedByMe ? 'lucide-heart fill-current' : 'lucide-heart'"
                 class="size-4"
                 aria-hidden="true"
               />
-              {{ post.data.like_count }}
+              {{ likeCount }}
             </button>
             <button
               type="button"
@@ -107,9 +106,8 @@
             <Button icon="lucide-send" variant="outline" theme="gray" @click="openShareDialog" />
             <Button
               icon="lucide-bookmark"
-              :variant="post.data.saved_by_me ? 'solid' : 'outline'"
+              :variant="savedByMe ? 'solid' : 'outline'"
               theme="gray"
-              :loading="toggleSave.loading"
               @click="handleSave"
             />
           </div>
@@ -486,6 +484,31 @@ function confirmDeleteComment(comment) {
   })
 }
 
+// Like/save/follow all need to flip the instant they're clicked, before the
+// server confirms — but post.data is useCall's read-only computed (see the
+// comment on commentList above for why mutating into it doesn't reliably
+// re-render), so these live in their own local refs instead, kept in sync
+// with post.data whenever a *real* fetch lands (a fresh page load, or
+// switching to a different post) — never touched by the optimistic handlers
+// themselves, which only ever adjust the refs directly.
+const likedByMe = ref(false)
+const likeCount = ref(0)
+const savedByMe = ref(false)
+const authorFollowingByMe = ref(false)
+const authorFollowPending = ref(false)
+watch(
+  () => post.data,
+  (data) => {
+    if (!data) return
+    likedByMe.value = !!data.liked_by_me
+    likeCount.value = data.like_count || 0
+    savedByMe.value = !!data.saved_by_me
+    authorFollowingByMe.value = !!data.author_following_by_me
+    authorFollowPending.value = !!data.author_follow_pending
+  },
+  { immediate: true },
+)
+
 const renderedContent = computed(() => ensureHtmlContent(post.data?.content))
 
 // MediaNodeView (frappe-ui's image NodeView) never applies a custom
@@ -518,7 +541,6 @@ const toggleLike = useCall({
   url: '/api/v2/method/my_new_app.api.toggle_like',
   method: 'POST',
   immediate: false,
-  onSuccess: () => post.reload(),
 })
 
 const addComment = useCall({
@@ -545,7 +567,24 @@ const moreOptions = computed(() => {
 })
 
 function like() {
-  toggleLike.submit({ reference_type: 'Post', reference_name: route.params.postId })
+  const wasLiked = likedByMe.value
+  const previousCount = likeCount.value
+  // Flip immediately; reconcile with the server's real numbers on success
+  // (a concurrent like from someone else could land between click and
+  // response, so the guessed count is provisional), or put it back exactly
+  // as it was if the request fails outright.
+  likedByMe.value = !wasLiked
+  likeCount.value = wasLiked ? previousCount - 1 : previousCount + 1
+
+  toggleLike.submit({ reference_type: 'Post', reference_name: route.params.postId }).then((result) => {
+    if (result) {
+      likedByMe.value = result.liked
+      likeCount.value = result.count
+    } else {
+      likedByMe.value = wasLiked
+      likeCount.value = previousCount
+    }
+  })
 }
 
 const toggleCommentLikeCall = useCall({
@@ -555,11 +594,20 @@ const toggleCommentLikeCall = useCall({
 })
 
 function toggleCommentLike(comment) {
+  const target = commentList.value.find((c) => c.name === comment.name)
+  if (!target) return
+  const wasLiked = target.liked_by_me
+  const previousCount = target.like_count
+  target.liked_by_me = !wasLiked
+  target.like_count = wasLiked ? previousCount - 1 : previousCount + 1
+
   toggleCommentLikeCall.submit({ reference_type: 'Post Comment', reference_name: comment.name }).then((result) => {
-    const target = commentList.value.find((c) => c.name === comment.name)
-    if (target) {
+    if (result) {
       target.liked_by_me = result.liked
       target.like_count = result.count
+    } else {
+      target.liked_by_me = wasLiked
+      target.like_count = previousCount
     }
   })
 }
@@ -568,44 +616,69 @@ const toggleSave = useCall({
   url: '/api/v2/method/my_new_app.api.toggle_save_post',
   method: 'POST',
   immediate: false,
-  onSuccess: (data) => {
-    toast.success(data.saved ? 'Saved' : 'Removed from saved posts')
-    post.reload()
-  },
 })
 
 function handleSave() {
-  toggleSave.submit({ post: route.params.postId })
+  const wasSaved = savedByMe.value
+  savedByMe.value = !wasSaved
+
+  toggleSave.submit({ post: route.params.postId }).then((result) => {
+    if (result) {
+      savedByMe.value = result.saved
+      toast.success(result.saved ? 'Saved' : 'Removed from saved posts')
+    } else {
+      savedByMe.value = wasSaved
+    }
+  })
 }
 
 const followUser = useCall({
   url: '/api/v2/method/my_new_app.follow.follow_user',
   method: 'POST',
   immediate: false,
-  onSuccess: (data) => {
-    post.reload()
-    if (data.status === 'requested') toast.info('Follow request sent')
-  },
 })
 
 const unfollowUser = useCall({
   url: '/api/v2/method/my_new_app.follow.unfollow_user',
   method: 'POST',
   immediate: false,
-  onSuccess: () => post.reload(),
 })
 
 const authorFollowLabel = computed(() => {
-  if (post.data?.author_following_by_me) return 'Following'
-  if (post.data?.author_follow_pending) return 'Requested'
+  if (authorFollowingByMe.value) return 'Following'
+  if (authorFollowPending.value) return 'Requested'
   return 'Follow'
 })
 
 function handleFollowClick() {
-  if (post.data.author_following_by_me || post.data.author_follow_pending) {
-    unfollowUser.submit({ user: post.data.author })
+  const wasFollowing = authorFollowingByMe.value
+  const wasPending = authorFollowPending.value
+
+  if (wasFollowing || wasPending) {
+    authorFollowingByMe.value = false
+    authorFollowPending.value = false
+    unfollowUser.submit({ user: post.data.author }).then((result) => {
+      if (!result) {
+        authorFollowingByMe.value = wasFollowing
+        authorFollowPending.value = wasPending
+      }
+    })
   } else {
-    followUser.submit({ user: post.data.author })
+    // A private account's follow always lands as "requested", never
+    // immediately "following" — optimistically assume that (the common
+    // case for anyone gated behind a request in the first place) rather
+    // than guessing "following" and having it visibly downgrade once the
+    // real status lands.
+    authorFollowPending.value = true
+    followUser.submit({ user: post.data.author }).then((result) => {
+      if (result) {
+        authorFollowingByMe.value = result.status === 'following'
+        authorFollowPending.value = result.status === 'requested'
+        if (result.status === 'requested') toast.info('Follow request sent')
+      } else {
+        authorFollowPending.value = false
+      }
+    })
   }
 }
 

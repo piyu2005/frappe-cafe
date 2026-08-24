@@ -51,13 +51,13 @@
           <div v-else-if="activeTab.label === 'Saved'" class="pt-4">
             <LoadingText v-if="savedPosts.loading && !savedPosts.data" :lines="4" />
             <p
-              v-else-if="savedPosts.data && savedPosts.data.length === 0"
+              v-else-if="savedPosts.data && savedPostsList.length === 0"
               class="text-p-base text-ink-gray-6"
             >
               No saved posts yet.
             </p>
             <div v-else class="divide-y divide-outline-gray-1">
-              <div v-for="p in savedPosts.data" :key="p.name" class="flex items-center gap-3 py-4">
+              <div v-for="p in savedPostsList" :key="p.name" class="flex items-center gap-3 py-4">
                 <router-link
                   :to="{ name: 'PostDetail', params: { postId: p.name } }"
                   class="flex min-w-0 flex-1 items-stretch gap-4"
@@ -76,7 +76,6 @@
                 <Button
                   icon="lucide-bookmark-minus"
                   variant="ghost"
-                  :loading="unsavePost.loading"
                   @click="unsave(p.name)"
                 />
               </div>
@@ -239,15 +238,39 @@ const savedPosts = useCall({
   url: '/api/v2/method/my_new_app.api.list_saved_posts',
 })
 
+// Removing a post needs to drop it from the list the instant it's clicked,
+// before the server confirms — but savedPosts.data is useCall's read-only
+// computed, so this keeps its own mutable copy (same pattern as
+// PostDetail.vue's commentList) instead of filtering that directly.
+const savedPostsList = ref([])
+watch(
+  () => savedPosts.data,
+  (val) => {
+    if (!val) return
+    savedPostsList.value = val
+  },
+  { immediate: true },
+)
+
 const unsavePost = useCall({
   url: '/api/v2/method/my_new_app.api.toggle_save_post',
   method: 'POST',
   immediate: false,
-  onSuccess: () => savedPosts.reload(),
 })
 
 function unsave(postId) {
-  unsavePost.submit({ post: postId })
+  const previousList = savedPostsList.value
+  savedPostsList.value = previousList.filter((p) => p.name !== postId)
+
+  unsavePost.submit({ post: postId }).then((result) => {
+    // A falsy result means the request failed outright - put the post back.
+    // A truthy result where `saved` somehow came back true (a same-post
+    // double-click landing between optimistic removal and this response)
+    // also means it's still saved - same fix, put it back either way.
+    if (!result || result.saved) {
+      savedPostsList.value = previousList
+    }
+  })
 }
 
 const draftArchiveFilters = computed(() => ({
