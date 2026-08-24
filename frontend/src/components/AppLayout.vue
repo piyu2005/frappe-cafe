@@ -126,6 +126,22 @@
               @click="notificationsOpen = false"
             />
           </div>
+
+          <!-- Mirrors frappe-ui's own SidebarCollapseToggle (same icon,
+               rotation, and transition) so expanding from the rail uses the
+               exact same affordance real Frappe products use for the
+               opposite direction — see the matching Sidebar-side toggle
+               below. Kept separate from the logo button above (which still
+               expands on click too) since that's branding, not a labeled
+               collapse/expand control. -->
+          <div class="mt-auto flex w-full flex-col items-center gap-3">
+            <RailItem label="Expand" variant="ghost" @click="sidebarOpen = true">
+              <span
+                class="lucide-panel-right-open size-4 rotate-180 transition-transform duration-300 ease-in-out"
+                aria-hidden="true"
+              />
+            </RailItem>
+          </div>
         </Rail>
       </template>
 
@@ -201,6 +217,24 @@
               @click="notificationsOpen = false"
             />
           </nav>
+
+          <!-- Same icon/rotation as frappe-ui's own SidebarCollapseToggle
+               (used verbatim on the rail side above) — reimplemented as a
+               plain SidebarItem here rather than that component directly,
+               since it toggles our own Rail/Sidebar swap (`sidebarOpen`)
+               rather than frappe-ui Sidebar's own internal collapsed state,
+               which this app opts out of via `disable-collapse` in favor of
+               swapping to a distinct icon-only Rail. -->
+          <div class="mt-auto px-2 pb-2">
+            <SidebarItem label="Collapse" @click="sidebarOpen = false">
+              <template #prefix>
+                <span
+                  class="lucide-panel-right-open size-4 text-ink-gray-6 transition-transform duration-300 ease-in-out"
+                  aria-hidden="true"
+                />
+              </template>
+            </SidebarItem>
+          </div>
         </Sidebar>
       </template>
 
