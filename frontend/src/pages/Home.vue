@@ -39,24 +39,6 @@
         </template>
       </TextInput>
 
-      <div class="mt-4 flex flex-wrap gap-2">
-        <button
-          v-for="cat in categoryList.data || []"
-          :key="cat.name"
-          type="button"
-          class="rounded px-2 py-1.5 text-base text-ink-gray-7"
-          :class="
-            categoryFilter === cat.name
-              ? 'bg-surface-gray-2'
-              : 'border border-outline-gray-2 hover:bg-surface-gray-1'
-          "
-          @click="categoryFilter = categoryFilter === cat.name ? '' : cat.name"
-        >
-          {{ cat.title }}
-          <span v-if="categoryFilter === cat.name" class="lucide-x ml-1 size-3" aria-hidden="true" />
-        </button>
-      </div>
-
       <LoadingText v-if="posts.loading && !posts.data" class="mt-10" :lines="4" />
 
       <div v-else-if="!posts.data || posts.data.length === 0" class="py-16 text-center">
@@ -133,15 +115,9 @@ const isMobile = useIsMobile()
 const searchQuery = ref('')
 const pageLength = ref(10)
 
-const categoryList = useCall({
-  url: '/api/v2/method/my_new_app.api.list_categories',
-})
-const categoryFilter = ref('')
-
 const filters = computed(() => {
   const f = { status: 'Published' }
   if (searchQuery.value) f.title = ['like', `%${searchQuery.value}%`]
-  if (categoryFilter.value) f.category = categoryFilter.value
   return f
 })
 
@@ -214,7 +190,7 @@ watch(
   },
 )
 
-watch([searchQuery, categoryFilter], () => {
+watch(searchQuery, () => {
   pageLength.value = 10
 })
 
