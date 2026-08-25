@@ -8,58 +8,58 @@
       <LoadingText v-if="profile.loading && !profile.data" :lines="6" />
 
       <template v-else-if="profile.data">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div class="flex items-center gap-4">
-            <div
-              class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-gray-2 sm:size-25"
-            >
-              <img
-                v-if="profile.data.user_image && !avatarImageError"
-                :src="profile.data.user_image"
-                :alt="profile.data.full_name"
-                class="h-full w-full object-cover"
-                @error="avatarImageError = true"
-              />
-              <span v-else class="text-[2rem] font-medium uppercase text-ink-gray-5 sm:text-[2.5rem]">
-                {{ profile.data.full_name?.[0] }}
-              </span>
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5">
-                <h1 class="truncate text-3xl-semibold text-ink-gray-8 sm:text-7xl-semibold">{{ profile.data.full_name }}</h1>
-              </div>
-              <div class="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-ink-gray-5">
-                <span v-if="profile.data.job_title" class="flex items-center gap-1">
-                  <span class="lucide-briefcase size-4" aria-hidden="true" />
-                  {{ profile.data.job_title }}<template v-if="profile.data.company"> at {{ profile.data.company }}</template>
-                </span>
-                <span v-if="profile.data.job_title">·</span>
-                <span class="text-base">@{{ profile.data.username }}</span>
-              </div>
-              <div v-if="profile.data.headline || isOwnProfile" class="mt-1 flex items-start gap-1.5">
-                <p
-                  class="text-p-lg"
-                  :class="profile.data.headline ? 'text-ink-gray-6' : 'text-ink-gray-4'"
-                >
-                  {{ profile.data.headline || (isOwnProfile ? 'Add a short headline.' : '') }}
-                </p>
-              </div>
-            </div>
+        <div class="flex items-start gap-4 sm:gap-8">
+          <div
+            class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-gray-2 sm:size-25"
+          >
+            <img
+              v-if="profile.data.user_image && !avatarImageError"
+              :src="profile.data.user_image"
+              :alt="profile.data.full_name"
+              class="h-full w-full object-cover"
+              @error="avatarImageError = true"
+            />
+            <span v-else class="text-[2rem] font-medium uppercase text-ink-gray-5 sm:text-[2.5rem]">
+              {{ profile.data.full_name?.[0] }}
+            </span>
           </div>
-          <div class="flex items-center gap-2">
-            <template v-if="isOwnProfile">
-              <Button variant="outline" label="Edit" @click="openEditHeader" />
-            </template>
-            <template v-else>
-              <Button
-                :variant="followingByMe ? 'subtle' : followPending ? 'outline' : 'solid'"
-                theme="gray"
-                :icon-right="followingByMe ? 'lucide-check' : undefined"
-                :label="followLabel"
-                @click="handleFollowClick"
-              />
-            </template>
-            <Button variant="outline" icon="lucide-share-2" @click="copyLink" />
+          <div class="min-w-0 flex-1">
+            <!-- Buttons live on the name's own row (not the whole avatar+headline
+                 block), so they only compete for width with the name - the
+                 headline below stays free to use the column's full width. -->
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <h1 class="truncate text-3xl-semibold text-ink-gray-8 sm:text-7xl-semibold">{{ profile.data.full_name }}</h1>
+              <div class="flex items-center gap-2">
+                <template v-if="isOwnProfile">
+                  <Button variant="outline" label="Edit" @click="openEditHeader" />
+                </template>
+                <template v-else>
+                  <Button
+                    :variant="followingByMe ? 'subtle' : followPending ? 'outline' : 'solid'"
+                    theme="gray"
+                    :label="followLabel"
+                    @click="handleFollowClick"
+                  />
+                </template>
+                <Button variant="outline" icon="lucide-share-2" @click="copyLink" />
+              </div>
+            </div>
+            <div class="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-ink-gray-5">
+              <span v-if="profile.data.job_title" class="flex items-center gap-1">
+                <span class="lucide-briefcase size-4" aria-hidden="true" />
+                {{ profile.data.job_title }}<template v-if="profile.data.company"> at {{ profile.data.company }}</template>
+              </span>
+              <span v-if="profile.data.job_title">·</span>
+              <span class="text-base">@{{ profile.data.username }}</span>
+            </div>
+            <div v-if="profile.data.headline || isOwnProfile" class="mt-1 flex items-start gap-1.5">
+              <p
+                class="text-p-lg"
+                :class="profile.data.headline ? 'text-ink-gray-6' : 'text-ink-gray-4'"
+              >
+                {{ profile.data.headline || (isOwnProfile ? 'Add a short headline.' : '') }}
+              </p>
+            </div>
           </div>
         </div>
 
