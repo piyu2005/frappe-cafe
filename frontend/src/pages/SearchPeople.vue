@@ -4,7 +4,7 @@
       :items="
         inviteMode
           ? [{ label: APP_NAME, route: '/' }, { label: pubTitle, route: `/publications/${route.query.pub}` }, { label: 'Invite' }]
-          : [{ label: APP_NAME, route: '/' }, { label: 'Search' }]
+          : [{ label: APP_NAME, route: '/' }, { label: 'Explore' }]
       "
     />
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
@@ -19,12 +19,12 @@
     </template>
   </PageHeaderMobile>
   <ScrollArea class="h-full">
-    <div class="mx-auto max-w-[760px] px-4 py-6 sm:px-5 sm:py-8">
-      <h1 class="text-3xl font-semibold text-ink-gray-9">
+    <div class="mx-auto max-w-[640px] px-4 py-6 sm:px-5 sm:py-8">
+      <h1 class="font-[Newsreader] text-[32px] font-normal leading-[1.6] tracking-[0.015em] text-black">
         {{ inviteMode ? `Invite people to ${pubTitle}` : `Writers at ${APP_NAME}` }}
       </h1>
 
-      <TextInput v-model="query" class="mt-5" placeholder="Search" size="lg">
+      <TextInput v-model="query" class="mt-2" placeholder="Search" size="sm">
         <template #prefix>
           <span class="lucide-search size-4 text-ink-gray-5" aria-hidden="true" />
         </template>
@@ -89,10 +89,10 @@
           <router-link
             v-else
             :to="{ name: 'Profile', params: { userId: person.name } }"
-            class="flex items-center gap-3 rounded px-2 py-2 hover:bg-surface-gray-1"
+            class="flex items-center gap-3 rounded px-2 py-1.5 hover:bg-surface-gray-1"
           >
-            <Avatar :image="person.user_image" :label="person.full_name" size="md" />
-            <span class="text-base text-ink-gray-8">{{ person.full_name }}</span>
+            <Avatar :image="person.user_image" :label="person.full_name" size="xl" />
+            <span class="text-lg text-black">{{ person.full_name }}</span>
           </router-link>
         </template>
 
