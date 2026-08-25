@@ -1,77 +1,82 @@
 <template>
   <PageHeader v-if="!isMobile">
-    <Breadcrumbs :items="[{ label: APP_NAME, route: '/' }, { label: 'Profile' }]" />
+    <Breadcrumbs :items="breadcrumbItems" />
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
   <ScrollArea class="h-full">
-    <div class="mx-auto max-w-[760px] px-4 py-6 sm:px-5 sm:py-8">
+    <!-- max-w is 700px of actual Figma content plus 2*20px for the sm:px-5
+         gutter this app's pages all share - the gutter isn't part of the
+         700px Figma spans, so it has to be added on top rather than eaten
+         out of it. -->
+    <div class="mx-auto max-w-[740px] px-4 py-6 sm:px-5 sm:py-8">
       <LoadingText v-if="profile.loading && !profile.data" :lines="6" />
 
       <template v-else-if="profile.data">
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div class="flex items-center gap-4">
-            <div
-              class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-gray-2 sm:size-28"
-            >
-              <img
-                v-if="profile.data.user_image && !avatarImageError"
-                :src="profile.data.user_image"
-                :alt="profile.data.full_name"
-                class="h-full w-full object-cover"
-                @error="avatarImageError = true"
-              />
-              <span v-else class="text-[2rem] font-medium uppercase text-ink-gray-5 sm:text-[2.75rem]">
-                {{ profile.data.full_name?.[0] }}
-              </span>
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5">
-                <h1 class="truncate text-3xl font-semibold text-ink-gray-9 sm:text-6xl">{{ profile.data.full_name }}</h1>
-              </div>
-              <div class="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-ink-gray-5">
-                <span v-if="profile.data.job_title" class="flex items-center gap-1">
-                  <span class="lucide-briefcase size-3.5" aria-hidden="true" />
-                  {{ profile.data.job_title }}<template v-if="profile.data.company"> at {{ profile.data.company }}</template>
-                </span>
-                <span v-if="profile.data.job_title">·</span>
-                <span>@{{ profile.data.username }}</span>
-              </div>
-              <div v-if="profile.data.headline || isOwnProfile" class="mt-1 flex items-start gap-1.5">
-                <p
-                  class="text-p-sm"
-                  :class="profile.data.headline ? 'text-ink-gray-6' : 'text-ink-gray-4'"
-                >
-                  {{ profile.data.headline || (isOwnProfile ? 'Add a short headline.' : '') }}
-                </p>
-              </div>
-            </div>
+        <div class="flex items-start gap-4 sm:gap-8">
+          <div
+            class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-gray-2 sm:size-25"
+          >
+            <img
+              v-if="profile.data.user_image && !avatarImageError"
+              :src="profile.data.user_image"
+              :alt="profile.data.full_name"
+              class="h-full w-full object-cover"
+              @error="avatarImageError = true"
+            />
+            <span v-else class="text-[2rem] font-medium uppercase text-ink-gray-5 sm:text-[2.5rem]">
+              {{ profile.data.full_name?.[0] }}
+            </span>
           </div>
-          <div class="flex items-center gap-2">
-            <template v-if="isOwnProfile">
-              <Button label="Edit" @click="openEditHeader" />
-            </template>
-            <template v-else>
-              <Button
-                :variant="followingByMe || followPending ? 'outline' : 'solid'"
-                theme="gray"
-                :label="followLabel"
-                @click="handleFollowClick"
-              />
-            </template>
-            <Button icon="lucide-share-2" @click="copyLink" />
+          <div class="min-w-0 flex-1">
+            <!-- Buttons live on the name's own row (not the whole avatar+headline
+                 block), so they only compete for width with the name - the
+                 headline below stays free to use the column's full width. -->
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <h1 class="truncate text-3xl-semibold text-ink-gray-8 sm:text-7xl-semibold">{{ profile.data.full_name }}</h1>
+              <div class="flex items-center gap-2">
+                <template v-if="isOwnProfile">
+                  <Button variant="outline" label="Edit" @click="openEditHeader" />
+                </template>
+                <template v-else>
+                  <Button
+                    :variant="followingByMe ? 'subtle' : followPending ? 'outline' : 'solid'"
+                    theme="gray"
+                    :label="followLabel"
+                    @click="handleFollowClick"
+                  />
+                </template>
+                <Button variant="outline" icon="lucide-share-2" @click="copyLink" />
+              </div>
+            </div>
+            <div class="mt-1 flex flex-wrap items-center gap-1.5 text-sm text-ink-gray-5">
+              <span v-if="profile.data.job_title" class="flex items-center gap-1">
+                <span class="lucide-briefcase size-4" aria-hidden="true" />
+                {{ profile.data.job_title }}<template v-if="profile.data.company"> at {{ profile.data.company }}</template>
+              </span>
+              <span v-if="profile.data.job_title">·</span>
+              <span class="text-base">@{{ profile.data.username }}</span>
+            </div>
+            <div v-if="profile.data.headline || isOwnProfile" class="mt-1 flex items-start gap-1.5">
+              <p
+                class="text-p-lg"
+                :class="profile.data.headline ? 'text-ink-gray-6' : 'text-ink-gray-4'"
+              >
+                {{ profile.data.headline || (isOwnProfile ? 'Add a short headline.' : '') }}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div class="mt-6 space-y-4">
-          <div class="rounded-md border border-outline-gray-1 p-4">
-            <div class="flex items-center justify-between pb-3">
-              <div class="flex items-center gap-2 text-lg-semibold text-ink-gray-9">
-                <span class="lucide-user size-5" aria-hidden="true" />
+        <div class="mt-8 space-y-4">
+          <div class="rounded-md border border-outline-gray-1 p-5">
+            <div class="flex items-center justify-between pb-4">
+              <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
+                <span class="lucide-user size-4" aria-hidden="true" />
                 Introduction
               </div>
             </div>
             <template v-if="profile.data.bio">
-              <p class="mt-2 text-p-sm text-ink-gray-7" :class="introExpanded ? '' : 'line-clamp-3'">
+              <p class="text-p-base text-ink-gray-6" :class="introExpanded ? '' : 'line-clamp-3'">
                 {{ profile.data.bio }}
               </p>
               <button
@@ -82,19 +87,19 @@
                 {{ introExpanded ? 'see less' : '...see more' }}
               </button>
             </template>
-            <p v-else class="mt-2 text-p-sm text-ink-gray-5">
+            <p v-else class="text-p-base text-ink-gray-5">
               {{ isOwnProfile ? 'Write about yourself.' : '' }}
             </p>
           </div>
 
           <div>
-            <div class="rounded-md border border-outline-gray-1 p-4">
-              <div class="flex items-center gap-2 pb-3 text-lg-semibold text-ink-gray-9">
-                <span class="lucide-notebook-pen size-5" aria-hidden="true" />
+            <div class="rounded-md border border-outline-gray-1 p-5">
+              <div class="flex items-center gap-1.5 pb-4 text-base-medium text-ink-gray-8">
+                <span class="lucide-notebook-pen size-4" aria-hidden="true" />
                 Posts
               </div>
 
-              <div v-if="recentPosts.data && recentPosts.data.length" class="mt-2 divide-y divide-outline-gray-1">
+              <div v-if="recentPosts.data && recentPosts.data.length" class="divide-y divide-outline-gray-1">
                 <router-link
                   v-for="post in recentPosts.data"
                   :key="post.name"
@@ -103,8 +108,8 @@
                 >
                   <div class="flex min-w-0 flex-1 flex-col justify-between">
                     <div>
-                      <div class="text-lg-semibold text-ink-gray-9">{{ post.display_title || post.title || 'Untitled' }}</div>
-                      <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ post.excerpt || excerpt(post.content, 140) }}</p>
+                      <div class="text-p-base-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
+                      <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">{{ post.excerpt || excerpt(post.content, 140) }}</p>
                     </div>
                     <div class="mt-2 text-xs text-ink-gray-5">
                       {{ formatDate(post.creation) }} · {{ readTime(post.content) }} min read ·
@@ -118,10 +123,10 @@
                   />
                 </router-link>
               </div>
-              <p v-else class="mt-2 text-p-sm text-ink-gray-5">
+              <p v-else class="text-base text-ink-gray-5">
                 <template v-if="isOwnProfile">
                   You haven't published anything yet.
-                  <router-link to="/write" class="font-medium text-ink-gray-9 underline">
+                  <router-link to="/write" class="text-base-medium text-ink-gray-8 underline">
                     Write your first blog.
                   </router-link>
                 </template>
@@ -129,117 +134,143 @@
               </p>
             </div>
 
-            <button
-              v-if="recentPosts.data && recentPosts.data.length === postsLimit"
-              class="mt-2 block w-full text-center text-sm text-ink-gray-6 hover:text-ink-gray-9 hover:underline"
-              :disabled="recentPosts.loading"
-              @click="postsLimit += 10"
-            >
-              {{ recentPosts.loading ? 'Loading...' : 'View more posts' }}
-            </button>
-          </div>
-
-          <div class="rounded-md border border-outline-gray-1 p-4">
-            <div class="flex items-center justify-between pb-3">
-              <div class="flex items-center gap-2 text-lg-semibold text-ink-gray-9">
-                <span class="lucide-briefcase size-5" aria-hidden="true" />
-                Work History
-              </div>
-              <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openAddWork">
-                <span class="lucide-plus size-4" aria-hidden="true" />
+            <div v-if="recentPosts.data && recentPosts.data.length === postsLimit" class="mt-3 flex justify-center">
+              <button
+                type="button"
+                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8 disabled:opacity-50"
+                :disabled="recentPosts.loading"
+                @click="postsLimit += 10"
+              >
+                {{ recentPosts.loading ? 'Loading...' : 'View all posts' }}
               </button>
             </div>
-            <p v-if="!profile.data.work.length" class="mt-2 text-p-sm text-ink-gray-5">
-              {{ isOwnProfile ? 'Add your work experience.' : 'No work history added yet.' }}
-            </p>
-            <div v-else class="mt-2 divide-y divide-outline-gray-1">
-              <div
-                v-for="job in profile.data.work"
-                :key="job.name"
-                class="flex items-start justify-between gap-3 py-5 first:pt-0 last:pb-0"
-              >
-                <div>
-                  <div class="text-base-semibold text-ink-gray-9">{{ job.company }}</div>
-                  <!-- Plain inline flow, not flex-wrap: flex-wrap only wraps
-                       whole items as opaque boxes, so once the title alone
-                       is long enough to wrap onto two lines by itself, the
-                       date range gets pushed to a new flex line even when
-                       there's visibly leftover room on the title's second
-                       line — inline spans wrap word-by-word like normal
-                       text, filling that room instead. -->
-                  <div class="mt-1 text-base text-ink-gray-8">
-                    <span v-if="job.title">{{ job.title }}</span>
-                    <span v-if="job.title && (job.start_date || job.end_date)" class="text-ink-gray-4"> · </span>
-                    <span v-if="job.start_date || job.end_date">
-                      {{ formatMonthYear(job.start_date) }} — {{ job.end_date ? formatMonthYear(job.end_date) : 'Present' }}
-                    </span>
-                  </div>
-                  <p v-if="job.description" class="mt-1 text-p-sm text-ink-gray-5">{{ job.description }}</p>
+          </div>
+
+          <div>
+            <div class="rounded-md border border-outline-gray-1 p-5">
+              <div class="flex items-center justify-between pb-4">
+                <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
+                  <span class="lucide-briefcase size-4" aria-hidden="true" />
+                  Work History
                 </div>
-                <button
-                  v-if="isOwnProfile"
-                  class="shrink-0 text-ink-gray-4 hover:text-ink-gray-8"
-                  @click="openEditWork(job)"
-                >
-                  <span class="lucide-pencil size-3.5" aria-hidden="true" />
+                <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openAddWork">
+                  <span class="lucide-plus size-4" aria-hidden="true" />
                 </button>
               </div>
-            </div>
-          </div>
-
-          <div class="!mt-6 rounded-md border border-outline-gray-1 p-4">
-            <div class="flex items-center justify-between pb-3">
-              <div class="flex items-center gap-2 text-lg-semibold text-ink-gray-9">
-                <span class="lucide-graduation-cap size-5" aria-hidden="true" />
-                Education
-              </div>
-              <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openAddEducation">
-                <span class="lucide-plus size-4" aria-hidden="true" />
-              </button>
-            </div>
-            <p v-if="!profile.data.education.length" class="mt-2 text-p-sm text-ink-gray-5">
-              {{ isOwnProfile ? 'Add your education.' : 'No education added yet.' }}
-            </p>
-            <div v-else class="mt-2 divide-y divide-outline-gray-1">
-              <div
-                v-for="edu in profile.data.education"
-                :key="edu.name"
-                class="flex items-start justify-between gap-3 py-5 first:pt-0 last:pb-0"
-              >
-                <div>
-                  <div class="text-base-semibold text-ink-gray-9">{{ edu.school }}</div>
-                  <!-- Plain inline flow, not flex-wrap: flex-wrap only wraps
-                       whole items as opaque boxes, so once degree+field
-                       alone is long enough to wrap onto two lines by
-                       itself, the date range gets pushed to a new flex line
-                       even when there's visibly leftover room on that
-                       second line — inline spans wrap word-by-word like
-                       normal text, filling that room instead. -->
-                  <div
-                    v-if="edu.degree || edu.field_of_study || edu.start_year || edu.end_year"
-                    class="mt-1 text-base text-ink-gray-8"
+              <p v-if="!profile.data.work.length" class="text-base text-ink-gray-5">
+                {{ isOwnProfile ? 'Add your work experience.' : 'No work history added yet.' }}
+              </p>
+              <div v-else class="divide-y divide-outline-gray-1">
+                <div
+                  v-for="job in profile.data.work.slice(0, workLimit)"
+                  :key="job.name"
+                  class="flex items-start justify-between gap-3 py-5 first:pt-0 last:pb-0"
+                >
+                  <div>
+                    <div class="text-p-base-semibold text-ink-gray-8">{{ job.company }}</div>
+                    <!-- Plain inline flow, not flex-wrap: flex-wrap only wraps
+                         whole items as opaque boxes, so once the title alone
+                         is long enough to wrap onto two lines by itself, the
+                         date range gets pushed to a new flex line even when
+                         there's visibly leftover room on the title's second
+                         line — inline spans wrap word-by-word like normal
+                         text, filling that room instead. -->
+                    <div class="mt-1 text-p-base text-ink-gray-8">
+                      <span v-if="job.title">{{ job.title }}</span>
+                      <span v-if="job.title && (job.start_date || job.end_date)" class="text-ink-gray-4"> · </span>
+                      <span v-if="job.start_date || job.end_date" class="text-sm text-ink-gray-5">
+                        {{ formatMonthYear(job.start_date) }} — {{ job.end_date ? formatMonthYear(job.end_date) : 'Present' }}
+                      </span>
+                    </div>
+                    <p v-if="job.description" class="mt-1 text-p-sm text-ink-gray-6">{{ job.description }}</p>
+                  </div>
+                  <button
+                    v-if="isOwnProfile"
+                    class="shrink-0 text-ink-gray-4 hover:text-ink-gray-8"
+                    @click="openEditWork(job)"
                   >
-                    <span v-if="edu.degree || edu.field_of_study">
-                      {{ edu.degree }}<template v-if="edu.degree && edu.field_of_study">, </template>{{ edu.field_of_study }}
-                    </span>
-                    <span
-                      v-if="(edu.degree || edu.field_of_study) && (edu.start_year || edu.end_year)"
-                      class="text-ink-gray-4"
-                      > · </span
-                    >
-                    <span v-if="edu.start_year || edu.end_year">
-                      {{ formatMonthYear(edu.start_year) }} — {{ edu.end_year ? formatMonthYear(edu.end_year) : 'Present' }}
-                    </span>
-                  </div>
+                    <span class="lucide-pencil size-3.5" aria-hidden="true" />
+                  </button>
                 </div>
-                <button
-                  v-if="isOwnProfile"
-                  class="shrink-0 text-ink-gray-4 hover:text-ink-gray-8"
-                  @click="openEditEducation(edu)"
-                >
-                  <span class="lucide-pencil size-3.5" aria-hidden="true" />
+              </div>
+            </div>
+
+            <div v-if="profile.data.work.length > workLimit" class="mt-3 flex justify-center">
+              <button
+                type="button"
+                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8"
+                @click="workLimit = profile.data.work.length"
+              >
+                Show all History
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div class="rounded-md border border-outline-gray-1 p-5">
+              <div class="flex items-center justify-between pb-4">
+                <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
+                  <span class="lucide-graduation-cap size-4" aria-hidden="true" />
+                  Education
+                </div>
+                <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openAddEducation">
+                  <span class="lucide-plus size-4" aria-hidden="true" />
                 </button>
               </div>
+              <p v-if="!profile.data.education.length" class="text-base text-ink-gray-5">
+                {{ isOwnProfile ? 'Add your education.' : 'No education added yet.' }}
+              </p>
+              <div v-else class="divide-y divide-outline-gray-1">
+                <div
+                  v-for="edu in profile.data.education.slice(0, educationLimit)"
+                  :key="edu.name"
+                  class="flex items-start justify-between gap-3 py-5 first:pt-0 last:pb-0"
+                >
+                  <div>
+                    <div class="text-p-base-semibold text-ink-gray-8">{{ edu.school }}</div>
+                    <!-- Plain inline flow, not flex-wrap: flex-wrap only wraps
+                         whole items as opaque boxes, so once degree+field
+                         alone is long enough to wrap onto two lines by
+                         itself, the date range gets pushed to a new flex line
+                         even when there's visibly leftover room on that
+                         second line — inline spans wrap word-by-word like
+                         normal text, filling that room instead. -->
+                    <div
+                      v-if="edu.degree || edu.field_of_study || edu.start_year || edu.end_year"
+                      class="mt-1 text-p-base text-ink-gray-7"
+                    >
+                      <span v-if="edu.degree || edu.field_of_study">
+                        {{ edu.degree }}<template v-if="edu.degree && edu.field_of_study">, </template>{{ edu.field_of_study }}
+                      </span>
+                      <span
+                        v-if="(edu.degree || edu.field_of_study) && (edu.start_year || edu.end_year)"
+                        class="text-ink-gray-4"
+                        > · </span
+                      >
+                      <span v-if="edu.start_year || edu.end_year" class="text-sm text-ink-gray-5">
+                        {{ formatMonthYear(edu.start_year) }} — {{ edu.end_year ? formatMonthYear(edu.end_year) : 'Present' }}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    v-if="isOwnProfile"
+                    class="shrink-0 text-ink-gray-4 hover:text-ink-gray-8"
+                    @click="openEditEducation(edu)"
+                  >
+                    <span class="lucide-pencil size-3.5" aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="profile.data.education.length > educationLimit" class="mt-3 flex justify-center">
+              <button
+                type="button"
+                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8"
+                @click="educationLimit = profile.data.education.length"
+              >
+                Show all Education
+              </button>
             </div>
           </div>
         </div>
@@ -353,6 +384,18 @@ const profile = useCall({
   refetch: true,
 })
 
+// Own profile keeps the generic "Profile" crumb; someone else's names them
+// directly, reached via Explore - matching how ProfilePosts.vue already
+// breadcrumbs into a specific person.
+const breadcrumbItems = computed(() => {
+  if (isOwnProfile.value) return [{ label: APP_NAME, route: '/' }, { label: 'Profile' }]
+  return [
+    { label: APP_NAME, route: '/' },
+    { label: 'Explore', route: '/' },
+    { label: profile.data?.full_name || 'Profile' },
+  ]
+})
+
 // Follow state needs to flip the instant it's clicked, before the server
 // confirms — but profile.data is useCall's read-only computed, so this lives
 // in its own local refs (same pattern as PostDetail.vue's like/save/follow),
@@ -378,6 +421,12 @@ const recentPosts = useCall({
 
 const introExpanded = ref(false)
 const bioNeedsTruncation = computed(() => (profile.data?.bio || '').length > 220)
+
+// Work/education are already fully loaded in one shot by get_profile (unlike
+// Posts, which paginates server-side) - "Show all" just lifts a client-side
+// cap rather than triggering another request.
+const workLimit = ref(3)
+const educationLimit = ref(3)
 
 function thumbnailFor(post) {
   if (post.cover_image) return post.cover_image
