@@ -4,7 +4,11 @@
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
   <ScrollArea class="h-full">
-    <div class="mx-auto max-w-[700px] px-4 py-6 sm:px-5 sm:py-8">
+    <!-- max-w is 700px of actual Figma content plus 2*20px for the sm:px-5
+         gutter this app's pages all share - the gutter isn't part of the
+         700px Figma spans, so it has to be added on top rather than eaten
+         out of it. -->
+    <div class="mx-auto max-w-[740px] px-4 py-6 sm:px-5 sm:py-8">
       <LoadingText v-if="profile.loading && !profile.data" :lines="6" />
 
       <template v-else-if="profile.data">
