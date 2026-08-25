@@ -64,7 +64,7 @@
               <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">
                 {{ post.excerpt || excerpt(post.content, 160) }}
               </p>
-              <div class="mt-2 flex items-center gap-3 text-xs text-ink-gray-5">
+              <div class="mt-4 flex items-center gap-3 text-xs text-ink-gray-5">
                 <span>{{ formatDate(post.creation) }}</span>
                 <span aria-hidden="true">&middot;</span>
                 <span>{{ readTime(post.content) }} min read</span>
