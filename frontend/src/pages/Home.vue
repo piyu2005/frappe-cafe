@@ -50,31 +50,37 @@
           v-for="post in posts.data"
           :key="post.name"
           :to="{ name: 'PostDetail', params: { postId: post.name } }"
-          class="flex items-stretch justify-between gap-4 py-2"
+          class="flex flex-col gap-3 py-2"
         >
-          <div class="flex min-w-0 flex-1 flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-2">
-                <Avatar :image="post.author_image" :label="post.author_name || post.author" size="sm" />
-                <span class="text-sm text-ink-gray-8">{{ post.author_name || post.author }}</span>
-              </div>
-              <div class="mt-2 text-p-base-semibold text-ink-gray-8">
+          <div class="flex items-center gap-2">
+            <Avatar :image="post.author_image" :label="post.author_name || post.author" size="sm" />
+            <span class="text-sm text-ink-gray-8">{{ post.author_name || post.author }}</span>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="min-w-0 flex-1">
+              <div class="text-p-base-semibold text-ink-gray-8">
                 {{ post.display_title || post.title || excerpt(post.content, 60) }}
               </div>
               <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">
                 {{ post.excerpt || excerpt(post.content, 160) }}
               </p>
+              <div class="mt-2 flex items-center gap-3 text-xs text-ink-gray-5">
+                <span>{{ formatDate(post.creation) }}</span>
+                <span class="size-0.5 rounded-full bg-ink-gray-5" aria-hidden="true" />
+                <span>{{ readTime(post.content) }} min read</span>
+                <span class="size-0.5 rounded-full bg-ink-gray-5" aria-hidden="true" />
+                <span class="flex items-center gap-1">
+                  <span class="lucide-message-circle size-4" aria-hidden="true" />
+                  {{ commentCounts.data?.[post.name] ?? 0 }} comments
+                </span>
+              </div>
             </div>
-            <div class="mt-2 text-xs text-ink-gray-5">
-              {{ formatDate(post.creation) }} · {{ readTime(post.content) }} min read ·
-              {{ commentCounts.data?.[post.name] ?? 0 }} comment{{ (commentCounts.data?.[post.name] ?? 0) === 1 ? '' : 's' }}
-            </div>
+            <img
+              v-if="coverImageFor(post)"
+              :src="coverImageFor(post)"
+              class="mt-1 h-24 w-32 shrink-0 rounded-md bg-surface-gray-2 object-cover"
+            />
           </div>
-          <img
-            v-if="coverImageFor(post)"
-            :src="coverImageFor(post)"
-            class="h-24 w-32 shrink-0 rounded-md bg-surface-gray-2 object-cover"
-          />
         </router-link>
       </div>
 
