@@ -130,13 +130,16 @@
               </p>
             </div>
 
-            <Button
-              v-if="recentPosts.data && recentPosts.data.length === postsLimit"
-              class="mx-auto mt-3"
-              :label="recentPosts.loading ? 'Loading...' : 'View all posts'"
-              :disabled="recentPosts.loading"
-              @click="postsLimit += 10"
-            />
+            <div v-if="recentPosts.data && recentPosts.data.length === postsLimit" class="mt-3 flex justify-center">
+              <button
+                type="button"
+                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8 disabled:opacity-50"
+                :disabled="recentPosts.loading"
+                @click="postsLimit += 10"
+              >
+                {{ recentPosts.loading ? 'Loading...' : 'View all posts' }}
+              </button>
+            </div>
           </div>
 
           <div>
@@ -188,12 +191,15 @@
               </div>
             </div>
 
-            <Button
-              v-if="profile.data.work.length > workLimit"
-              class="mx-auto mt-3"
-              label="Show all History"
-              @click="workLimit = profile.data.work.length"
-            />
+            <div v-if="profile.data.work.length > workLimit" class="mt-3 flex justify-center">
+              <button
+                type="button"
+                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8"
+                @click="workLimit = profile.data.work.length"
+              >
+                Show all History
+              </button>
+            </div>
           </div>
 
           <div>
@@ -253,12 +259,15 @@
               </div>
             </div>
 
-            <Button
-              v-if="profile.data.education.length > educationLimit"
-              class="mx-auto mt-3"
-              label="Show all Education"
-              @click="educationLimit = profile.data.education.length"
-            />
+            <div v-if="profile.data.education.length > educationLimit" class="mt-3 flex justify-center">
+              <button
+                type="button"
+                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8"
+                @click="educationLimit = profile.data.education.length"
+              >
+                Show all Education
+              </button>
+            </div>
           </div>
         </div>
       </template>
