@@ -45,12 +45,12 @@
         <p class="text-p-base text-ink-gray-6">No writings found.</p>
       </div>
 
-      <div v-else class="mt-6 divide-y divide-outline-gray-1 space-y-12">
+      <div v-else class="mt-6 divide-y divide-outline-gray-1">
         <router-link
           v-for="post in posts.data"
           :key="post.name"
           :to="{ name: 'PostDetail', params: { postId: post.name } }"
-          class="flex flex-col gap-3 py-2"
+          class="flex flex-col gap-3 py-9"
         >
           <div class="flex items-center gap-2">
             <Avatar :image="post.author_image" :label="post.author_name || post.author" size="sm" />
@@ -66,13 +66,10 @@
               </p>
               <div class="mt-2 flex items-center gap-3 text-xs text-ink-gray-5">
                 <span>{{ formatDate(post.creation) }}</span>
-                <span class="size-0.5 rounded-full bg-ink-gray-5" aria-hidden="true" />
+                <span aria-hidden="true">&middot;</span>
                 <span>{{ readTime(post.content) }} min read</span>
-                <span class="size-0.5 rounded-full bg-ink-gray-5" aria-hidden="true" />
-                <span class="flex items-center gap-1">
-                  <span class="lucide-message-circle size-4" aria-hidden="true" />
-                  {{ commentCounts.data?.[post.name] ?? 0 }} comments
-                </span>
+                <span aria-hidden="true">&middot;</span>
+                <span>{{ commentCounts.data?.[post.name] ?? 0 }} comments</span>
               </div>
             </div>
             <img
