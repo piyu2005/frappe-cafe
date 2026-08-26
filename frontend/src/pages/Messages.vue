@@ -164,7 +164,7 @@
           <template v-else>You can't reply to this conversation.</template>
         </div>
 
-        <ScrollArea ref="scrollAreaRef" class="flex-1 px-4 pb-3 pt-6">
+        <ScrollArea ref="scrollAreaRef" class="flex-1" viewport-class="px-4 pb-3 pt-6">
           <LoadingText v-if="messages.loading && !messageList.length" :lines="6" />
           <div v-else class="space-y-4">
             <div
