@@ -77,7 +77,7 @@
           />
 
           <EditorBubbleMenu :items="bubbleToolbar" />
-          <EditorContent class="mt-4 min-h-[160px] text-ink-gray-8" />
+          <EditorContent class="mt-4 min-h-[calc(100vh-320px)] text-ink-gray-8" />
         </template>
       </Editor>
 
