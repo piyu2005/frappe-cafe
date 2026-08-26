@@ -8,7 +8,7 @@
     "
   >
     <form v-if="!sent" @submit.prevent="submit">
-      <FormControl type="email" label="Email" placeholder="name@example.com" v-model="email" required />
+      <FormControl type="email" label="Email" placeholder="name@example.com" v-model="email" required autofocus />
 
       <ErrorMessage class="mt-3" :message="resetPassword.error?.message" />
 

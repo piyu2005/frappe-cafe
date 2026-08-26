@@ -168,7 +168,7 @@
               </button>
             </div>
 
-            <div v-if="replyingTo === c.name" class="mt-2 pl-14">
+            <div v-if="replyingTo === c.name" class="mt-2 pl-14" :ref="focusReplyBox">
               <FormControl
                 v-model="replyText"
                 type="textarea"
@@ -222,7 +222,7 @@
                   </button>
                 </div>
 
-                <div v-if="replyingTo === r.name" class="mt-2 pl-14">
+                <div v-if="replyingTo === r.name" class="mt-2 pl-14" :ref="focusReplyBox">
                   <FormControl
                     v-model="replyText"
                     type="textarea"
@@ -392,6 +392,18 @@ function toggleReplyBox(comment) {
   }
   replyingTo.value = comment.name
   replyText.value = ''
+}
+
+// A plain `autofocus` attribute on the reply textarea doesn't reliably win
+// here — the box only appears after the "Reply" button's own click has
+// already claimed focus for itself, and by the time the element lands in
+// the DOM the browser doesn't treat it as the page's initial autofocus
+// target the way it does for a field present since first paint. Focusing it
+// explicitly once it mounts (this is a Vue function ref, called with the
+// element on mount and `null` on unmount) sidesteps that entirely.
+function focusReplyBox(el) {
+  if (!el) return
+  nextTick(() => el.querySelector('textarea')?.focus())
 }
 
 function cancelReply() {

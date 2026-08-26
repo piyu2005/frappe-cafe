@@ -7,6 +7,7 @@
         placeholder="••••••••"
         v-model="newPassword"
         required
+        autofocus
       />
 
       <FormControl

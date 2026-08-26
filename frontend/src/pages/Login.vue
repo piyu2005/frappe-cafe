@@ -4,7 +4,7 @@
     subtitle="Write, share, and connect."
   >
     <form @submit.prevent="submit">
-      <FormControl type="email" label="Email" placeholder="name@example.com" v-model="email" required />
+      <FormControl type="email" label="Email" placeholder="name@example.com" v-model="email" required autofocus />
 
       <FormControl
         class="mt-4"
