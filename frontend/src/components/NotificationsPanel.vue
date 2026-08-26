@@ -193,26 +193,14 @@ const respondGroupInvite = useCall({
   url: '/api/v2/method/my_new_app.chat.respond_to_group_invite',
   method: 'POST',
   immediate: false,
-  onSuccess: (data) => {
-    notifications.reload()
-    if (data.conversation) {
-      open.value = false
-      router.push({ name: 'Messages', params: { conversationId: data.conversation } })
-    }
-  },
+  onSuccess: () => notifications.reload(),
 })
 
 const respondPublicationInvite = useCall({
   url: '/api/v2/method/my_new_app.api.respond_to_publication_invite',
   method: 'POST',
   immediate: false,
-  onSuccess: (data) => {
-    notifications.reload()
-    if (data.publication) {
-      open.value = false
-      router.push({ name: 'PublicationDetail', params: { handle: data.publication } })
-    }
-  },
+  onSuccess: () => notifications.reload(),
 })
 
 // All three request types share the exact same pending/accept/decline shape
@@ -231,8 +219,29 @@ function isResponding(type) {
   return RESPOND_CALLS[type]?.loading || false
 }
 
+// Navigating off *this click's own* resolved promise — not the shared
+// useCall's onSuccess/data — matters when two invites are accepted in quick
+// succession (e.g. two pending group invites): onSuccess fires against
+// whatever `data` the reactive call object currently holds, which is
+// whichever response landed most recently, not necessarily the one from
+// this particular click. That's exactly how accepting invite A could
+// silently drop you into invite B's conversation if B's response happened
+// to arrive first. Each `.submit()` call returns its own promise resolved
+// with its own response, so chaining off that instead ties the navigation
+// to this specific request, regardless of what else is in flight.
 function accept(n) {
-  RESPOND_CALLS[n.type]?.submit({ name: n.reference_name, accept: 1 })
+  const call = RESPOND_CALLS[n.type]
+  if (!call) return
+  call.submit({ name: n.reference_name, accept: 1 }).then((data) => {
+    if (!data) return
+    if (data.conversation) {
+      open.value = false
+      router.push({ name: 'Messages', params: { conversationId: data.conversation } })
+    } else if (data.publication) {
+      open.value = false
+      router.push({ name: 'PublicationDetail', params: { handle: data.publication } })
+    }
+  })
 }
 
 function decline(n) {
