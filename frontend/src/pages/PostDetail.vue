@@ -807,8 +807,9 @@ function timeAgo(value) {
  */
 :deep(.not-prose) {
   width: 100% !important;
-  height: 50vh !important;
-  min-height: 240px !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 /* The <img>/<video> sit inside their own unsized wrapper div — a percentage
    height can't resolve through an auto-height ancestor, so that wrapper
@@ -821,10 +822,5 @@ function timeAgo(value) {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
-}
-@media (min-width: 640px) {
-  :deep(.not-prose) {
-    height: 420px !important;
-  }
 }
 </style>
