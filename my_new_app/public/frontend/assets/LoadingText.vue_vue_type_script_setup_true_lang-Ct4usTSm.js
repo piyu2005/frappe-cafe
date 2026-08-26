@@ -1,2 +1,0 @@
-import{q as t,o as a,k as s,e as o,bN as n,f as c,t as r}from"./index-KQlaFTOs.js";const i={class:"flex items-center text-base text-ink-gray-4"},x=t({__name:"LoadingText",props:{text:{default:"Loading..."}},setup(e){return(_,m)=>(a(),s("div",i,[o(n,{class:"-ml-1 mr-2 h-3 w-3"}),c(" "+r(e.text),1)]))}});export{x as _};
-//# sourceMappingURL=LoadingText.vue_vue_type_script_setup_true_lang-Ct4usTSm.js.map
