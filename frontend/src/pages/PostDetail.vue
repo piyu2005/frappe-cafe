@@ -811,6 +811,14 @@ function timeAgo(value) {
   aspect-ratio: 16 / 9 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+/* The image sits in its own wrapper div carrying the editor's generic `my-2`
+   (8px) block spacing — Figma's image blocks use 16px above and below, so
+   this overrides just that one wrapper rather than every `my-2` element in
+   the article (which would also catch unrelated content). */
+:deep(div:has(> .not-prose)) {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
 /* The <img>/<video> sit inside their own unsized wrapper div — a percentage
    height can't resolve through an auto-height ancestor, so that wrapper
    needs to be stretched too before height:100% on the media itself works. */
