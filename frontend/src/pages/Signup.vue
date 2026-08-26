@@ -26,7 +26,7 @@
     subtitle="Write, share, and connect — without the noise."
   >
     <form @submit.prevent="submit">
-      <FormControl type="text" label="Username" placeholder="janedoe" v-model="username" required />
+      <FormControl type="text" label="Username" placeholder="janedoe" v-model="username" required autofocus />
 
       <FormControl
         class="mt-4"

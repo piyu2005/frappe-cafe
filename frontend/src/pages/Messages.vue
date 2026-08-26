@@ -37,7 +37,7 @@
       class="flex w-full shrink-0 flex-col border-outline-gray-1 md:w-80 md:border-r"
     >
       <div class="border-b border-outline-gray-1 p-3">
-        <TextInput v-model="search" placeholder="Search by name">
+        <TextInput v-model="search" placeholder="Search by name" autofocus>
           <template #prefix>
             <span class="lucide-search size-4 text-ink-gray-5" aria-hidden="true" />
           </template>
@@ -1072,6 +1072,8 @@ async function openConversationData(id) {
   await Promise.all([conversation.reload(), messages.reload(), mentionableUsers.reload()])
   markRead.submit({ conversation: id })
   scrollToBottom()
+  await nextTick()
+  composerEditorRef.value?.editor?.chain().focus().run()
 }
 
 watch(activeConversationId, openConversationData, { immediate: true })

@@ -24,7 +24,7 @@
         {{ inviteMode ? `Invite people to ${pubTitle}` : `Writers at ${APP_NAME}` }}
       </h1>
 
-      <TextInput v-model="query" class="mt-2" placeholder="Search" size="sm">
+      <TextInput ref="searchInputRef" v-model="query" class="mt-2" placeholder="Search" size="sm">
         <template #prefix>
           <span class="lucide-search size-4 text-ink-gray-5" aria-hidden="true" />
         </template>
@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   Avatar,
@@ -133,6 +133,11 @@ const inviteMode = computed(() => Boolean(route.query.pub))
 const query = ref('')
 const selected = ref(null)
 const role = ref('Member')
+
+const searchInputRef = ref(null)
+onMounted(() => {
+  searchInputRef.value?.el?.focus()
+})
 
 // useCall's `url` is unref'd, not invoked — needs to be a ref/computed, not
 // a plain function, to react to inviteMode changing.
