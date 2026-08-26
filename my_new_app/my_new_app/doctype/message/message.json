@@ -100,12 +100,12 @@
   },
   {
    "fieldname": "link_url",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Link URL"
   },
   {
    "fieldname": "link_title",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Link Title"
   },
   {
@@ -115,7 +115,7 @@
   },
   {
    "fieldname": "link_image",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Link Image"
   }
  ],

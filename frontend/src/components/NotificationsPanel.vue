@@ -33,10 +33,11 @@
           <div class="flex items-center gap-1">
             <Button
               variant="ghost"
-              label="Mark all as read"
+              icon="lucide-check-check"
               size="sm"
+              tooltip="Mark all as read"
               :loading="markAllRead.loading"
-              @click="markAllRead.submit({})"
+              @click="onMarkAllReadClick"
             />
             <button
               type="button"
@@ -129,7 +130,7 @@
 <script setup>
 import { computed, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { Avatar, Badge, Button, LoadingText, ScrollArea, useCall } from 'frappe-ui'
+import { Avatar, Badge, Button, LoadingText, ScrollArea, toast, useCall } from 'frappe-ui'
 import { unreadNotifCount } from '@/data/notifications'
 
 const props = defineProps({
@@ -181,6 +182,13 @@ const markAllRead = useCall({
 watch(open, (isOpen) => {
   if (isOpen) markAllRead.submit({})
 })
+
+// Separate from the auto-mark-on-open above so the confirmation toast only
+// fires for this deliberate click, not every time the panel is opened.
+async function onMarkAllReadClick() {
+  await markAllRead.submit({})
+  toast.success('All notifications marked as read')
+}
 
 const respondFollow = useCall({
   url: '/api/v2/method/my_new_app.follow.respond_to_follow_request',
