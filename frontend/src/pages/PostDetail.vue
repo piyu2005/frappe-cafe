@@ -13,7 +13,7 @@
   </PageHeaderMobile>
 
   <ScrollArea class="h-full">
-    <div class="mx-auto max-w-[770px] px-4 py-6 sm:px-5 sm:py-8">
+    <div class="mx-auto max-w-[600px] px-4 pt-6 pb-6 sm:px-6 sm:pt-12 sm:pb-8">
       <LoadingText v-if="post.loading && !post.data" :lines="8" />
 
       <div v-else-if="post.error && !post.data" class="flex flex-col items-center gap-3 py-24 text-center">
@@ -24,23 +24,22 @@
       </div>
 
       <template v-else-if="post.data">
-        <h1 class="text-3xl font-semibold text-ink-gray-9">{{ post.data.title }}</h1>
+        <h1 class="text-p-4xl-semibold text-ink-gray-9">{{ post.data.title }}</h1>
 
-        <div class="mt-5 flex items-center gap-4">
+        <div class="mt-6 flex items-center gap-3">
           <Avatar
             :image="post.data.author_image"
             :label="post.data.author_name"
             size="3xl"
-            class="size-20 author-avatar"
           />
           <div class="min-w-0 flex-1">
             <router-link
               :to="{ name: 'Profile', params: { userId: post.data.author } }"
-              class="text-xl font-semibold text-ink-gray-9 hover:underline"
+              class="text-lg-semibold text-ink-gray-9 hover:underline"
             >
               {{ post.data.author_name }}
             </router-link>
-            <div class="mt-1 text-base text-ink-gray-5">
+            <div class="mt-1.5 text-base text-ink-gray-5">
               {{ formatDate(post.data.creation) }} · {{ readTime(post.data.content) }} min read
             </div>
           </div>
@@ -56,12 +55,12 @@
           </Dropdown>
         </div>
 
-        <hr class="mt-3 border-outline-gray-1" />
+        <hr class="mt-6 border-outline-gray-1" />
 
         <PostImageCarousel
           v-if="isImagePost"
           :images="post.data.images.map((i) => i.image)"
-          class="mt-8"
+          class="mt-6"
         />
 
         <Editor
@@ -71,18 +70,24 @@
           :editable="false"
         >
           <template #default>
-            <EditorContent class="mt-8" />
+            <EditorContent class="mt-6" />
           </template>
         </Editor>
 
         <div v-if="post.data.tags.length" class="mt-6 flex flex-wrap gap-2">
-          <Badge v-for="tag in post.data.tags" :key="tag" :label="tag" variant="subtle" size="lg" />
+          <span
+            v-for="tag in post.data.tags"
+            :key="tag"
+            class="rounded bg-surface-gray-2 px-2 py-1.5 text-base text-ink-gray-6"
+          >
+            {{ tag }}
+          </span>
         </div>
 
-        <div class="mt-8 flex items-center justify-between border-y border-outline-gray-1 py-3">
-          <div class="flex items-center gap-4">
+        <div class="mt-6 flex items-center justify-between border-y border-outline-gray-1 py-3">
+          <div class="flex items-center gap-6">
             <button
-              class="flex items-center gap-1.5 text-sm"
+              class="flex items-center gap-2 text-base"
               :class="likedByMe ? 'text-ink-red-6' : 'text-ink-gray-6'"
               @click="like"
             >
@@ -95,14 +100,14 @@
             </button>
             <button
               type="button"
-              class="flex items-center gap-1.5 text-sm text-ink-gray-6"
+              class="flex items-center gap-2 text-base text-ink-gray-6"
               @click="focusCommentBox"
             >
               <span class="lucide-message-circle size-4" aria-hidden="true" />
               {{ commentCount }}
             </button>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1">
             <Button icon="lucide-send" variant="outline" theme="gray" @click="openShareDialog" />
             <Button
               icon="lucide-bookmark"
@@ -115,7 +120,7 @@
 
         <h2 class="mt-6 text-lg-semibold text-ink-gray-9">Responses ({{ commentCount }})</h2>
 
-        <div ref="commentBoxRef" class="mt-3">
+        <div ref="commentBoxRef" class="mt-6">
           <FormControl
             v-model="newComment"
             type="textarea"
@@ -134,13 +139,13 @@
 
         <div class="mt-6 divide-y divide-outline-gray-1">
           <div v-for="c in visibleComments" :key="c._key" class="py-4">
-            <div class="flex items-center gap-2">
-              <Avatar :image="c.comment_by_image" :label="c.comment_by_name" size="sm" />
-              <span class="text-sm-medium text-ink-gray-8">{{ c.comment_by_name }}</span>
+            <div class="flex items-center gap-4">
+              <Avatar :image="c.comment_by_image" :label="c.comment_by_name" size="2xl" />
+              <span class="text-p-sm-semibold text-ink-gray-8">{{ c.comment_by_name }}</span>
               <span class="text-xs text-ink-gray-5">{{ timeAgo(c.creation) }}</span>
             </div>
-            <p class="mt-1 pl-8 text-p-sm text-ink-gray-7">{{ c.content }}</p>
-            <div class="mt-1 flex items-center gap-3 pl-8 text-xs">
+            <p class="mt-1 pl-14 text-p-sm text-ink-gray-7">{{ c.content }}</p>
+            <div class="mt-2 flex items-center gap-4 pl-14 text-xs">
               <button
                 class="flex items-center gap-1"
                 :class="c.liked_by_me ? 'text-ink-red-6' : 'text-ink-gray-5'"
@@ -148,7 +153,7 @@
               >
                 <span
                   :class="c.liked_by_me ? 'lucide-heart fill-current' : 'lucide-heart'"
-                  class="size-3"
+                  class="size-4"
                   aria-hidden="true"
                 />
                 {{ c.like_count }}
@@ -163,7 +168,7 @@
               </button>
             </div>
 
-            <div v-if="replyingTo === c.name" class="mt-2 pl-8">
+            <div v-if="replyingTo === c.name" class="mt-2 pl-14">
               <FormControl
                 v-model="replyText"
                 type="textarea"
@@ -179,22 +184,22 @@
 
             <button
               v-if="repliesFor(c.name).length && !expandedReplies.has(c.name)"
-              class="mt-2 ml-8 flex items-center gap-1.5 text-xs text-ink-gray-5 hover:underline"
+              class="mt-2 ml-14 flex items-center gap-1.5 text-xs text-ink-gray-5 hover:underline"
               @click="expandedReplies.add(c.name)"
             >
               <span class="h-px w-6 bg-outline-gray-2" aria-hidden="true" />
               View {{ repliesFor(c.name).length }} {{ repliesFor(c.name).length === 1 ? 'reply' : 'replies' }}
             </button>
 
-            <div v-if="expandedReplies.has(c.name)" class="mt-2 ml-8 space-y-3">
+            <div v-if="expandedReplies.has(c.name)" class="mt-2 ml-14 space-y-3">
               <div v-for="r in repliesFor(c.name)" :key="r._key">
-                <div class="flex items-center gap-2">
-                  <Avatar :image="r.comment_by_image" :label="r.comment_by_name" size="sm" />
-                  <span class="text-sm-medium text-ink-gray-8">{{ r.comment_by_name }}</span>
+                <div class="flex items-center gap-4">
+                  <Avatar :image="r.comment_by_image" :label="r.comment_by_name" size="2xl" />
+                  <span class="text-p-sm-semibold text-ink-gray-8">{{ r.comment_by_name }}</span>
                   <span class="text-xs text-ink-gray-5">{{ timeAgo(r.creation) }}</span>
                 </div>
-                <p class="mt-1 pl-8 text-p-sm text-ink-gray-7">{{ r.content }}</p>
-                <div class="mt-1 flex items-center gap-3 pl-8 text-xs">
+                <p class="mt-1 pl-14 text-p-sm text-ink-gray-7">{{ r.content }}</p>
+                <div class="mt-2 flex items-center gap-4 pl-14 text-xs">
                   <button
                     class="flex items-center gap-1"
                     :class="r.liked_by_me ? 'text-ink-red-6' : 'text-ink-gray-5'"
@@ -202,7 +207,7 @@
                   >
                     <span
                       :class="r.liked_by_me ? 'lucide-heart fill-current' : 'lucide-heart'"
-                      class="size-3"
+                      class="size-4"
                       aria-hidden="true"
                     />
                     {{ r.like_count }}
@@ -217,7 +222,7 @@
                   </button>
                 </div>
 
-                <div v-if="replyingTo === r.name" class="mt-2 pl-8">
+                <div v-if="replyingTo === r.name" class="mt-2 pl-14">
                   <FormControl
                     v-model="replyText"
                     type="textarea"
@@ -233,7 +238,7 @@
               </div>
 
               <button
-                class="ml-8 flex items-center gap-1.5 text-xs text-ink-gray-5 hover:underline"
+                class="ml-14 flex items-center gap-1.5 text-xs text-ink-gray-5 hover:underline"
                 @click="expandedReplies.delete(c.name)"
               >
                 Hide replies
@@ -244,7 +249,7 @@
 
         <button
           v-if="topLevelComments.length > visibleCount"
-          class="mt-2 w-full text-center text-sm text-ink-gray-6 hover:underline"
+          class="mt-6 w-full text-center text-base text-ink-gray-6 hover:underline"
           @click="visibleCount += 10"
         >
           Show more comments
@@ -259,7 +264,6 @@ import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   Avatar,
-  Badge,
   Breadcrumbs,
   Button,
   dialog,
@@ -791,13 +795,6 @@ function timeAgo(value) {
 </script>
 
 <style scoped>
-/* Avatar's `size` prop only goes up to `3xl` (text-3xl), which reads small
-   against the 80px circle this page uses — there's no bigger enum step, so
-   reach past the label div's own class straight to a fixed size instead. */
-.author-avatar :deep(.uppercase) {
-  font-size: 2rem;
-}
-
 /*
  * Images inserted in the editor carry an explicit pixel width/height (the
  * source photo's natural size, unless the author manually resized it while
@@ -810,8 +807,17 @@ function timeAgo(value) {
  */
 :deep(.not-prose) {
   width: 100% !important;
-  height: 50vh !important;
-  min-height: 240px !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+/* The image sits in its own wrapper div carrying the editor's generic `my-2`
+   (8px) block spacing — Figma's image blocks use 16px above and below, so
+   this overrides just that one wrapper rather than every `my-2` element in
+   the article (which would also catch unrelated content). */
+:deep(div:has(> .not-prose)) {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
 }
 /* The <img>/<video> sit inside their own unsized wrapper div — a percentage
    height can't resolve through an auto-height ancestor, so that wrapper
@@ -824,10 +830,5 @@ function timeAgo(value) {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
-}
-@media (min-width: 640px) {
-  :deep(.not-prose) {
-    height: 420px !important;
-  }
 }
 </style>
