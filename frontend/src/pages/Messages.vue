@@ -164,7 +164,7 @@
           <template v-else>You can't reply to this conversation.</template>
         </div>
 
-        <ScrollArea ref="scrollAreaRef" class="flex-1 px-4 py-3">
+        <ScrollArea ref="scrollAreaRef" class="flex-1 px-4 pb-3 pt-6">
           <LoadingText v-if="messages.loading && !messageList.length" :lines="6" />
           <div v-else class="space-y-4">
             <div
@@ -496,20 +496,29 @@
                 <div class="flex items-center justify-between px-1.5 pb-1.5">
                   <TooltipProvider :hover-delay="0.4" :skip-delay="0.3">
                     <div class="flex items-center gap-0.5">
-                      <FileUploader ref="fileUploaderRef" @success="onFileUploaded">
-                        <template #default="{ uploading, openFileSelector }">
-                          <Tooltip text="Attach file">
-                            <button
-                              type="button"
-                              class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
-                              :disabled="uploading || conversation.data.is_blocked || !!editingMessage"
-                              @click="openFileSelector"
-                            >
-                              <span class="lucide-paperclip size-4" aria-hidden="true" />
-                            </button>
-                          </Tooltip>
-                        </template>
-                      </FileUploader>
+                      <!-- Plain multi-select input, not <FileUploader> — that component's
+                           underlying <input type="file"> has no `multiple` attribute and
+                           its onFileAdd only ever reads files[0], so the OS picker itself
+                           only ever allowed choosing one file at a time. Reuses the same
+                           useFileUpload()-backed upload path already used for pasted
+                           clipboard images (see onComposerPaste) instead. -->
+                      <input
+                        ref="attachFileInputRef"
+                        type="file"
+                        multiple
+                        class="hidden"
+                        @change="onAttachFilesSelected"
+                      />
+                      <Tooltip text="Attach file">
+                        <button
+                          type="button"
+                          class="flex size-7 items-center justify-center rounded text-ink-gray-5 hover:bg-surface-gray-2 hover:text-ink-gray-8 disabled:opacity-50"
+                          :disabled="attachingFiles || conversation.data.is_blocked || !!editingMessage"
+                          @click="attachFileInputRef?.click()"
+                        >
+                          <span class="lucide-paperclip size-4" aria-hidden="true" />
+                        </button>
+                      </Tooltip>
 
                       <Tooltip text="Formatting">
                         <button
@@ -680,10 +689,21 @@
           <span class="lucide-x size-5" aria-hidden="true" />
         </button>
 
+        <!-- target="_blank": download_attachment serves images with
+             Content-Disposition: inline (so the message grid's own <img>
+             can render them) rather than "attachment" — the `download`
+             attribute alone doesn't reliably force a save in the current
+             tab against that header, and without target="_blank" the
+             browser can end up navigating this tab away to the raw image
+             instead, which then looks like the whole app flashing/reloading
+             when the user goes back. Opening in a new tab keeps whatever
+             happens fully isolated from the SPA. -->
         <a
           v-if="currentLightboxImage"
           :href="currentLightboxImage.file_url"
           :download="currentLightboxImage.file_name || ''"
+          target="_blank"
+          rel="noopener"
           class="absolute right-16 top-4 flex size-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
         >
           <span class="lucide-download size-5" aria-hidden="true" />
@@ -733,7 +753,6 @@ import {
   Button,
   Dialog,
   Dropdown,
-  FileUploader,
   FormControl,
   LoadingText,
   PageHeader,
@@ -802,7 +821,8 @@ const editingMessage = ref(null)
 const scrollAreaRef = ref(null)
 const composerEditorRef = ref(null)
 const composerWrapperRef = ref(null)
-const fileUploaderRef = ref(null)
+const attachFileInputRef = ref(null)
+const attachingFiles = ref(false)
 const showFormatting = ref(false)
 const showPollDialog = ref(false)
 const pollQuestion = ref('')
@@ -1364,25 +1384,45 @@ function onLightboxKeydown(e) {
 onMounted(() => window.addEventListener('keydown', onLightboxKeydown))
 onBeforeUnmount(() => window.removeEventListener('keydown', onLightboxKeydown))
 
-// Resetting the underlying <input type="file">'s value after every pick is
-// required so selecting the same file again later still fires a change
-// event — browsers don't re-fire it when the file list is unchanged.
+const { upload: uploadFile } = useFileUpload()
+
 function onFileUploaded(file) {
   pendingAttachments.value = [
     ...pendingAttachments.value,
     { file_url: file.file_url, file_name: file.file_name, file_size: file.file_size },
   ]
-  const inputEl = fileUploaderRef.value?.inputRef?.()
-  if (inputEl) inputEl.value = ''
+}
+
+// The paperclip button's file picker — uploads every selected file (not
+// just the first), one at a time so a slow upload doesn't fail the rest of
+// the batch. Resetting the input's own value afterward is required so
+// picking the exact same file again later still fires a change event —
+// browsers don't re-fire it when the file list is unchanged.
+async function onAttachFilesSelected(event) {
+  const files = Array.from(event.target.files || [])
+  event.target.value = ''
+  if (!files.length) return
+
+  attachingFiles.value = true
+  try {
+    for (const file of files) {
+      try {
+        const uploaded = await uploadFile(file, { private: true })
+        onFileUploaded(uploaded)
+      } catch (err) {
+        toast.error(err?.message || `Error uploading ${file.name}`)
+      }
+    }
+  } finally {
+    attachingFiles.value = false
+  }
 }
 
 // Screenshots/copied images arrive as clipboard files, not text — same
-// upload path as the paperclip button (FileUploader), just without a file
-// picker in between. Only image items are intercepted; a plain text paste
-// (the common case) is left alone to fall through to the editor's own
-// default handling.
-const { upload: uploadPastedFile } = useFileUpload()
-
+// upload path as the paperclip button, just without a file picker in
+// between. Only image items are intercepted; a plain text paste (the
+// common case) is left alone to fall through to the editor's own default
+// handling.
 async function onComposerPaste(event) {
   if (conversation.data?.is_blocked) return
 
@@ -1395,7 +1435,7 @@ async function onComposerPaste(event) {
     const file = item.getAsFile()
     if (!file) continue
     try {
-      const uploaded = await uploadPastedFile(file, { private: true })
+      const uploaded = await uploadFile(file, { private: true })
       onFileUploaded(uploaded)
     } catch (err) {
       toast.error(err?.message || 'Error uploading image')
