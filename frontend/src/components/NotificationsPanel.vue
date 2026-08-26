@@ -92,7 +92,7 @@
                     theme="gray"
                     size="sm"
                     label="Accept"
-                    :loading="isResponding(n.type)"
+                    :loading="isLoadingKey(n, 'accept')"
                     @click.stop="accept(n)"
                   />
                   <Button
@@ -100,7 +100,7 @@
                     theme="gray"
                     size="sm"
                     label="Decline"
-                    :loading="isResponding(n.type)"
+                    :loading="isLoadingKey(n, 'decline')"
                     @click.stop="decline(n)"
                   />
                 </div>
@@ -127,7 +127,7 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Avatar, Badge, Button, LoadingText, ScrollArea, useCall } from 'frappe-ui'
 import { unreadNotifCount } from '@/data/notifications'
@@ -215,8 +215,17 @@ function isRespondable(type) {
   return type in RESPOND_CALLS
 }
 
-function isResponding(type) {
-  return RESPOND_CALLS[type]?.loading || false
+// Keyed by `${notification name}:accept` / `:decline` — a shared per-*type*
+// loading flag (the useCall instance's own `.loading`) would light up both
+// buttons on every notification of that type the instant any one of them
+// was clicked, since Accept and Decline for every "Group Invite" (say) all
+// read the exact same flag. Tracking which specific button on which
+// specific notification is in flight keeps the spinner on only the one
+// actually clicked.
+const loadingKeys = reactive(new Set())
+
+function isLoadingKey(n, action) {
+  return loadingKeys.has(`${n.name}:${action}`)
 }
 
 // Navigating off *this click's own* resolved promise — not the shared
@@ -229,23 +238,32 @@ function isResponding(type) {
 // to arrive first. Each `.submit()` call returns its own promise resolved
 // with its own response, so chaining off that instead ties the navigation
 // to this specific request, regardless of what else is in flight.
-function accept(n) {
+function respond(n, action) {
   const call = RESPOND_CALLS[n.type]
   if (!call) return
-  call.submit({ name: n.reference_name, accept: 1 }).then((data) => {
-    if (!data) return
-    if (data.conversation) {
-      open.value = false
-      router.push({ name: 'Messages', params: { conversationId: data.conversation } })
-    } else if (data.publication) {
-      open.value = false
-      router.push({ name: 'PublicationDetail', params: { handle: data.publication } })
-    }
-  })
+  const key = `${n.name}:${action}`
+  loadingKeys.add(key)
+  call
+    .submit({ name: n.reference_name, accept: action === 'accept' ? 1 : 0 })
+    .then((data) => {
+      if (action !== 'accept' || !data) return
+      if (data.conversation) {
+        open.value = false
+        router.push({ name: 'Messages', params: { conversationId: data.conversation } })
+      } else if (data.publication) {
+        open.value = false
+        router.push({ name: 'PublicationDetail', params: { handle: data.publication } })
+      }
+    })
+    .finally(() => loadingKeys.delete(key))
+}
+
+function accept(n) {
+  respond(n, 'accept')
 }
 
 function decline(n) {
-  RESPOND_CALLS[n.type]?.submit({ name: n.reference_name, accept: 0 })
+  respond(n, 'decline')
 }
 
 const ICONS = {
