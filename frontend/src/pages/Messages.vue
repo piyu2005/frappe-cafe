@@ -254,6 +254,8 @@
                     >
                       <img
                         :src="a.file_url"
+                        loading="lazy"
+                        decoding="async"
                         class="rounded object-cover"
                         :class="imageAttachments(m).length > 1 ? 'size-full' : 'max-h-64'"
                       />
@@ -285,6 +287,8 @@
                     <img
                       v-if="m.link_image"
                       :src="m.link_image"
+                      loading="lazy"
+                      decoding="async"
                       class="size-14 shrink-0 rounded object-cover"
                     />
                     <div class="min-w-0">
@@ -303,7 +307,7 @@
                     rel="noopener"
                     class="mt-2 block overflow-hidden rounded border border-outline-gray-1"
                   >
-                    <img v-if="m.link_image" :src="m.link_image" class="h-28 w-full object-cover" />
+                    <img v-if="m.link_image" :src="m.link_image" loading="lazy" decoding="async" class="h-28 w-full object-cover" />
                     <div class="p-2">
                       <div class="truncate text-xs font-medium">{{ m.link_title }}</div>
                       <p v-if="m.link_description" class="mt-0.5 line-clamp-2 text-xs opacity-80">

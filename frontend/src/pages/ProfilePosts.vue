@@ -79,6 +79,8 @@
           <img
             v-if="thumbnailFor(post)"
             :src="thumbnailFor(post)"
+            loading="lazy"
+            decoding="async"
             class="h-20 w-24 shrink-0 rounded-md object-cover"
           />
         </router-link>

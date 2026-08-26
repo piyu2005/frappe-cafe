@@ -96,6 +96,8 @@
             <img
               v-if="coverImageFor(post)"
               :src="coverImageFor(post)"
+              loading="lazy"
+              decoding="async"
               class="h-20 w-24 shrink-0 rounded-md object-cover"
             />
           </router-link>
