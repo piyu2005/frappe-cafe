@@ -45,7 +45,7 @@
         <p class="text-p-base text-ink-gray-6">No writings found.</p>
       </div>
 
-      <div v-else class="mt-6 divide-y divide-outline-gray-1">
+      <div v-else class="mt-2 divide-y divide-outline-gray-1">
         <router-link
           v-for="post in posts.data"
           :key="post.name"
