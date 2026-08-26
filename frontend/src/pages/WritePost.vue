@@ -49,7 +49,7 @@
       :lines="10"
     />
 
-    <div v-else class="mx-auto max-w-[770px] px-4 py-6 sm:px-5 sm:py-10">
+    <div v-else class="mx-auto max-w-[600px] px-4 py-6 sm:px-0 sm:py-10">
       <p v-if="lastSavedLabel" class="text-center text-sm text-ink-gray-5">
         {{ statusLabel }} · Last saved {{ lastSavedLabel }}
       </p>
@@ -63,7 +63,7 @@
       >
         <template #default>
           <div
-            class="mt-4 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-outline-gray-2 bg-surface-base px-2 py-1.5 shadow-sm sm:w-fit [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+            class="mt-4 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-outline-gray-2 bg-surface-base px-2 py-1 shadow-sm sm:w-fit [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
           >
             <EditorFixedMenu :items="toolbar" button-size="sm" class="shrink-0" />
           </div>
@@ -72,12 +72,12 @@
             ref="titleInputRef"
             v-model="form.title"
             placeholder="Give your story a title"
-            class="mt-8 w-full border-0 bg-transparent p-0 text-2xl font-semibold text-ink-gray-9 placeholder:text-ink-gray-4 focus:outline-none focus:ring-0 sm:text-3xl"
+            class="mt-4 w-full border-0 bg-transparent p-0 text-p-4xl-semibold text-ink-gray-9 placeholder:text-ink-gray-4 focus:outline-none focus:ring-0"
             @keydown.enter.prevent="focusContentStart"
           />
 
           <EditorBubbleMenu :items="bubbleToolbar" />
-          <EditorContent class="mt-4 min-h-[420px] text-ink-gray-8" />
+          <EditorContent class="mt-4 min-h-[540px] text-ink-gray-8" />
         </template>
       </Editor>
 
