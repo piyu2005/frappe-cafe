@@ -75,10 +75,16 @@
         </Editor>
 
         <div v-if="post.data.tags.length" class="mt-6 flex flex-wrap gap-2">
-          <Badge v-for="tag in post.data.tags" :key="tag" :label="tag" variant="subtle" size="lg" />
+          <span
+            v-for="tag in post.data.tags"
+            :key="tag"
+            class="rounded bg-surface-gray-2 px-2 py-1.5 text-base text-ink-gray-6"
+          >
+            {{ tag }}
+          </span>
         </div>
 
-        <div class="mt-6 flex items-center justify-between border-y border-outline-gray-1">
+        <div class="mt-6 flex items-center justify-between border-y border-outline-gray-1 py-3">
           <div class="flex items-center gap-6">
             <button
               class="flex items-center gap-2 text-base"
@@ -243,7 +249,7 @@
 
         <button
           v-if="topLevelComments.length > visibleCount"
-          class="mt-2 w-full text-center text-sm text-ink-gray-6 hover:underline"
+          class="mt-6 w-full text-center text-base text-ink-gray-6 hover:underline"
           @click="visibleCount += 10"
         >
           Show more comments
@@ -258,7 +264,6 @@ import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   Avatar,
-  Badge,
   Breadcrumbs,
   Button,
   dialog,
