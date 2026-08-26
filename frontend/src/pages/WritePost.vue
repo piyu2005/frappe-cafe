@@ -49,7 +49,7 @@
       :lines="10"
     />
 
-    <div v-else class="mx-auto max-w-[770px] px-4 py-6 sm:px-5 sm:py-10">
+    <div v-else class="mx-auto max-w-[600px] px-4 py-6 sm:px-0 sm:py-10">
       <p v-if="lastSavedLabel" class="text-center text-sm text-ink-gray-5">
         {{ statusLabel }} · Last saved {{ lastSavedLabel }}
       </p>
@@ -63,7 +63,7 @@
       >
         <template #default>
           <div
-            class="mt-4 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-outline-gray-2 bg-surface-base px-2 py-1.5 shadow-sm sm:w-fit [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+            class="mt-4 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-outline-gray-2 bg-surface-base px-2 py-1 shadow-sm sm:w-fit [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
           >
             <EditorFixedMenu :items="toolbar" button-size="sm" class="shrink-0" />
           </div>
@@ -72,12 +72,12 @@
             ref="titleInputRef"
             v-model="form.title"
             placeholder="Give your story a title"
-            class="mt-8 w-full border-0 bg-transparent p-0 text-2xl font-semibold text-ink-gray-9 placeholder:text-ink-gray-4 focus:outline-none focus:ring-0 sm:text-3xl"
+            class="mt-4 w-full border-0 bg-transparent p-0 text-p-4xl-semibold text-ink-gray-9 placeholder:text-ink-gray-4 focus:outline-none focus:ring-0"
             @keydown.enter.prevent="focusContentStart"
           />
 
           <EditorBubbleMenu :items="bubbleToolbar" />
-          <EditorContent class="mt-4 min-h-[420px] text-ink-gray-8" />
+          <EditorContent class="mt-4 min-h-[calc(100vh-320px)] text-ink-gray-8" />
         </template>
       </Editor>
 
@@ -732,13 +732,14 @@ const mobileMoreOptions = computed(() => {
 <style scoped>
 /* Mirrors PostDetail.vue's published-view treatment exactly (see its own
    comment for the full rationale) — without this, an inserted image shows
-   at its raw natural size while writing, then jumps to a fixed-height,
+   at its raw natural size while writing, then jumps to a differently-shaped,
    cropped size the moment it's actually posted. Keeping both identical
    makes the editor a true preview of the published result. */
 :deep(.not-prose) {
   width: 100% !important;
-  height: 50vh !important;
-  min-height: 240px !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 :deep(.not-prose > div) {
   height: 100% !important;
@@ -754,9 +755,11 @@ const mobileMoreOptions = computed(() => {
 :deep(.not-prose img) {
   cursor: grab;
 }
-@media (min-width: 640px) {
-  :deep(.not-prose) {
-    height: 420px !important;
-  }
+/* The image sits in its own wrapper div carrying the editor's generic `my-2`
+   (8px) block spacing — Figma's image blocks use 16px above and below (see
+   PostDetail.vue's identical override). */
+:deep(div:has(> .not-prose)) {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
 }
 </style>
