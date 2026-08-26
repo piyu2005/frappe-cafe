@@ -41,6 +41,30 @@ def _preview_text(content):
 	return re.sub(r"\s+", " ", stripped).strip() or None
 
 
+def _conversation_list_preview(last_message):
+	"""One-line summary for the conversation list sidebar. A message with no
+	text — an attachment-only image/file, a shared post, or a poll — still
+	has a real `content` of None, which _preview_text correctly turns into
+	None too; falling straight through to the caller's own "No messages
+	yet" text then would be wrong for a conversation that does have a
+	message, just not a text one. Named after whichever kind of payload
+	it actually carries instead."""
+	if not last_message:
+		return None
+	if last_message.is_deleted:
+		return "This message was deleted"
+	preview = _preview_text(last_message.content)
+	if preview:
+		return preview
+	if last_message.shared_post:
+		return "Shared a post"
+	if last_message.poll:
+		return "Sent a poll"
+	if last_message.has_attachment:
+		return "Sent an attachment"
+	return None
+
+
 def _is_member(conversation, user=None):
 	user = user or frappe.session.user
 	return frappe.db.exists("Conversation Member", {"conversation": conversation, "user": user})
@@ -447,7 +471,9 @@ def list_conversations():
 	placeholders = ", ".join(["%s"] * len(conv_ids))
 	for row in frappe.db.sql(
 		f"""
-		SELECT m.conversation, m.content, m.creation, m.sender, m.is_deleted
+		SELECT m.conversation, m.content, m.creation, m.sender, m.is_deleted,
+			m.shared_post, m.poll,
+			EXISTS(SELECT 1 FROM `tabMessage Attachment` ma WHERE ma.parent = m.name) AS has_attachment
 		FROM `tabMessage` m
 		INNER JOIN (
 			SELECT conversation, MAX(creation) AS max_creation
@@ -503,13 +529,7 @@ def list_conversations():
 				"other_user": other_user,
 				"is_group": conv.is_group,
 				"muted": m.muted,
-				"last_message": (
-					"This message was deleted"
-					if last_message and last_message.is_deleted
-					else _preview_text(last_message.content)
-					if last_message
-					else None
-				),
+				"last_message": _conversation_list_preview(last_message),
 				"last_message_at": last_message.creation if last_message else None,
 				"unread_count": 0 if m.muted else unread_count,
 			}

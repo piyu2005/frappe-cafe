@@ -80,7 +80,7 @@
               icon="lucide-house"
               :active="!notificationsOpen && route.name === 'Home'"
               to="/"
-              @click="notificationsOpen = false"
+              @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
             <RailItem
               label="Search"
@@ -88,7 +88,7 @@
               icon="lucide-search"
               :active="!notificationsOpen && route.name === 'SearchPeople'"
               :to="{ name: 'SearchPeople' }"
-              @click="notificationsOpen = false"
+              @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
             <RailItem
               label="Messages"
@@ -98,7 +98,7 @@
               :badge="unreadMessageCount.data || 0"
               badge-style="count"
               :to="{ name: 'Messages' }"
-              @click="notificationsOpen = false"
+              @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
             <RailItem
               label="Notifications"
@@ -107,7 +107,7 @@
               :active="notificationsOpen"
               :badge="unreadNotifCount.data || 0"
               badge-style="count"
-              @click="notificationsOpen = !notificationsOpen"
+              @click="(e) => { notificationsOpen = !notificationsOpen; blurTrigger(e) }"
             />
             <RailItem
               label="Profile"
@@ -115,7 +115,7 @@
               icon="lucide-user"
               :active="!notificationsOpen && route.name === 'Profile'"
               :to="{ name: 'Profile' }"
-              @click="notificationsOpen = false"
+              @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
             <RailItem
               label="Settings"
@@ -123,7 +123,7 @@
               icon="lucide-settings"
               :active="!notificationsOpen && route.name === 'Settings'"
               :to="{ name: 'Settings' }"
-              @click="notificationsOpen = false"
+              @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
           </div>
 
@@ -135,7 +135,7 @@
                expands on click too) since that's branding, not a labeled
                collapse/expand control. -->
           <div class="mt-auto flex w-full flex-col items-center gap-3">
-            <RailItem label="Expand" variant="ghost" @click="sidebarOpen = true">
+            <RailItem label="Expand" variant="ghost" @click="(e) => { sidebarOpen = true; blurTrigger(e) }">
               <span
                 class="lucide-panel-right-open size-4 rotate-180 transition-transform duration-300 ease-in-out"
                 aria-hidden="true"
@@ -284,6 +284,17 @@ watch(
     notificationsOpen.value = false
   },
 )
+
+// RailItem's Tooltip (unlike SidebarItem's) has no way to disable itself, and
+// reka-ui opens tooltips on focus as well as hover for keyboard accessibility.
+// A mouse click still leaves the trigger focused afterwards, so without this
+// its tooltip can pop back open later with no real hover behind it — e.g.
+// after the panel/route changes and reflows, or focus otherwise returns near
+// the rail. Blurring right after the click removes that lingering focus so
+// the tooltip only ever shows for an actual hover or deliberate Tab press.
+function blurTrigger(event) {
+  event.currentTarget?.blur()
+}
 
 function handleNewMessage(payload) {
   unreadMessageCount.reload()
