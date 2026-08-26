@@ -75,6 +75,8 @@
             <img
               v-if="coverImageFor(post)"
               :src="coverImageFor(post)"
+              loading="lazy"
+              decoding="async"
               class="mt-1 h-24 w-32 shrink-0 rounded-md bg-surface-gray-2 object-cover"
             />
           </div>
