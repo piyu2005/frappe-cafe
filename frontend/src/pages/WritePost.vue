@@ -732,13 +732,14 @@ const mobileMoreOptions = computed(() => {
 <style scoped>
 /* Mirrors PostDetail.vue's published-view treatment exactly (see its own
    comment for the full rationale) — without this, an inserted image shows
-   at its raw natural size while writing, then jumps to a fixed-height,
+   at its raw natural size while writing, then jumps to a differently-shaped,
    cropped size the moment it's actually posted. Keeping both identical
    makes the editor a true preview of the published result. */
 :deep(.not-prose) {
   width: 100% !important;
-  height: 50vh !important;
-  min-height: 240px !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 :deep(.not-prose > div) {
   height: 100% !important;
@@ -754,9 +755,11 @@ const mobileMoreOptions = computed(() => {
 :deep(.not-prose img) {
   cursor: grab;
 }
-@media (min-width: 640px) {
-  :deep(.not-prose) {
-    height: 420px !important;
-  }
+/* The image sits in its own wrapper div carrying the editor's generic `my-2`
+   (8px) block spacing — Figma's image blocks use 16px above and below (see
+   PostDetail.vue's identical override). */
+:deep(div:has(> .not-prose)) {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
 }
 </style>
