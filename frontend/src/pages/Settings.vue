@@ -4,19 +4,19 @@
     <Button variant="solid" theme="gray" icon-left="lucide-plus" label="New Post" route="/write" />
   </PageHeader>
   <ScrollArea class="h-full">
-    <div class="mx-auto max-w-[760px] px-4 py-6 sm:px-5 sm:py-8">
+    <div class="mx-auto max-w-[600px] px-4 py-6 sm:px-0 sm:pt-12 sm:pb-12">
       <Tabs v-model="tab" :tabs="tabs" class="settings-tabs">
         <template #tab-panel="{ tab: activeTab }">
-          <div v-if="activeTab.label === 'Account'" class="divide-y divide-outline-gray-1">
-            <div class="flex items-center justify-between py-4">
+          <div v-if="activeTab.label === 'Account'" class="pt-4 divide-y divide-outline-gray-1">
+            <div class="flex items-center justify-between py-6">
               <span class="text-base-medium text-ink-gray-8">Username & Subdomain</span>
               <span class="text-sm text-ink-gray-5">@{{ username }}</span>
             </div>
-            <div class="flex items-center justify-between py-4">
+            <div class="flex items-center justify-between py-6">
               <span class="text-base-medium text-ink-gray-8">Email Address</span>
               <span class="text-sm text-ink-gray-5">{{ session.user }}</span>
             </div>
-            <div class="flex items-center justify-between py-4">
+            <div class="flex items-center justify-between py-6">
               <div>
                 <div class="text-base-medium text-ink-gray-8">Private account</div>
                 <p class="text-sm text-ink-gray-5">
@@ -26,20 +26,20 @@
               <Switch v-model="isPrivate" :disabled="updatePrivacy.loading" @update:model-value="handlePrivacyToggle" />
             </div>
             <button
-              class="flex w-full items-center justify-between py-4 text-left"
+              class="flex w-full items-center justify-between py-6 text-left"
               @click="openChangePassword"
             >
               <span class="text-base-medium text-ink-gray-8">Change Password</span>
               <span class="lucide-arrow-right size-4 text-ink-gray-5" aria-hidden="true" />
             </button>
             <button
-              class="flex w-full items-center justify-between py-4 text-left"
+              class="flex w-full items-center justify-between py-6 text-left"
               @click="handleLogout"
             >
               <span class="text-base-medium text-ink-gray-8">Log out</span>
               <span class="lucide-log-out size-4 text-ink-gray-5" aria-hidden="true" />
             </button>
-            <div class="flex w-full items-center justify-between py-4 text-left opacity-50">
+            <div class="flex w-full items-center justify-between py-6 text-left opacity-50">
               <div>
                 <span class="text-base-medium text-ink-gray-8">Delete account</span>
                 <p class="text-sm text-ink-gray-5">Temporarily unavailable — contact support if you need this.</p>
@@ -57,7 +57,7 @@
               No saved posts yet.
             </p>
             <div v-else class="divide-y divide-outline-gray-1">
-              <div v-for="p in savedPostsList" :key="p.name" class="flex items-center gap-3 py-4">
+              <div v-for="p in savedPostsList" :key="p.name" class="flex items-center gap-3 py-6">
                 <router-link
                   :to="{ name: 'PostDetail', params: { postId: p.name } }"
                   class="flex min-w-0 flex-1 items-stretch gap-4"
@@ -95,7 +95,7 @@
                 v-for="p in draftArchivePosts.data"
                 :key="p.name"
                 :to="{ name: 'WritePost', params: { postId: p.name } }"
-                class="flex items-stretch justify-between gap-4 py-4"
+                class="flex items-stretch justify-between gap-4 py-6"
               >
                 <div class="min-w-0 flex-1">
                   <div class="truncate text-base-medium text-ink-gray-9">{{ p.display_title || p.title || 'Untitled' }}</div>
@@ -327,10 +327,17 @@ function excerpt(content, length) {
 <style scoped>
 /* Tabs' own tablist carries a built-in horizontal px-5, on top of this
    page's container padding — so the tab labels sat further right than the
-   content rows below them, which have no padding of their own. Zeroing just
-   the tablist's left/right padding lines them back up. */
+   content rows below them, which have no padding of their own. Zeroing the
+   tablist's own padding (all sides — its `p-1` also added a few px of
+   vertical slack) and widening its `gap-5` (20px) to Figma's 32px, and
+   shrinking each trigger's own `py-2.5` down to `py-2`, brings the whole bar
+   to Figma's exact 33px-tall spec. */
 .settings-tabs :deep([role='tablist']) {
-  padding-left: 0;
-  padding-right: 0;
+  padding: 0;
+  gap: 32px;
+}
+.settings-tabs :deep([role='tab']) {
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 </style>
