@@ -30,6 +30,40 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Vue/Vue Router rarely change between deploys (pinned versions,
+        // not app code), but without this they're baked into the same
+        // "index" chunk as our own app setup — so every deploy forces a
+        // full re-download of all of it, even on a repeat visit where the
+        // browser already has last week's identical framework code cached.
+        // Splitting them out means only the (much smaller) chunk that
+        // actually changed needs to be fetched again.
+        //
+        // Deliberately NOT grouping frappe-ui the same way: it's imported
+        // from both `frappe-ui` (components) and `frappe-ui/editor`
+        // (tiptap/prosemirror), and a broad `id.includes('frappe-ui')`
+        // match pulls both into one chunk — merging the editor's ~500KB
+        // gzipped weight into a chunk every page loads, undoing Rollup's
+        // existing automatic split that keeps it out of pages that don't
+        // use the editor (Login, Home, Profile, Settings, ...). Left to
+        // Rollup's default chunking instead, same as tiptap/prosemirror
+        // itself — see optimizeDeps.exclude below for why a second,
+        // separately-bundled copy of tiptap would break at runtime.
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (
+            id.includes('node_modules/vue/') ||
+            id.includes('node_modules/vue-router/') ||
+            id.includes('node_modules/@vue/')
+          ) {
+            return 'vendor-vue'
+          }
+        },
+      },
+    },
+  },
   optimizeDeps: {
     exclude: [
       'frappe-ui',
