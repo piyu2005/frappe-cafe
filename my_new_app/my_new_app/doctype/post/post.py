@@ -1,5 +1,16 @@
+import io
+
 import frappe
 from frappe.model.document import Document
+
+# Feeds only ever show cover_image at a small fixed box (see Home.vue/
+# ProfilePosts.vue/PublicationDetail.vue's h-20/h-24 thumbnail classes) — full
+# original uploads (easily 500KB+) were being shipped for that, dominating
+# page weight even after images were made lazy-loading. cover_image's own
+# doctype description already calls it "Thumbnail shown in feeds", so this
+# resizes it down to what that description promises rather than adding a
+# second field.
+COVER_THUMBNAIL_SIZE = (480, 360)
 
 
 class Post(Document):
@@ -14,6 +25,10 @@ class Post(Document):
 			self.published_at = frappe.utils.now_datetime()
 		if self.post_type == "Image" and self.images and not self.cover_image:
 			self.cover_image = self.images[0].image
+		if self.cover_image and self.has_value_changed("cover_image"):
+			thumbnail_url = _make_cover_thumbnail(self.cover_image, self.name)
+			if thumbnail_url:
+				self.cover_image = thumbnail_url
 
 	def on_update(self):
 		if self.status == "Published" and self.has_value_changed("status"):
@@ -26,6 +41,36 @@ class Post(Document):
 		frappe.db.delete("Saved Post", {"post": self.name})
 		frappe.db.delete("Like", {"reference_type": "Post", "reference_name": self.name})
 		frappe.db.set_value("Message", {"shared_post": self.name}, "shared_post", None)
+
+
+def _make_cover_thumbnail(cover_image_url, post_name):
+	# Best-effort: an unresizable source (an external URL not on this site's
+	# own file storage, an already-deleted File record, a corrupt upload)
+	# should never block saving the post — it just keeps the original
+	# cover_image untouched.
+	try:
+		from PIL import Image
+
+		from frappe.utils.file_manager import get_file, save_file
+
+		filename, content = get_file(cover_image_url)
+		if isinstance(content, str):
+			return None
+
+		image = Image.open(io.BytesIO(content))
+		if image.mode != "RGB":
+			image = image.convert("RGB")
+		image.thumbnail(COVER_THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
+
+		buf = io.BytesIO()
+		image.save(buf, format="JPEG", quality=82)
+
+		base_name = filename.rsplit(".", 1)[0]
+		file_doc = save_file(f"{base_name}_thumb.jpg", buf.getvalue(), "Post", post_name, is_private=0)
+		return file_doc.file_url
+	except Exception:
+		frappe.log_error(title="Post cover thumbnail generation failed")
+		return None
 
 
 def _delete_comment_thread(post_name):
