@@ -618,6 +618,7 @@ def get_post(post_id):
 		post.images = [{"image": post.attachment}]
 	post.author_bio = frappe.db.get_value("User", post.author, "bio")
 	post.author_follower_count = _subscriber_count("User", post.author)
+	post.author_is_private = frappe.db.get_value("User", post.author, "is_private")
 
 	from my_new_app.follow import get_follow_state
 
