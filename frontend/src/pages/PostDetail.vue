@@ -680,18 +680,21 @@ function handleFollowClick() {
       }
     })
   } else {
-    // A private account's follow always lands as "requested", never
-    // immediately "following" — optimistically assume that (the common
-    // case for anyone gated behind a request in the first place) rather
-    // than guessing "following" and having it visibly downgrade once the
-    // real status lands.
-    authorFollowPending.value = true
+    // Only a private account's follow lands as "requested" — optimistically
+    // guessing that unconditionally made a public author's button flash
+    // "Requested" for a moment before the real "following" response landed.
+    if (post.data?.author_is_private) {
+      authorFollowPending.value = true
+    } else {
+      authorFollowingByMe.value = true
+    }
     followUser.submit({ user: post.data.author }).then((result) => {
       if (result) {
         authorFollowingByMe.value = result.status === 'following'
         authorFollowPending.value = result.status === 'requested'
         if (result.status === 'requested') toast.info('Follow request sent')
       } else {
+        authorFollowingByMe.value = false
         authorFollowPending.value = false
       }
     })
