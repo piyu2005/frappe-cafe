@@ -503,16 +503,21 @@ function handleFollowClick() {
       }
     })
   } else {
-    // A private account's follow always lands as "requested" - see
-    // PostDetail.vue's identical handler for why that's the safe optimistic
-    // guess rather than "following".
-    followPending.value = true
+    // Only a private account's follow lands as "requested" — optimistically
+    // guessing that unconditionally made a public account's button flash
+    // "Requested" for a moment before the real "following" response landed.
+    if (profile.data?.is_private) {
+      followPending.value = true
+    } else {
+      followingByMe.value = true
+    }
     followUser.submit({ user: targetUser.value }).then((result) => {
       if (result) {
         followingByMe.value = result.status === 'following'
         followPending.value = result.status === 'requested'
         if (result.status === 'requested') toast.info('Follow request sent')
       } else {
+        followingByMe.value = false
         followPending.value = false
       }
     })
