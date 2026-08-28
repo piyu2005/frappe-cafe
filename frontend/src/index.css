@@ -13,3 +13,20 @@
 .ProseMirror:focus-visible {
   outline: none;
 }
+
+/* Tooltips/popovers/dropdowns (reka-ui, via frappe-ui's Tooltip/Popover/
+   Dropdown) are positioned purely via an inline `transform` on this wrapper,
+   updated on every open and on every reposition while hovering between
+   neighbouring triggers (see Rail's shared TooltipProvider). `will-change`
+   promotes it to its own GPU layer up front instead of only on the first
+   transform change, so the compositor never has a stale/intermediate frame
+   of this element sitting in a shared layer to redraw from — the class of
+   bug behind a floating tooltip very briefly rendering at a leftover
+   position before snapping to the correct one. Reported as happening on a
+   real Chrome + real hardware combination this session couldn't reproduce
+   (headless and headed Chrome, DOM inspection, and frame-by-frame video
+   capture); this is the standard mitigation for that failure mode
+   regardless of the exact trigger. */
+[data-reka-popper-content-wrapper] {
+  will-change: transform;
+}
