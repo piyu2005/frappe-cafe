@@ -74,6 +74,9 @@
                 <span class="lucide-user size-4" aria-hidden="true" />
                 Introduction
               </div>
+              <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openEditBio">
+                <span class="lucide-pencil size-3.5" aria-hidden="true" />
+              </button>
             </div>
             <template v-if="profile.data.bio">
               <p class="text-p-base text-ink-gray-6" :class="introExpanded ? '' : 'line-clamp-3'">
@@ -580,8 +583,18 @@ function openEditHeader() {
       { name: 'headline', label: 'Headline', defaultValue: profile.data.headline },
       { name: 'job_title', label: 'Job title', defaultValue: profile.data.job_title },
       { name: 'company', label: 'Company', defaultValue: profile.data.company },
-      { name: 'bio', label: 'Introduction', type: 'textarea', defaultValue: profile.data.bio },
     ],
+    onConfirm: ({ values, close }) => {
+      updateProfile.submit(values)
+      close()
+    },
+  })
+}
+
+function openEditBio() {
+  dialog.prompt({
+    title: 'Edit introduction',
+    fields: [{ name: 'bio', label: 'Introduction', type: 'textarea', defaultValue: profile.data.bio }],
     onConfirm: ({ values, close }) => {
       updateProfile.submit(values)
       close()
