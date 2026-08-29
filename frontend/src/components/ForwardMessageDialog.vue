@@ -2,6 +2,22 @@
   <Dialog v-model="open" size="lg" title="Forward message">
     <template #default>
       <div class="flex flex-col gap-2">
+        <div v-if="selected.length" class="flex flex-wrap gap-1.5">
+          <span
+            v-for="t in selected"
+            :key="t.key"
+            class="flex items-center gap-1.5 rounded-full bg-surface-gray-2 py-1 pl-1 pr-2 text-sm text-ink-gray-8"
+          >
+            <Avatar :image="t.image" :label="t.label" size="sm" />
+            {{ t.label }}<span v-if="t.username" class="text-ink-gray-5">@{{ t.username }}</span>
+            <span
+              class="lucide-x size-3 cursor-pointer text-ink-gray-5 hover:text-ink-gray-8"
+              aria-hidden="true"
+              @click="remove(t)"
+            />
+          </span>
+        </div>
+
         <TextInput v-model="query" placeholder="Search by name">
           <template #prefix>
             <span class="lucide-search size-4 text-ink-gray-5" aria-hidden="true" />
@@ -16,8 +32,8 @@
             :key="r.key"
             type="button"
             class="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-surface-gray-1 disabled:opacity-50"
-            :disabled="forwarding"
-            @click="select(r)"
+            :disabled="sending"
+            @click="add(r)"
           >
             <Avatar :image="r.image" :label="r.label" size="sm" />
             <div class="min-w-0 flex-1">
@@ -29,19 +45,29 @@
       </div>
     </template>
     <template #actions="{ close }">
-      <div class="flex justify-end">
+      <div class="flex justify-end gap-2">
         <Button variant="outline" label="Cancel" @click="close" />
+        <Button
+          variant="solid"
+          theme="gray"
+          :label="selected.length > 1 ? `Send (${selected.length})` : 'Send'"
+          :loading="sending"
+          :disabled="!selected.length"
+          @click="send"
+        />
       </div>
     </template>
   </Dialog>
 </template>
 
 <script setup>
-// Single-select "who to forward to", built to match PeoplePicker's
+// Multi-select "who to forward to", built to match PeoplePicker's
 // search-as-you-type feel (used by New Group's member picker) rather than
 // the combobox-popup pattern the first version of this dialog used — typing
 // a name should show live matches directly under the field, not require
-// opening a separate dropdown first.
+// opening a separate dropdown first. Unlike the single-select version, a
+// click here just adds a chip; forwarding only actually happens on Send, so
+// the user gets a second chance to back out before anything is sent.
 import { computed, ref, watch } from 'vue'
 import { Avatar, Button, Dialog, LoadingText, TextInput, call, toast, useCall } from 'frappe-ui'
 
@@ -54,7 +80,8 @@ const open = defineModel({ default: false })
 const emit = defineEmits(['forwarded'])
 
 const query = ref('')
-const forwarding = ref(false)
+const sending = ref(false)
+const selected = ref([])
 
 const peopleSearch = useCall({
   url: '/api/v2/method/my_new_app.chat.search_people_to_message',
@@ -71,15 +98,18 @@ watch(query, () => {
 watch(open, (isOpen) => {
   if (!isOpen) return
   query.value = ''
+  selected.value = []
   peopleSearch.reload()
 })
 
 // Existing conversations (including groups) first, then anyone else on the
 // platform — a person who already has a DM is left out of the second group
 // so they don't show up twice under two different labels for the same chat.
+// Anything already picked is left out entirely, same as PeoplePicker.
 const results = computed(() => {
   const q = query.value.trim().toLowerCase()
   const existingDmUsers = new Set(props.conversations.map((c) => c.other_user).filter(Boolean))
+  const selectedKeys = new Set(selected.value.map((t) => t.key))
 
   const conversationResults = props.conversations
     .filter((c) => c.conversation !== props.excludeConversation)
@@ -103,23 +133,36 @@ const results = computed(() => {
       image: p.user_image,
     }))
 
-  return [...conversationResults, ...peopleResults]
+  return [...conversationResults, ...peopleResults].filter((r) => !selectedKeys.has(r.key))
 })
 
-async function select(r) {
-  if (forwarding.value || !props.message) return
-  forwarding.value = true
+function add(r) {
+  selected.value = [...selected.value, r]
+  query.value = ''
+}
+
+function remove(t) {
+  selected.value = selected.value.filter((r) => r.key !== t.key)
+}
+
+async function send() {
+  if (sending.value || !props.message || !selected.value.length) return
+  sending.value = true
   try {
-    const conversationId =
-      r.kind === 'person' ? (await call('my_new_app.chat.start_dm', { other_user: r.id })).conversation : r.id
-    await call('my_new_app.chat.forward_message', { message: props.message.name, conversation: conversationId })
-    toast.success('Message forwarded')
+    for (const target of selected.value) {
+      const conversationId =
+        target.kind === 'person'
+          ? (await call('my_new_app.chat.start_dm', { other_user: target.id })).conversation
+          : target.id
+      await call('my_new_app.chat.forward_message', { message: props.message.name, conversation: conversationId })
+    }
+    toast.success(selected.value.length > 1 ? `Message forwarded to ${selected.value.length} chats` : 'Message forwarded')
     open.value = false
     emit('forwarded')
   } catch (err) {
     toast.error(err.message || 'Could not forward message')
   } finally {
-    forwarding.value = false
+    sending.value = false
   }
 }
 </script>
