@@ -388,12 +388,12 @@
                     <span class="lucide-reply size-3.5" aria-hidden="true" />
                   </button>
 
-                  <Dropdown v-if="m.sender === session.user" :options="messageOptions(m)" placement="right">
+                  <Dropdown :options="messageOptions(m)" :placement="m.sender === session.user ? 'right' : 'left'">
                     <template #default="{ open }">
                       <button
                         type="button"
-                        class="absolute -top-3 -left-16 size-6 items-center justify-center rounded-full border border-outline-gray-1 bg-surface-base text-ink-gray-6"
-                        :class="open ? 'flex' : 'hidden group-hover:flex'"
+                        class="absolute -top-3 size-6 items-center justify-center rounded-full border border-outline-gray-1 bg-surface-base text-ink-gray-6"
+                        :class="[m.sender === session.user ? '-left-16' : '-right-16', open ? 'flex' : 'hidden group-hover:flex']"
                       >
                         <span class="lucide-more-horizontal size-3.5" aria-hidden="true" />
                       </button>
@@ -679,6 +679,14 @@
       @left="conversations.reload()"
     />
 
+    <ForwardMessageDialog
+      v-model="forwardDialogOpen"
+      :message="forwardingMessage"
+      :conversations="conversations.data || []"
+      :exclude-conversation="activeConversationId"
+      @forwarded="conversations.reload()"
+    />
+
     <Teleport to="body">
       <div
         v-if="lightboxOpen"
@@ -802,6 +810,7 @@ const isMobile = useIsMobile()
 import MentionChip from '@/components/MentionChip.vue'
 import CreateGroupDialog from '@/components/CreateGroupDialog.vue'
 import GroupMembersDialog from '@/components/GroupMembersDialog.vue'
+import ForwardMessageDialog from '@/components/ForwardMessageDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -1224,10 +1233,22 @@ function cancelEdit() {
 }
 
 function messageOptions(m) {
-  return [
-    { label: 'Edit', icon: 'lucide-pencil', onClick: () => startEdit(m) },
-    { label: 'Delete', icon: 'lucide-trash-2', onClick: () => confirmDeleteMessage(m) },
-  ]
+  const options = [{ label: 'Forward', icon: 'lucide-forward', onClick: () => openForwardDialog(m) }]
+  if (m.sender === session.user) {
+    options.push(
+      { label: 'Edit', icon: 'lucide-pencil', onClick: () => startEdit(m) },
+      { label: 'Delete', icon: 'lucide-trash-2', onClick: () => confirmDeleteMessage(m) },
+    )
+  }
+  return options
+}
+
+const forwardDialogOpen = ref(false)
+const forwardingMessage = ref(null)
+
+function openForwardDialog(m) {
+  forwardingMessage.value = m
+  forwardDialogOpen.value = true
 }
 
 const deleteMessageCall = useCall({

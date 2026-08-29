@@ -15,6 +15,7 @@ declare module 'vue' {
     AuthCard: typeof import('./src/components/AuthCard.vue')['default']
     CreateGroupDialog: typeof import('./src/components/CreateGroupDialog.vue')['default']
     EmojiPicker: typeof import('./src/components/EmojiPicker.vue')['default']
+    ForwardMessageDialog: typeof import('./src/components/ForwardMessageDialog.vue')['default']
     GoogleIcon: typeof import('./src/components/GoogleIcon.vue')['default']
     GroupMembersDialog: typeof import('./src/components/GroupMembersDialog.vue')['default']
     MentionChip: typeof import('./src/components/MentionChip.vue')['default']
