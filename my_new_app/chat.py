@@ -1107,6 +1107,47 @@ def send_message(conversation, content=None, attachments=None, shared_post=None,
 
 
 @frappe.whitelist()
+def forward_message(message, conversation):
+	source = frappe.get_doc("Message", message)
+	if source.is_deleted:
+		frappe.throw("This message has been deleted")
+	# Proves the forwarder actually had legitimate access to this message
+	# (and therefore to whatever it's attaching) - what makes it safe for
+	# the re-link below to bypass send_message's normal owner-only check.
+	_require_member(source.conversation)
+
+	attachments = [
+		{"file_url": a.file_url, "file_name": a.file_name, "file_size": a.file_size}
+		for a in source.attachments
+	]
+	result = send_message(
+		conversation=conversation,
+		content=source.content,
+		attachments=attachments,
+		shared_post=source.shared_post,
+	)
+
+	# send_message only re-links a File it can see is owned by the caller -
+	# correct for its usual "attach whatever I just uploaded" callers, but a
+	# forwarded attachment normally belongs to whoever sent the original
+	# message. The membership check above is what makes re-linking it here
+	# safe regardless of that original owner.
+	for a in attachments:
+		file_name = frappe.db.get_value(
+			"File", {"file_url": a["file_url"], "attached_to_doctype": "Message", "attached_to_name": source.name}, "name"
+		)
+		if file_name:
+			frappe.db.set_value(
+				"File",
+				file_name,
+				{"attached_to_doctype": "Message", "attached_to_name": result["name"]},
+				update_modified=False,
+			)
+
+	return result
+
+
+@frappe.whitelist()
 def edit_message(message, content):
 	doc = frappe.get_doc("Message", message)
 	if doc.sender != frappe.session.user:

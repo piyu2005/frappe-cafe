@@ -388,12 +388,12 @@
                     <span class="lucide-reply size-3.5" aria-hidden="true" />
                   </button>
 
-                  <Dropdown v-if="m.sender === session.user" :options="messageOptions(m)" placement="right">
+                  <Dropdown :options="messageOptions(m)" :placement="m.sender === session.user ? 'right' : 'left'">
                     <template #default="{ open }">
                       <button
                         type="button"
-                        class="absolute -top-3 -left-16 size-6 items-center justify-center rounded-full border border-outline-gray-1 bg-surface-base text-ink-gray-6"
-                        :class="open ? 'flex' : 'hidden group-hover:flex'"
+                        class="absolute -top-3 size-6 items-center justify-center rounded-full border border-outline-gray-1 bg-surface-base text-ink-gray-6"
+                        :class="[m.sender === session.user ? '-left-16' : '-right-16', open ? 'flex' : 'hidden group-hover:flex']"
                       >
                         <span class="lucide-more-horizontal size-3.5" aria-hidden="true" />
                       </button>
@@ -1224,10 +1224,46 @@ function cancelEdit() {
 }
 
 function messageOptions(m) {
-  return [
-    { label: 'Edit', icon: 'lucide-pencil', onClick: () => startEdit(m) },
-    { label: 'Delete', icon: 'lucide-trash-2', onClick: () => confirmDeleteMessage(m) },
-  ]
+  const options = [{ label: 'Forward', icon: 'lucide-forward', onClick: () => openForwardDialog(m) }]
+  if (m.sender === session.user) {
+    options.push(
+      { label: 'Edit', icon: 'lucide-pencil', onClick: () => startEdit(m) },
+      { label: 'Delete', icon: 'lucide-trash-2', onClick: () => confirmDeleteMessage(m) },
+    )
+  }
+  return options
+}
+
+const forwardMessageCall = useCall({
+  url: '/api/v2/method/my_new_app.chat.forward_message',
+  method: 'POST',
+  immediate: false,
+  onSuccess: () => toast.success('Message forwarded'),
+  onError: (err) => toast.error(err.message),
+})
+
+function openForwardDialog(m) {
+  const targets = (conversations.data || []).filter((c) => c.conversation !== activeConversationId.value)
+  if (!targets.length) {
+    toast.error('No other conversations to forward to')
+    return
+  }
+  dialog.prompt({
+    title: 'Forward message',
+    fields: [
+      {
+        name: 'conversation',
+        label: 'Send to',
+        type: 'combobox',
+        required: true,
+        options: targets.map((c) => ({ label: c.display_name, value: c.conversation })),
+      },
+    ],
+    onConfirm: ({ values, close }) => {
+      forwardMessageCall.submit({ message: m.name, conversation: values.conversation })
+      close()
+    },
+  })
 }
 
 const deleteMessageCall = useCall({
