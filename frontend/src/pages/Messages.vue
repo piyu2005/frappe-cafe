@@ -767,6 +767,7 @@ import {
   TextInput,
   Tooltip,
   TooltipProvider,
+  call,
   dialog,
   formatBytes,
   toast,
@@ -1234,36 +1235,60 @@ function messageOptions(m) {
   return options
 }
 
-const forwardMessageCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.forward_message',
-  method: 'POST',
+const forwardablePeople = useCall({
+  url: '/api/v2/method/my_new_app.api.list_people',
   immediate: false,
-  onSuccess: () => toast.success('Message forwarded'),
-  onError: (err) => toast.error(err.message),
 })
 
-function openForwardDialog(m) {
-  const targets = (conversations.data || []).filter((c) => c.conversation !== activeConversationId.value)
-  if (!targets.length) {
-    toast.error('No other conversations to forward to')
-    return
+// Two kinds of forward target in one list: an existing conversation
+// (including groups — "Send to" isn't limited to people you already have a
+// DM with), and any other person, for starting a fresh DM the same way
+// PostDetail's "Share this post" does. Values are tagged with a prefix
+// ("conversation:"/"person:") rather than using two separate fields, since a
+// single combobox is what actually lets you type a name and find someone
+// you don't already have a conversation with — the gap this replaces.
+async function openForwardDialog(m) {
+  if (!forwardablePeople.data) {
+    await forwardablePeople.reload()
   }
+  const existingDmUsers = new Set((conversations.data || []).map((c) => c.other_user).filter(Boolean))
+  const conversationOptions = (conversations.data || [])
+    .filter((c) => c.conversation !== activeConversationId.value)
+    .map((c) => ({ label: c.display_name, value: `conversation:${c.conversation}` }))
+  const peopleOptions = (forwardablePeople.data || [])
+    .filter((p) => p.name !== session.user && !existingDmUsers.has(p.name))
+    .map((p) => ({ label: p.full_name, value: `person:${p.name}` }))
+
   dialog.prompt({
     title: 'Forward message',
     fields: [
       {
-        name: 'conversation',
+        name: 'target',
         label: 'Send to',
         type: 'combobox',
         required: true,
-        options: targets.map((c) => ({ label: c.display_name, value: c.conversation })),
+        options: [...conversationOptions, ...peopleOptions],
       },
     ],
     onConfirm: ({ values, close }) => {
-      forwardMessageCall.submit({ message: m.name, conversation: values.conversation })
       close()
+      forwardToTarget(m, values.target)
     },
   })
+}
+
+async function forwardToTarget(m, target) {
+  const sep = target.indexOf(':')
+  const kind = target.slice(0, sep)
+  const id = target.slice(sep + 1)
+  try {
+    const conversationId = kind === 'person' ? (await call('my_new_app.chat.start_dm', { other_user: id })).conversation : id
+    await call('my_new_app.chat.forward_message', { message: m.name, conversation: conversationId })
+    toast.success('Message forwarded')
+    conversations.reload()
+  } catch (err) {
+    toast.error(err.message || 'Could not forward message')
+  }
 }
 
 const deleteMessageCall = useCall({
