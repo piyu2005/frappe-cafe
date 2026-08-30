@@ -32,7 +32,7 @@
                  block), so they only compete for width with the name - the
                  headline below stays free to use the column's full width. -->
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <h1 class="truncate text-3xl-semibold text-ink-gray-8 sm:text-7xl-semibold">{{ profile.data.full_name }}</h1>
+              <h1 class="truncate text-3xl-semibold text-ink-gray-8 sm:text-7xl-semibold sm:tracking-[0.015em]">{{ profile.data.full_name }}</h1>
               <div class="flex items-center gap-2">
                 <template v-if="isOwnProfile">
                   <Button variant="outline" label="Edit" @click="openEditHeader" />
@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <div class="mt-8 space-y-4">
+        <div class="mt-8 space-y-8">
           <div class="rounded-md border border-outline-gray-1 p-5">
             <div class="flex items-center justify-between pb-4">
               <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
