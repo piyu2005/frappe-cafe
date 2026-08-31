@@ -151,7 +151,7 @@
                 variant="ghost"
                 theme="gray"
                 size="sm"
-                class="!text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                class="!h-auto !rounded-full !px-4 !py-1 !text-[14px] !font-medium !leading-[20px] !text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent disabled:!opacity-50"
                 :loading="recentPosts.loading"
                 loading-text="Loading..."
                 :label="postsExpanded ? 'View less' : 'View all posts'"
@@ -224,7 +224,7 @@
                 variant="ghost"
                 theme="gray"
                 size="sm"
-                class="!text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                class="!h-auto !rounded-full !px-4 !py-1 !text-[14px] !font-medium !leading-[20px] !text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
                 label="Show all History"
                 @click="workLimit = profile.data.work.length"
               />
@@ -303,7 +303,7 @@
                 variant="ghost"
                 theme="gray"
                 size="sm"
-                class="!text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                class="!h-auto !rounded-full !px-4 !py-1 !text-[14px] !font-medium !leading-[20px] !text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
                 label="Show all Education"
                 @click="educationLimit = profile.data.education.length"
               />

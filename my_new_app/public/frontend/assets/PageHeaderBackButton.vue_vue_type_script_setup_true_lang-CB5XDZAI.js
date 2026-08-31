@@ -1,2 +1,0 @@
-import{D as n,an as c,K as s,L as l}from"./vendor-vue-BGjg0pxy.js";import{b as r}from"./index-CsnHqAMA.js";const p=n({__name:"PageHeaderBackButton",props:{to:{},label:{default:"Back"}},setup(e){const o=e,a=c();function t(){o.to?a.push(o.to):a.back()}return(i,u)=>(s(),l(r,{variant:"ghost",size:"md",icon:"lucide-chevron-left",label:e.label,onClick:t},null,8,["label"]))}});export{p as _};
-//# sourceMappingURL=PageHeaderBackButton.vue_vue_type_script_setup_true_lang-CB5XDZAI.js.map
