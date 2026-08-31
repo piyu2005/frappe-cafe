@@ -1813,17 +1813,27 @@ onBeforeUnmount(() => {
 // Frappe chat products) use.
 //
 // Identified via the fixed `z-index: 100` inline style frappe-ui's
-// suggestion renderer always sets on the popup it appends to <body> -
-// unique to tiptap suggestion popups (mention/slash-commands/emoji/tag; see
-// frappe-ui's createSuggestionRenderer). Only mention is enabled in this
-// composer (emoji/tag are off, slash-commands isn't part of this kit), so
-// within this page it's an unambiguous signature - this observer is only
-// ever alive while Messages.vue is mounted, so it can't affect any other
-// page's popovers/dropdowns/tooltips either.
+// suggestion renderer always sets on the popup it appends to <body> - but
+// that alone is NOT unique: every reka-ui-based floating element (Tooltip,
+// Popover, Select, Combobox, ...) teleported to <body> carries the exact
+// same z-[100] class from frappe-ui's own components, so a rail icon's
+// tooltip opening while a conversation is open used to match this check
+// and get its position hijacked to sit above the composer, throwing it
+// hundreds of pixels off from its actual trigger. The suggestion popup is
+// `position: absolute` (frappe-ui's suggestion-renderer.ts); every reka
+// popper wrapper is `position: fixed` and carries its own
+// `data-reka-popper-content-wrapper` marker - checking both is what
+// actually makes this signature unambiguous.
 let mentionPopupObserver = null
 
 function isMentionPopup(node) {
-  return node.nodeType === 1 && node.parentElement === document.body && node.style.zIndex === '100'
+  return (
+    node.nodeType === 1 &&
+    node.parentElement === document.body &&
+    node.style.zIndex === '100' &&
+    node.style.position === 'absolute' &&
+    !node.hasAttribute('data-reka-popper-content-wrapper')
+  )
 }
 
 function repositionMentionPopup(popupEl) {
