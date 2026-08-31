@@ -32,16 +32,35 @@ app.mount('#app')
 //    still counts it as hovered on return — and if a hover-delay timer was
 //    mid-flight when the tab backgrounded, background-tab timer throttling
 //    can make it fire late, right as focus returns.
+// Tooltip libraries (reka-ui's grace-area tracking, used by frappe-ui's
+// Tooltip) read the synthetic pointerleave's clientX/clientY below to figure
+// out which direction the pointer left in. A PointerEvent built with no
+// coordinates defaults to (0, 0) — a bogus exit point at the viewport
+// corner — which can corrupt that calculation and suppress the *next*
+// tooltip's open for a few hundred ms. Track the real last pointer position
+// so the synthetic event carries a plausible one instead.
+let lastPointerX = 0
+let lastPointerY = 0
+window.addEventListener(
+  'pointermove',
+  (e) => {
+    lastPointerX = e.clientX
+    lastPointerY = e.clientY
+  },
+  { passive: true },
+)
+
 function dismissFloatingUI() {
   document.activeElement?.blur?.()
 
   const hovered = document.querySelectorAll(':hover')
   for (let i = hovered.length - 1; i >= 0; i--) {
     const el = hovered[i]
-    el.dispatchEvent(new PointerEvent('pointerleave', { bubbles: false, cancelable: true }))
-    el.dispatchEvent(new PointerEvent('pointerout', { bubbles: true, cancelable: true }))
-    el.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false, cancelable: true }))
-    el.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, cancelable: true }))
+    const point = { clientX: lastPointerX, clientY: lastPointerY }
+    el.dispatchEvent(new PointerEvent('pointerleave', { bubbles: false, cancelable: true, ...point }))
+    el.dispatchEvent(new PointerEvent('pointerout', { bubbles: true, cancelable: true, ...point }))
+    el.dispatchEvent(new MouseEvent('mouseleave', { bubbles: false, cancelable: true, ...point }))
+    el.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, cancelable: true, ...point }))
   }
 
   // Escape is the accessibility-mandated way to dismiss floating UI
