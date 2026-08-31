@@ -74,21 +74,30 @@
                 <span class="lucide-user size-4" aria-hidden="true" />
                 Introduction
               </div>
-              <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openEditBio">
-                <span class="lucide-pencil size-3.5" aria-hidden="true" />
-              </button>
+              <Button
+                v-if="isOwnProfile"
+                variant="ghost"
+                theme="gray"
+                size="xs"
+                class="!text-ink-gray-5 hover:!bg-transparent hover:!text-ink-gray-9 active:!bg-transparent"
+                icon="lucide-pencil"
+                label="Edit introduction"
+                @click="openEditBio"
+              />
             </div>
             <template v-if="profile.data.bio">
               <p class="text-p-base text-ink-gray-6" :class="introExpanded ? '' : 'line-clamp-3'">
                 {{ profile.data.bio }}
               </p>
-              <button
+              <Button
                 v-if="bioNeedsTruncation"
-                class="mt-1 block w-full text-right text-p-sm text-ink-gray-5 hover:text-ink-gray-8 hover:underline"
+                variant="ghost"
+                theme="gray"
+                size="sm"
+                class="mt-1 w-full justify-end !text-ink-gray-5 hover:!bg-transparent hover:!text-ink-gray-8 hover:!underline active:!bg-transparent"
+                :label="introExpanded ? 'see less' : '...see more'"
                 @click="introExpanded = !introExpanded"
-              >
-                {{ introExpanded ? 'see less' : '...see more' }}
-              </button>
+              />
             </template>
             <p v-else class="text-p-base text-ink-gray-5">
               {{ isOwnProfile ? 'Write about yourself.' : '' }}
@@ -138,14 +147,16 @@
             </div>
 
             <div v-if="showPostsToggle" class="mt-3 flex justify-center">
-              <button
-                type="button"
-                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8 disabled:opacity-50"
-                :disabled="recentPosts.loading"
+              <Button
+                variant="ghost"
+                theme="gray"
+                size="sm"
+                class="!text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                :loading="recentPosts.loading"
+                loading-text="Loading..."
+                :label="postsExpanded ? 'View less' : 'View all posts'"
                 @click="togglePosts"
-              >
-                {{ recentPosts.loading ? 'Loading...' : postsExpanded ? 'View less' : 'View all posts' }}
-              </button>
+              />
             </div>
           </div>
 
@@ -156,9 +167,16 @@
                   <span class="lucide-briefcase size-4" aria-hidden="true" />
                   Work History
                 </div>
-                <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openAddWork">
-                  <span class="lucide-plus size-4" aria-hidden="true" />
-                </button>
+                <Button
+                  v-if="isOwnProfile"
+                  variant="ghost"
+                  theme="gray"
+                  size="xs"
+                  class="!text-ink-gray-5 hover:!bg-transparent hover:!text-ink-gray-9 active:!bg-transparent"
+                  icon="lucide-plus"
+                  label="Add work experience"
+                  @click="openAddWork"
+                />
               </div>
               <p v-if="!profile.data.work.length" class="text-base text-ink-gray-5">
                 {{ isOwnProfile ? 'Add your work experience.' : 'No work history added yet.' }}
@@ -187,25 +205,29 @@
                     </div>
                     <p v-if="job.description" class="mt-1 text-p-sm text-ink-gray-6">{{ job.description }}</p>
                   </div>
-                  <button
+                  <Button
                     v-if="isOwnProfile"
-                    class="shrink-0 text-ink-gray-4 hover:text-ink-gray-8"
+                    variant="ghost"
+                    theme="gray"
+                    size="xs"
+                    class="shrink-0 !text-ink-gray-4 hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                    icon="lucide-pencil"
+                    :label="`Edit ${job.company}`"
                     @click="openEditWork(job)"
-                  >
-                    <span class="lucide-pencil size-3.5" aria-hidden="true" />
-                  </button>
+                  />
                 </div>
               </div>
             </div>
 
             <div v-if="profile.data.work.length > workLimit" class="mt-3 flex justify-center">
-              <button
-                type="button"
-                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8"
+              <Button
+                variant="ghost"
+                theme="gray"
+                size="sm"
+                class="!text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                label="Show all History"
                 @click="workLimit = profile.data.work.length"
-              >
-                Show all History
-              </button>
+              />
             </div>
           </div>
 
@@ -216,9 +238,16 @@
                   <span class="lucide-graduation-cap size-4" aria-hidden="true" />
                   Education
                 </div>
-                <button v-if="isOwnProfile" class="text-ink-gray-5 hover:text-ink-gray-9" @click="openAddEducation">
-                  <span class="lucide-plus size-4" aria-hidden="true" />
-                </button>
+                <Button
+                  v-if="isOwnProfile"
+                  variant="ghost"
+                  theme="gray"
+                  size="xs"
+                  class="!text-ink-gray-5 hover:!bg-transparent hover:!text-ink-gray-9 active:!bg-transparent"
+                  icon="lucide-plus"
+                  label="Add education"
+                  @click="openAddEducation"
+                />
               </div>
               <p v-if="!profile.data.education.length" class="text-base text-ink-gray-5">
                 {{ isOwnProfile ? 'Add your education.' : 'No education added yet.' }}
@@ -255,25 +284,29 @@
                       </span>
                     </div>
                   </div>
-                  <button
+                  <Button
                     v-if="isOwnProfile"
-                    class="shrink-0 text-ink-gray-4 hover:text-ink-gray-8"
+                    variant="ghost"
+                    theme="gray"
+                    size="xs"
+                    class="shrink-0 !text-ink-gray-4 hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                    icon="lucide-pencil"
+                    :label="`Edit ${edu.school}`"
                     @click="openEditEducation(edu)"
-                  >
-                    <span class="lucide-pencil size-3.5" aria-hidden="true" />
-                  </button>
+                  />
                 </div>
               </div>
             </div>
 
             <div v-if="profile.data.education.length > educationLimit" class="mt-3 flex justify-center">
-              <button
-                type="button"
-                class="rounded-full px-4 py-1 text-[14px] font-medium leading-[20px] text-[rgb(113,113,122)] hover:text-ink-gray-8"
+              <Button
+                variant="ghost"
+                theme="gray"
+                size="sm"
+                class="!text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                label="Show all Education"
                 @click="educationLimit = profile.data.education.length"
-              >
-                Show all Education
-              </button>
+              />
             </div>
           </div>
         </div>
