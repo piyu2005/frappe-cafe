@@ -757,7 +757,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   Avatar,
@@ -781,22 +781,30 @@ import {
   useCall,
   useFileUpload,
 } from 'frappe-ui'
-import {
-  Blockquote,
-  Bold,
-  BulletList,
-  CommentKit,
-  Editor,
-  EditorContent,
-  EditorFixedMenu,
-  FontHighlight,
-  Highlight,
-  InlineCode,
-  InsertLink,
-  Italic,
-  OrderedList,
-  Strike,
-} from 'frappe-ui/editor'
+// `frappe-ui/editor` pulls in tiptap/ProseMirror - by far the heaviest
+// dependency on this page (~300KB gzipped, its own build chunk - see
+// vite.config.js's manualChunks comment). Importing it statically like this
+// module's other imports would block this *entire* page (conversation list
+// included) behind that download on every cold load, even before a
+// conversation is open. Loading it dynamically instead lets everything else
+// render immediately; only the two spots that actually need tiptap (the
+// composer and read-only rendering of rich-text messages, both still using
+// the exact same <Editor>/<EditorContent>/<EditorFixedMenu> components -
+// nothing about their behavior changes) show nothing for the brief moment
+// until it resolves, rather than the whole page waiting on it.
+const editorModule = shallowRef(null)
+let editorModulePromise = null
+function loadEditorModule() {
+  editorModulePromise ??= import('frappe-ui/editor').then((m) => {
+    editorModule.value = m
+    return m
+  })
+  return editorModulePromise
+}
+loadEditorModule()
+const Editor = defineAsyncComponent(() => loadEditorModule().then((m) => m.Editor))
+const EditorContent = defineAsyncComponent(() => loadEditorModule().then((m) => m.EditorContent))
+const EditorFixedMenu = defineAsyncComponent(() => loadEditorModule().then((m) => m.EditorFixedMenu))
 import { session } from '@/data/session'
 import { getSocket } from '@/data/socket'
 import { parseRichText } from '@/utils/richText'
@@ -880,20 +888,28 @@ const CodeBlockItem = {
   isActive: (editor) => editor.isActive('codeBlock'),
 }
 
-const composerToolbar = [
-  Bold,
-  Italic,
-  UnderlineItem,
-  Strike,
-  FontHighlight,
-  ClearFormatItem,
-  InlineCode,
-  CodeBlockItem,
-  BulletList,
-  OrderedList,
-  Blockquote,
-  InsertLink,
-]
+// Built lazily off editorModule (see loadEditorModule above) since Bold/
+// Italic/etc. are tiptap extension objects from the same dynamically-loaded
+// module - empty until it resolves, same as composerExtensions below.
+const composerToolbar = computed(() => {
+  if (!editorModule.value) return []
+  const { Bold, Italic, Strike, FontHighlight, InlineCode, BulletList, OrderedList, Blockquote, InsertLink } =
+    editorModule.value
+  return [
+    Bold,
+    Italic,
+    UnderlineItem,
+    Strike,
+    FontHighlight,
+    ClearFormatItem,
+    InlineCode,
+    CodeBlockItem,
+    BulletList,
+    OrderedList,
+    Blockquote,
+    InsertLink,
+  ]
+})
 
 const activeConversationId = computed(() => route.params.conversationId || null)
 
@@ -930,19 +946,23 @@ const mentionCandidates = computed(() =>
 // defaults, so it's added here directly — both are pulled in only through
 // `frappe-ui/editor`'s own exports, never a direct `@tiptap/*` import (see
 // vite.config.js's optimizeDeps comment for why that matters).
-const composerExtensions = [
-  CommentKit.configure({
-    mention: { items: mentionCandidates, component: MentionChip },
-    tag: false,
-    image: false,
-    imageGroup: false,
-    imageViewer: false,
-    video: false,
-    attachment: false,
-    emoji: false,
-  }),
-  Highlight,
-]
+const composerExtensions = computed(() => {
+  if (!editorModule.value) return []
+  const { CommentKit, Highlight } = editorModule.value
+  return [
+    CommentKit.configure({
+      mention: { items: mentionCandidates, component: MentionChip },
+      tag: false,
+      image: false,
+      imageGroup: false,
+      imageViewer: false,
+      video: false,
+      attachment: false,
+      emoji: false,
+    }),
+    Highlight,
+  ]
+})
 
 function isHtmlContent(text) {
   return /<[a-z][\s\S]*>/i.test(text || '')
