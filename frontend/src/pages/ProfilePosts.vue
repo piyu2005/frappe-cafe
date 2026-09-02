@@ -274,4 +274,14 @@ const breadcrumbItems = computed(() => {
   padding-top: 8px;
   padding-bottom: 8px;
 }
+
+/* Tabs' own tab-panel is `overflow-auto` by default, which grows its own
+   native scrollbar the moment its content overflows the panel's computed
+   height - a second scroll region nested inside this page's own ScrollArea.
+   This page has exactly one intended scroll container (the ScrollArea
+   above), so the panel should just grow with its content and let that
+   ScrollArea handle all scrolling. */
+.posts-tabs :deep([role='tabpanel']) {
+  overflow: visible;
+}
 </style>
