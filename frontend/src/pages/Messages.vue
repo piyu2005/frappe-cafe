@@ -922,8 +922,8 @@ const mentionableUsers = useCall({
 // `items` accepts a ref/getter and is read live at suggestion-time (see
 // frappe-ui's mention extension), so this can just be handed to
 // CommentKit.configure() below without re-triggering it manually.
-const mentionCandidates = computed(() =>
-  (mentionableUsers.data || []).map((u) => ({
+const mentionCandidates = computed(() => {
+  const users = (mentionableUsers.data || []).map((u) => ({
     id: u.name,
     // @-mentions read as handles, not display names — username first, only
     // falling back when a user hasn't set one.
@@ -931,8 +931,15 @@ const mentionCandidates = computed(() =>
     value: u.name,
     email: u.name,
     full_name: u.full_name,
-  })),
-)
+  }))
+  // "@all" only makes sense where there's more than one other person to
+  // reach — offering it in a DM would just duplicate mentioning that one
+  // other person. `id: 'all'` isn't a real user id; send_message special-
+  // cases it into notifying every other member instead of the usual
+  // mention-lookup-by-user-id path.
+  if (!conversation.data?.is_group) return users
+  return [{ id: 'all', label: 'all', value: 'all', email: null, full_name: 'Everyone in this group' }, ...users]
+})
 
 // CommentKit ("comments, chat, replies" per frappe-ui) is the lighter stack
 // vs RichTextKit — no headings/tables/task-lists. Media/tag/emoji are
