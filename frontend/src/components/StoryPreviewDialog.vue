@@ -1,6 +1,7 @@
 <template>
   <Dialog v-model="open" title="Story Preview" size="xl" :dismissible="false">
     <template #default>
+      <div ref="rootRef">
       <template v-if="!adjusting">
         <div
           class="group relative w-full overflow-hidden rounded-md bg-surface-gray-2"
@@ -84,6 +85,7 @@
           />
         </div>
       </template>
+      </div>
     </template>
     <template #actions>
       <div v-if="!adjusting" class="flex justify-end gap-2">
@@ -126,6 +128,59 @@ const excerptModel = defineModel('excerpt', { default: '' })
 const open = computed({
   get: () => props.modelValue,
   set: (v) => emit('update:modelValue', v),
+})
+
+// This dialog's own content is sized to fit comfortably on any reasonable
+// window — see the CSS note on .dialog-scroll-container in index.css for
+// the actual measurements — but frappe-ui's shared Dialog still wraps every
+// dialog (this one included) in a page-level overflow-y-auto container, so
+// a handful of pixels of genuine overflow on a short/zoomed-in window still
+// lets it scroll a little, just without a visible track. Rather than
+// touching that shared container (other dialogs may legitimately need to
+// scroll on a short screen), lock *this instance's* own container static —
+// found via the DOM, since it's an ancestor Dialog renders around our slot
+// content, not something passed down as a prop or slot we control directly.
+//
+// Only lock it below a small-overflow threshold, not unconditionally: on a
+// window short enough that the dialog genuinely can't fit, scrolling is
+// still the only way to reach the Cancel/Publish row, so leave that escape
+// hatch in place rather than trapping it.
+//
+// A single check right after open (even after nextTick) isn't reliable —
+// reka-ui's DialogPortal mounts its content through its own open-state
+// transition, not synchronously with our `open` prop flipping, and the
+// preview image/fonts can still be settling their own layout a moment
+// later too. Re-measuring on every animation frame for as long as the
+// dialog is open sidesteps guessing at any single "is it ready yet" point:
+// whatever the container's real overflow is on a given frame, the lock is
+// applied or released to match, continuously, until the dialog closes.
+const STATIC_OVERFLOW_THRESHOLD_PX = 30
+const rootRef = ref(null)
+let rafId = null
+
+function syncScrollLock() {
+  const scrollContainer = rootRef.value?.closest('.dialog-scroll-container')
+  if (scrollContainer) {
+    const overflow = scrollContainer.scrollHeight - scrollContainer.clientHeight
+    const locked = overflow > 0 && overflow <= STATIC_OVERFLOW_THRESHOLD_PX
+    scrollContainer.style.overflow = locked ? 'hidden' : ''
+    // `overflow: hidden` alone only stops *further* scrolling — it doesn't
+    // snap back a scrollTop a wheel/trackpad event already nudged the
+    // instant before this frame's lock took effect, which would otherwise
+    // leave the content sitting visibly shifted even though it can't move
+    // any further. Pinning it to 0 every frame while locked closes that gap.
+    if (locked) scrollContainer.scrollTop = 0
+  }
+  rafId = requestAnimationFrame(syncScrollLock)
+}
+
+watch(open, (isOpen) => {
+  if (isOpen) {
+    if (rafId == null) rafId = requestAnimationFrame(syncScrollLock)
+  } else if (rafId != null) {
+    cancelAnimationFrame(rafId)
+    rafId = null
+  }
 })
 
 // Lock page-level pinch/scroll zoom while adjusting so it can't fight with
@@ -277,6 +332,7 @@ function onTouchEnd(e) {
 onBeforeUnmount(() => {
   onDragEnd()
   onTouchEnd()
+  if (rafId != null) cancelAnimationFrame(rafId)
   if (restoreViewportContent !== null) {
     document.querySelector('meta[name="viewport"]')?.setAttribute('content', restoreViewportContent)
   }
