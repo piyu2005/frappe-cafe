@@ -1088,17 +1088,24 @@ def send_message(conversation, content=None, attachments=None, shared_post=None,
 	# but only notify ones who actually are: someone outside the chat has no
 	# way to open it, so a notification for a mention they can't see or act
 	# on is just confusing noise, not something worth alerting them to.
-	mentioned_ids = set(_extract_mentions(content)) & set(others)
+	raw_mentions = _extract_mentions(content)
+	# "all" isn't a real user id (the composer only offers it as a candidate
+	# for group conversations - see list_mentionable_users' frontend caller),
+	# so it can never survive the usual `& set(others)` intersection below.
+	# Expand it to every other member instead of just dropping it.
+	mentioned_all = "all" in raw_mentions and bool(frappe.db.get_value("Conversation", conversation, "is_group"))
+	mentioned_ids = set(others) if mentioned_all else set(raw_mentions) & set(others)
 	if mentioned_ids:
 		valid_mentions = frappe.db.get_all(
 			"User", filters={"name": ["in", list(mentioned_ids)], "enabled": 1}, pluck="name"
 		)
+		notif_message = "mentioned everyone in the group" if mentioned_all else "mentioned you in a message"
 		for user in valid_mentions:
 			_notify(
 				recipient=user,
 				actor=frappe.session.user,
 				notif_type="Mention",
-				message="mentioned you in a message",
+				message=notif_message,
 				reference_doctype="Conversation",
 				reference_name=conversation,
 			)

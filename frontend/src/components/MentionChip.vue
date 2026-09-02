@@ -1,6 +1,9 @@
 <template>
   <NodeViewWrapper as="span" class="inline">
-    <HoverCard :hover-delay="0.4" side="bottom" align="start">
+    <!-- "@all" has no user behind it - no profile to show, nowhere to DM -
+         so it renders as plain static text instead of a HoverCard trigger. -->
+    <span v-if="isAll" class="mention" data-type="mention">@{{ label }}</span>
+    <HoverCard v-else :hover-delay="0.4" side="bottom" align="start">
       <template #trigger>
         <span class="mention" data-type="mention">@{{ label }}</span>
       </template>
@@ -39,13 +42,17 @@ const router = useRouter()
 
 const userId = computed(() => props.node.attrs.id)
 const label = computed(() => props.node.attrs.label || userId.value)
+const isAll = computed(() => userId.value === 'all')
 
 // The email (userId) is already known from the mention's own attrs and shows
 // immediately; only name/avatar need this fetch, cached per-user so hovering
-// the same person's mention twice doesn't refire it.
+// the same person's mention twice doesn't refire it. Skipped entirely for
+// "@all" - `userId` is fixed for this NodeView instance's whole lifetime, so
+// a plain boolean (not a getter) is enough to keep it off for that instance.
 const profile = useCall({
   url: '/api/v2/method/my_new_app.api.get_profile',
   params: () => ({ user: userId.value }),
+  immediate: !isAll.value,
   // A plain string, not a getter — cacheKey isn't unwrapped reactively, but
   // that's fine: userId is fixed for this NodeView instance's whole lifetime.
   cacheKey: `mention-profile-${userId.value}`,
