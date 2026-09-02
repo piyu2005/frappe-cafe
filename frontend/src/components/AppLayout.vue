@@ -66,9 +66,12 @@
       <template v-if="!sidebarOpen" #rail>
         <Rail class="border-r border-outline-gray-1">
           <div class="flex w-full flex-col items-center gap-3">
+            <!-- Same brand mark as the expanded header below (size-8,
+                 rounded - matches Frappe Cloud's own sidebar logo exactly:
+                 32x32px, 8px/0.5rem radius), just without the label. -->
             <button
               type="button"
-              class="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-gray-10"
+              class="flex size-8 shrink-0 items-center justify-center rounded bg-surface-gray-10"
               @click="sidebarOpen = true"
             >
               <span class="lucide-feather size-4 text-ink-base" aria-hidden="true" />
@@ -147,22 +150,29 @@
 
       <template v-else #sidebar>
         <Sidebar disable-collapse width="14rem" class="border-r border-outline-gray-1">
-          <!-- App switcher header — matches frappe-ui's own Sidebar composition
-               convention (p-2 wrapper, h-8 full-width button, size-6 mark). -->
-          <div class="flex shrink-0 items-center p-2.5">
+          <!-- App switcher header — structure from frappe-ui's own official
+               "bespoke header" reference (ui.frappe.io/docs/components/
+               sidebar's hand-rolled demo header, used instead of the
+               separate <SidebarHeader> component since that one's built
+               around a Dropdown for a workspace-switcher menu; this app
+               collapses to an icon rail on click instead). Logo mark sized
+               to match Frappe Cloud's own real sidebar exactly: size-8
+               (32x32px), rounded (8px/0.5rem radius) - verified directly
+               against its own devtools computed styles. -->
+          <div class="flex shrink-0 items-center p-2">
             <button
               type="button"
-              class="flex h-9 w-full items-center gap-2 rounded px-1 transition hover:bg-surface-gray-2"
+              class="flex h-10 w-full items-center gap-2 rounded p-1 transition hover:bg-surface-gray-2"
               @click="sidebarOpen = false"
             >
-              <div class="grid size-9 shrink-0 place-items-center rounded-xl bg-surface-gray-10 text-ink-base">
+              <div class="grid size-8 shrink-0 place-items-center rounded bg-surface-gray-10 text-ink-base">
                 <span class="lucide-feather size-4" aria-hidden="true" />
               </div>
-              <span class="flex-1 truncate text-left text-base text-ink-gray-8">{{ APP_NAME }}</span>
+              <span class="flex-1 truncate text-left text-base-medium text-ink-gray-8">{{ APP_NAME }}</span>
             </button>
           </div>
 
-          <nav class="mt-0.5 space-y-3 px-2">
+          <nav class="mt-0.5 flex flex-col gap-1.5 px-2">
             <SidebarItem
               label="Feed"
               icon="lucide-house"
