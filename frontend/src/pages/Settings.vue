@@ -277,4 +277,10 @@ function excerpt(content, length) {
   padding-top: 8px;
   padding-bottom: 8px;
 }
+
+/* Same nested-scrollbar fix as ProfilePosts.vue's own tabs - see that file's
+   comment for the full rationale. */
+.settings-tabs :deep([role='tabpanel']) {
+  overflow: visible;
+}
 </style>
