@@ -1,5 +1,5 @@
 app_name = "my_new_app"
-app_title = "Frappe Cafe"
+app_title = "Cafe"
 app_publisher = "Priyanshi"
 app_description = "project"
 app_email = "hodagepriyanshi@gmail.com"

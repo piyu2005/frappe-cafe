@@ -56,9 +56,9 @@ def signup(email, password, username):
 	verify_url = frappe.utils.get_url(f"/frontend/verify-email?key={token}")
 	frappe.sendmail(
 		recipients=email,
-		subject="Verify your email for Frappe Cafe",
+		subject="Verify your email for Cafe",
 		message=f"""
-			<p>Welcome to Frappe Cafe! Click the link below to verify your email and finish creating your account.</p>
+			<p>Welcome to Cafe! Click the link below to verify your email and finish creating your account.</p>
 			<p><a href="{verify_url}">Verify your email</a></p>
 			<p>This link expires in 24 hours. If you didn't try to sign up, you can ignore this email.</p>
 		""",
