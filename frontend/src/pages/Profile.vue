@@ -111,9 +111,9 @@
                 Posts
               </div>
 
-              <div v-if="displayedPosts.length" class="divide-y divide-outline-gray-1">
+              <div v-if="recentPosts.data && recentPosts.data.length" class="divide-y divide-outline-gray-1">
                 <router-link
-                  v-for="post in displayedPosts"
+                  v-for="post in recentPosts.data"
                   :key="post.name"
                   :to="{ name: 'PostDetail', params: { postId: post.name } }"
                   class="flex items-stretch justify-between gap-4 py-5 first:pt-0 last:pb-0"
@@ -146,16 +146,14 @@
               </p>
             </div>
 
-            <div v-if="showPostsToggle" class="mt-3 flex justify-center">
+            <div v-if="recentPosts.data && recentPosts.data.length === postsLimit" class="mt-3 flex justify-center">
               <Button
                 variant="ghost"
                 theme="gray"
                 size="sm"
-                class="!h-auto !rounded-full !px-4 !py-1 !text-[14px] !font-medium !leading-[20px] !text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent disabled:!opacity-50"
-                :loading="recentPosts.loading"
-                loading-text="Loading..."
-                :label="postsExpanded ? 'View less' : 'View all posts'"
-                @click="togglePosts"
+                class="!h-auto !rounded-full !px-4 !py-1 !text-[14px] !font-medium !leading-[20px] !text-[rgb(113,113,122)] hover:!bg-transparent hover:!text-ink-gray-8 active:!bg-transparent"
+                label="View all posts"
+                :route="{ name: 'ProfilePosts', params: { userId: targetUser } }"
               />
             </div>
           </div>
@@ -448,42 +446,18 @@ watch(
   { immediate: true },
 )
 
-// postsLimit starts at a small page (3); "View all posts" bumps it to 0
-// (list_profile_posts/frappe.db.get_all treat a falsy limit as "no limit")
-// so the full list is fetched once and cached — collapsing back via "View
-// less" is then a pure client-side slice, no refetch needed to re-expand.
-const postsLimit = ref(3)
-const postsExpanded = ref(false)
-watch(targetUser, () => {
-  postsLimit.value = 3
-  postsExpanded.value = false
-})
+// Just a preview here — "View all posts" now routes to its own dedicated
+// ProfilePosts page (matching Work History/Education's own "Show all"
+// pattern of a small capped preview, except those expand in place since
+// they're already fully loaded up front, while posts are paginated
+// server-side and get a real page instead). "Exactly a full page of 3 came
+// back" is the only signal more might exist, same heuristic those rely on.
+const postsLimit = 3
 const recentPosts = useCall({
   url: '/api/v2/method/my_new_app.api.list_profile_posts',
-  params: () => ({ user: targetUser.value, limit: postsLimit.value }),
+  params: () => ({ user: targetUser.value, limit: postsLimit }),
   refetch: true,
 })
-const displayedPosts = computed(() => {
-  if (!recentPosts.data) return []
-  return postsExpanded.value ? recentPosts.data : recentPosts.data.slice(0, 3)
-})
-// Once expanded, postsLimit is 0 (the true total is known) and stays 0 -
-// collapsing/re-expanding after that never refetches. Before the first
-// expand, "exactly a full page of 3 came back" is the only signal that more
-// might exist, same heuristic Work History/Education already rely on.
-const showPostsToggle = computed(() => {
-  const data = recentPosts.data
-  if (!data) return false
-  return postsLimit.value === 0 ? data.length > 3 : data.length === postsLimit.value
-})
-function togglePosts() {
-  if (postsExpanded.value) {
-    postsExpanded.value = false
-    return
-  }
-  postsExpanded.value = true
-  postsLimit.value = 0
-}
 
 const introExpanded = ref(false)
 const bioNeedsTruncation = computed(() => (profile.data?.bio || '').length > 220)
