@@ -1,0 +1,2 @@
+import{aC as t}from"./index-CXoSvr-_.js";import{D as a,K as s,X as o,O as n,a3 as r,a4 as c}from"./vendor-vue-CISe1W1R.js";const i={class:"flex items-center text-base text-ink-gray-4"},x=a({__name:"LoadingText",props:{text:{default:"Loading..."}},setup(e){return(m,_)=>(s(),o("div",i,[n(t,{class:"-ml-1 mr-2 h-3 w-3"}),r(" "+c(e.text),1)]))}});export{x as _};
+//# sourceMappingURL=LoadingText.vue_vue_type_script_setup_true_lang-DUa_W_Gc.js.map

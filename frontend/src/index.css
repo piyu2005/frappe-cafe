@@ -30,3 +30,21 @@
 [data-reka-popper-content-wrapper] {
   will-change: transform;
 }
+
+/* frappe-ui's Dialog wraps every dialog's content in a page-level
+   `overflow-y-auto` container sized to `min-h-screen` (see Dialog.vue) —
+   correct when a dialog is genuinely taller than the viewport (the actions
+   row would otherwise be unreachable), but on a browser window just a few
+   pixels short of that threshold, the dialog visually reads as fully
+   visible while the container still measures a sliver of overflow and
+   shows a scrollbar track for it (reported on Story Preview, whose image +
+   fields sit right at that edge). Hiding the scrollbar visually — not
+   functionally — keeps real scrolling working via wheel/trackpad/touch for
+   any dialog that's actually taller than the window, without a visible
+   track appearing over content that already reads as fully shown. */
+.dialog-scroll-container {
+  scrollbar-width: none;
+}
+.dialog-scroll-container::-webkit-scrollbar {
+  display: none;
+}
