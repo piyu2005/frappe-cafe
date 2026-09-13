@@ -6,11 +6,7 @@
     :class="{ 'settings-tabs--modal': variant === 'modal' }"
   >
     <template #tab-panel="{ tab: activeTab }">
-      <component
-        :is="variant === 'modal' ? ScrollArea : 'div'"
-        v-bind="variant === 'modal' ? { viewportClass: 'pr-4 sm:pr-6' } : {}"
-        :class="variant === 'modal' ? 'settings-modal-scroll' : ''"
-      >
+      <div :class="variant === 'modal' ? 'settings-modal-scroll' : ''">
         <div v-if="activeTab.label === 'Account'" class="pt-4 divide-y divide-outline-gray-1">
           <div class="flex items-center justify-between py-6">
             <span class="text-base-medium text-ink-gray-8">Username</span>
@@ -86,7 +82,7 @@
             </div>
           </div>
         </div>
-      </component>
+      </div>
     </template>
   </Tabs>
 </template>
@@ -94,7 +90,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Button, LoadingText, ScrollArea, Switch, Tabs, dialog, toast, useCall } from 'frappe-ui'
+import { Button, LoadingText, Switch, Tabs, dialog, toast, useCall } from 'frappe-ui'
 import { logout, session } from '@/data/session'
 
 // When embedded in the standalone page (variant: 'page', the default) the
@@ -286,29 +282,61 @@ function excerpt(content, length) {
    the rest of the document, but the Dialog sizes itself to its content, so
    a short tab (e.g. "Saved" with no posts) would shrink the whole modal and
    a long one (many saved posts) would grow it past a sane size. Pinning this
-   wrapper to a fixed height and letting frappe-ui's own ScrollArea handle
-   the overflow (same component/scrollbar the rest of the app already uses
-   for every other scrollable page) keeps the modal itself a constant size
-   and gives an exact, guaranteed-visible match for frappe-ui's scrollbar -
-   unlike a plain `overflow-y: auto` div, which on most OSes/browsers renders
-   as an invisible-until-scrolled *native* overlay scrollbar instead. */
+   wrapper to a fixed height and letting IT scroll internally keeps the
+   modal itself a constant size either way.
+   frappe-ui's own <ScrollArea> was tried here first, but its scrollbar
+   track isn't just faded via opacity while idle - reka-ui only mounts it
+   into the DOM at all once a hover/scroll interaction begins, and unmounts
+   it again after. That's the right call for a full-page scroller (the
+   reader's cursor is already inside it), but in a fixed-size modal someone
+   can be looking straight at "Saved" without their pointer ever having
+   entered the panel, so nothing ever appears. A plain `overflow-y: auto`
+   div's own scrollbar, custom-styled below, has no such mount/unmount cycle
+   - it's simply visible the instant there's something to scroll, matching
+   Frappe Cloud/Gameplan's own always-on dialog scrollbar. */
 .settings-modal-scroll {
   height: 460px;
+  overflow-y: auto;
   /* Dialog's own body wrapper (frappe-ui's Dialog.vue) pads every side with
-     px-4 sm:px-6. ScrollArea's track renders flush against ITS OWN element's
-     edge (it's a sibling of the padded viewport, not inside it), so
-     extending this wrapper past that padding on the right - the
-     `viewportClass="pr-4 sm:pr-6"` prop on the <ScrollArea> puts the padding
-     back, but only around the content, not the track - pushes the scrollbar
-     itself out to the modal's true border, matching Frappe
-     Cloud/Gameplan's own dialogs, while row content stays visually aligned
-     where it was. */
+     px-4 sm:px-6, so the scrollbar would otherwise sit well inside that
+     padding instead of flush against the modal's true edge. Extending past
+     it on the right only (negative margin) and adding the same amount back
+     as this element's own padding keeps row content visually aligned where
+     it was while the scrollbar itself lands on the true border. */
   margin-right: -16px;
+  padding-right: 16px;
 }
 
 @media (min-width: 640px) {
   .settings-modal-scroll {
     margin-right: -24px;
+    padding-right: 24px;
   }
+}
+
+/* Firefox has no ::-webkit-scrollbar equivalent - this is its own always-on
+   (not overlay/hover-triggered) styling API, close enough to match. */
+.settings-modal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af transparent;
+}
+
+/* Styled to match frappe-ui's own ScrollBar thumb (Tabs, ScrollArea, ...)
+   as closely as a native scrollbar allows: same ~10px width, gray-400,
+   fully rounded. `background-clip: padding-box` + a transparent border
+   insets the visible thumb slightly off the track's edges, the same way
+   ScrollBar.vue's own `p-0.5` on its track does. WebKit/Blink only -
+   Firefox uses the scrollbar-width/-color rule above instead. */
+.settings-modal-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.settings-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.settings-modal-scroll::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 </style>
