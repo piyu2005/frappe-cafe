@@ -68,14 +68,12 @@
           <div class="flex w-full flex-col items-center gap-3">
             <!-- Same brand mark as the expanded header below (size-8,
                  rounded - matches Frappe Cloud's own sidebar logo exactly:
-                 32x32px, 8px/0.5rem radius), just without the label. -->
-            <button
-              type="button"
-              class="flex size-8 shrink-0 items-center justify-center rounded bg-surface-gray-10"
-              @click="sidebarOpen = true"
-            >
+                 32x32px, 8px/0.5rem radius), just without the label. Purely
+                 branding while collapsed - it doesn't expand the sidebar;
+                 use the dedicated "Expand" toggle below for that. -->
+            <div class="flex size-8 shrink-0 items-center justify-center rounded bg-surface-gray-10">
               <span class="lucide-feather size-4 text-ink-base" aria-hidden="true" />
-            </button>
+            </div>
 
             <RailItem
               label="Home"
@@ -134,9 +132,8 @@
                rotation, and transition) so expanding from the rail uses the
                exact same affordance real Frappe products use for the
                opposite direction — see the matching Sidebar-side toggle
-               below. Kept separate from the logo button above (which still
-               expands on click too) since that's branding, not a labeled
-               collapse/expand control. -->
+               below. This is the only control that expands the sidebar; the
+               logo button above is branding only. -->
           <div class="mt-auto flex w-full flex-col items-center gap-3">
             <RailItem label="Expand" variant="ghost" @click="(e) => { sidebarOpen = true; blurTrigger(e) }">
               <span
