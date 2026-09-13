@@ -267,7 +267,9 @@
          (SettingsPanel), just reusing the app's own Dialog + Tabs. -->
     <Dialog v-model="settingsModalOpen" title="Settings" size="lg">
       <template #default>
-        <SettingsPanel :sync-route-query="false" @navigate="settingsModalOpen = false" />
+        <div class="settings-modal-panel">
+          <SettingsPanel variant="modal" @navigate="settingsModalOpen = false" />
+        </div>
       </template>
     </Dialog>
   </div>
@@ -379,5 +381,17 @@ onBeforeUnmount(() => {
    desktop rail/sidebar's own labels. */
 :deep([data-slot='mobile-nav'] .text-xs-medium) {
   display: none;
+}
+
+/* Dialog's `size` prop only maps to a fixed set of Tailwind max-w-* presets
+   (512px/"lg", 576px/"xl", ...) with no arbitrary-width option, and its
+   content is teleported to <body> - outside this component's own DOM
+   subtree - so normal scoped styles (even :deep()) can't reach it. `:global`
+   opts this one rule out of scoping entirely; :has() keys it to the marker
+   div this component itself renders inside the dialog, so it can't affect
+   any other Dialog on the page. 600px matches the standalone Settings
+   page's own `max-w-[600px]` container exactly. */
+:global(.dialog-content:has(.settings-modal-panel)) {
+  max-width: 600px;
 }
 </style>

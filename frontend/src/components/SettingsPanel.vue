@@ -1,5 +1,10 @@
 <template>
-  <Tabs v-model="tab" :tabs="tabs" class="settings-tabs">
+  <Tabs
+    v-model="tab"
+    :tabs="tabs"
+    class="settings-tabs"
+    :class="{ 'settings-tabs--modal': variant === 'modal' }"
+  >
     <template #tab-panel="{ tab: activeTab }">
       <div v-if="activeTab.label === 'Account'" class="pt-4 divide-y divide-outline-gray-1">
         <div class="flex items-center justify-between py-6">
@@ -86,16 +91,16 @@ import { useRoute, useRouter } from 'vue-router'
 import { Button, LoadingText, Switch, Tabs, dialog, toast, useCall } from 'frappe-ui'
 import { logout, session } from '@/data/session'
 
-// When embedded in a page (syncRouteQuery: true, the default) the active tab
-// lives in the URL (?tab=drafts) rather than plain local state - clicking
-// into a post navigates away and destroys this component, so a local ref
-// alone would always come back on the default "Account" tab when the
-// browser's back button returns here. When embedded in a modal on top of an
-// arbitrary route instead, writing our tab into that unrelated route's query
-// would leave a stray ?tab= on whatever page the modal was opened from, so
-// the modal usage opts out and keeps the tab in local state only.
+// When embedded in the standalone page (variant: 'page', the default) the
+// active tab lives in the URL (?tab=drafts) rather than plain local state -
+// clicking into a post navigates away and destroys this component, so a
+// local ref alone would always come back on the default "Account" tab when
+// the browser's back button returns here. When embedded in the modal
+// instead (variant: 'modal'), writing our tab into that unrelated route's
+// query would leave a stray ?tab= on whatever page the modal was opened
+// from, so it keeps the tab in local state only.
 const props = defineProps({
-  syncRouteQuery: { type: Boolean, default: true },
+  variant: { type: String, default: 'page' },
 })
 const emit = defineEmits(['navigate'])
 
@@ -103,9 +108,10 @@ const route = useRoute()
 const router = useRouter()
 
 const tabs = [{ label: 'Account' }, { label: 'Saved' }]
+const syncRouteQuery = computed(() => props.variant !== 'modal')
 
 function tabIndexFromQuery() {
-  if (!props.syncRouteQuery) return 0
+  if (!syncRouteQuery.value) return 0
   const idx = tabs.findIndex((t) => t.label.toLowerCase() === route.query.tab)
   return idx === -1 ? 0 : idx
 }
@@ -113,7 +119,7 @@ function tabIndexFromQuery() {
 const tab = ref(tabIndexFromQuery())
 
 watch(tab, (idx) => {
-  if (!props.syncRouteQuery) return
+  if (!syncRouteQuery.value) return
   const slug = idx === 0 ? undefined : tabs[idx].label.toLowerCase()
   if ((route.query.tab || undefined) === slug) return
   const query = { ...route.query }
@@ -268,5 +274,19 @@ function excerpt(content, length) {
    comment for the full rationale. */
 .settings-tabs :deep([role='tabpanel']) {
   overflow: visible;
+}
+
+/* Modal variant only: the page can grow/shrink freely since it scrolls with
+   the rest of the document, but the Dialog sizes itself to its content, so
+   switching from "Account" (tall) to "Saved" (a one-line empty state) would
+   otherwise visibly shrink the whole modal. Pinning the panel to Account's
+   own natural height keeps the modal a constant size across tabs.
+   [data-state='active'] only - reka-ui's TabsContent keeps the *inactive*
+   panel's element in the DOM (empty, for a11y) rather than removing it, so
+   a min-height on every [role=tabpanel] would reserve that blank space too
+   and add it on top of the real active panel's height instead of replacing
+   it. */
+.settings-tabs--modal :deep([role='tabpanel'][data-state='active']) {
+  min-height: 440px;
 }
 </style>
