@@ -291,5 +291,21 @@ function excerpt(content, length) {
 .settings-tabs--modal :deep([role='tabpanel'][data-state='active']) {
   height: 460px;
   overflow-y: auto;
+  /* Dialog's own body wrapper (frappe-ui's Dialog.vue) pads every side with
+     px-4 sm:px-6, so a plain overflow-y:auto here would show its scrollbar
+     inset by that padding - well inside the modal's own edge. Extending the
+     panel past that padding on the right only (negative margin) and adding
+     the padding back as its own padding instead pushes the scrollbar out to
+     the modal's true border, matching Frappe Cloud/Gameplan's own dialogs,
+     while the actual row content stays visually aligned where it was. */
+  margin-right: -16px;
+  padding-right: 16px;
+}
+
+@media (min-width: 640px) {
+  .settings-tabs--modal :deep([role='tabpanel'][data-state='active']) {
+    margin-right: -24px;
+    padding-right: 24px;
+  }
 }
 </style>
