@@ -6,81 +6,87 @@
     :class="{ 'settings-tabs--modal': variant === 'modal' }"
   >
     <template #tab-panel="{ tab: activeTab }">
-      <div v-if="activeTab.label === 'Account'" class="pt-4 divide-y divide-outline-gray-1">
-        <div class="flex items-center justify-between py-6">
-          <span class="text-base-medium text-ink-gray-8">Username</span>
-          <span class="text-sm text-ink-gray-5">@{{ username }}</span>
-        </div>
-        <div class="flex items-center justify-between py-6">
-          <span class="text-base-medium text-ink-gray-8">Email Address</span>
-          <span class="text-sm text-ink-gray-5">{{ session.user }}</span>
-        </div>
-        <div class="flex items-center justify-between py-6">
-          <div>
-            <div class="text-base-medium text-ink-gray-8">Private account</div>
-            <p class="text-sm text-ink-gray-5">
-              When on, people must send a follow request to follow you.
-            </p>
+      <component
+        :is="variant === 'modal' ? ScrollArea : 'div'"
+        v-bind="variant === 'modal' ? { viewportClass: 'pr-4 sm:pr-6' } : {}"
+        :class="variant === 'modal' ? 'settings-modal-scroll' : ''"
+      >
+        <div v-if="activeTab.label === 'Account'" class="pt-4 divide-y divide-outline-gray-1">
+          <div class="flex items-center justify-between py-6">
+            <span class="text-base-medium text-ink-gray-8">Username</span>
+            <span class="text-sm text-ink-gray-5">@{{ username }}</span>
           </div>
-          <Switch v-model="isPrivate" :disabled="updatePrivacy.loading" @update:model-value="handlePrivacyToggle" />
-        </div>
-        <button
-          class="flex w-full items-center justify-between py-6 text-left"
-          @click="openChangePassword"
-        >
-          <span class="text-base-medium text-ink-gray-8">Change Password</span>
-          <span class="lucide-arrow-right size-4 text-ink-gray-5" aria-hidden="true" />
-        </button>
-        <button
-          class="flex w-full items-center justify-between py-6 text-left"
-          @click="handleLogout"
-        >
-          <span class="text-base-medium text-ink-gray-8">Log out</span>
-          <span class="lucide-log-out size-4 text-ink-gray-5" aria-hidden="true" />
-        </button>
-        <div class="flex w-full items-center justify-between py-6 text-left opacity-50">
-          <div>
-            <span class="text-base-medium text-ink-gray-8">Delete account</span>
-            <p class="text-sm text-ink-gray-5">Temporarily unavailable — contact support if you need this.</p>
+          <div class="flex items-center justify-between py-6">
+            <span class="text-base-medium text-ink-gray-8">Email Address</span>
+            <span class="text-sm text-ink-gray-5">{{ session.user }}</span>
           </div>
-          <span class="lucide-trash-2 size-4 text-ink-gray-5" aria-hidden="true" />
+          <div class="flex items-center justify-between py-6">
+            <div>
+              <div class="text-base-medium text-ink-gray-8">Private account</div>
+              <p class="text-sm text-ink-gray-5">
+                When on, people must send a follow request to follow you.
+              </p>
+            </div>
+            <Switch v-model="isPrivate" :disabled="updatePrivacy.loading" @update:model-value="handlePrivacyToggle" />
+          </div>
+          <button
+            class="flex w-full items-center justify-between py-6 text-left"
+            @click="openChangePassword"
+          >
+            <span class="text-base-medium text-ink-gray-8">Change Password</span>
+            <span class="lucide-arrow-right size-4 text-ink-gray-5" aria-hidden="true" />
+          </button>
+          <button
+            class="flex w-full items-center justify-between py-6 text-left"
+            @click="handleLogout"
+          >
+            <span class="text-base-medium text-ink-gray-8">Log out</span>
+            <span class="lucide-log-out size-4 text-ink-gray-5" aria-hidden="true" />
+          </button>
+          <div class="flex w-full items-center justify-between py-6 text-left opacity-50">
+            <div>
+              <span class="text-base-medium text-ink-gray-8">Delete account</span>
+              <p class="text-sm text-ink-gray-5">Temporarily unavailable — contact support if you need this.</p>
+            </div>
+            <span class="lucide-trash-2 size-4 text-ink-gray-5" aria-hidden="true" />
+          </div>
         </div>
-      </div>
 
-      <div v-else-if="activeTab.label === 'Saved'" class="pt-4">
-        <LoadingText v-if="savedPosts.loading && !savedPosts.data" :lines="4" />
-        <p
-          v-else-if="savedPosts.data && savedPostsList.length === 0"
-          class="text-p-base text-ink-gray-6"
-        >
-          No saved posts yet.
-        </p>
-        <div v-else class="divide-y divide-outline-gray-1">
-          <div v-for="p in savedPostsList" :key="p.name" class="flex items-center gap-3 py-6">
-            <router-link
-              :to="{ name: 'PostDetail', params: { postId: p.name } }"
-              class="flex min-w-0 flex-1 items-stretch gap-4"
-              @click="emit('navigate')"
-            >
-              <div class="min-w-0 flex-1">
-                <div class="truncate text-base-medium text-ink-gray-9">{{ p.display_title || p.title || 'Untitled' }}</div>
-                <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
-                <div class="mt-1 text-xs text-ink-gray-5">By {{ p.author_name }}</div>
-              </div>
-              <img
-                v-if="coverImageFor(p)"
-                :src="coverImageFor(p)"
-                class="h-20 w-24 shrink-0 rounded-md object-cover"
+        <div v-else-if="activeTab.label === 'Saved'" class="pt-4">
+          <LoadingText v-if="savedPosts.loading && !savedPosts.data" :lines="4" />
+          <p
+            v-else-if="savedPosts.data && savedPostsList.length === 0"
+            class="text-p-base text-ink-gray-6"
+          >
+            No saved posts yet.
+          </p>
+          <div v-else class="divide-y divide-outline-gray-1">
+            <div v-for="p in savedPostsList" :key="p.name" class="flex items-center gap-3 py-6">
+              <router-link
+                :to="{ name: 'PostDetail', params: { postId: p.name } }"
+                class="flex min-w-0 flex-1 items-stretch gap-4"
+                @click="emit('navigate')"
+              >
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-base-medium text-ink-gray-9">{{ p.display_title || p.title || 'Untitled' }}</div>
+                  <p class="mt-1 line-clamp-2 text-p-sm text-ink-gray-6">{{ excerpt(p.content, 140) }}</p>
+                  <div class="mt-1 text-xs text-ink-gray-5">By {{ p.author_name }}</div>
+                </div>
+                <img
+                  v-if="coverImageFor(p)"
+                  :src="coverImageFor(p)"
+                  class="h-20 w-24 shrink-0 rounded-md object-cover"
+                />
+              </router-link>
+              <Button
+                icon="lucide-bookmark-minus"
+                variant="ghost"
+                @click="unsave(p.name)"
               />
-            </router-link>
-            <Button
-              icon="lucide-bookmark-minus"
-              variant="ghost"
-              @click="unsave(p.name)"
-            />
+            </div>
           </div>
         </div>
-      </div>
+      </component>
     </template>
   </Tabs>
 </template>
@@ -88,7 +94,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Button, LoadingText, Switch, Tabs, dialog, toast, useCall } from 'frappe-ui'
+import { Button, LoadingText, ScrollArea, Switch, Tabs, dialog, toast, useCall } from 'frappe-ui'
 import { logout, session } from '@/data/session'
 
 // When embedded in the standalone page (variant: 'page', the default) the
@@ -279,33 +285,30 @@ function excerpt(content, length) {
 /* Modal variant only: the page can grow/shrink freely since it scrolls with
    the rest of the document, but the Dialog sizes itself to its content, so
    a short tab (e.g. "Saved" with no posts) would shrink the whole modal and
-   a long one (many saved posts) would grow it past a sane size. Pinning the
-   active panel to a fixed height and letting IT scroll internally (like
-   Gameplan's own settings modal) keeps the modal itself a constant size
-   either way - the scrollbar only ever appears on this panel, and only once
-   its content actually overflows the fixed height.
-   [data-state='active'] only - reka-ui's TabsContent keeps the *inactive*
-   panel's element in the DOM (empty, for a11y) rather than removing it, so
-   sizing every [role=tabpanel] would reserve that blank space too and add
-   it on top of the real active panel instead of replacing it. */
-.settings-tabs--modal :deep([role='tabpanel'][data-state='active']) {
+   a long one (many saved posts) would grow it past a sane size. Pinning this
+   wrapper to a fixed height and letting frappe-ui's own ScrollArea handle
+   the overflow (same component/scrollbar the rest of the app already uses
+   for every other scrollable page) keeps the modal itself a constant size
+   and gives an exact, guaranteed-visible match for frappe-ui's scrollbar -
+   unlike a plain `overflow-y: auto` div, which on most OSes/browsers renders
+   as an invisible-until-scrolled *native* overlay scrollbar instead. */
+.settings-modal-scroll {
   height: 460px;
-  overflow-y: auto;
   /* Dialog's own body wrapper (frappe-ui's Dialog.vue) pads every side with
-     px-4 sm:px-6, so a plain overflow-y:auto here would show its scrollbar
-     inset by that padding - well inside the modal's own edge. Extending the
-     panel past that padding on the right only (negative margin) and adding
-     the padding back as its own padding instead pushes the scrollbar out to
-     the modal's true border, matching Frappe Cloud/Gameplan's own dialogs,
-     while the actual row content stays visually aligned where it was. */
+     px-4 sm:px-6. ScrollArea's track renders flush against ITS OWN element's
+     edge (it's a sibling of the padded viewport, not inside it), so
+     extending this wrapper past that padding on the right - the
+     `viewportClass="pr-4 sm:pr-6"` prop on the <ScrollArea> puts the padding
+     back, but only around the content, not the track - pushes the scrollbar
+     itself out to the modal's true border, matching Frappe
+     Cloud/Gameplan's own dialogs, while row content stays visually aligned
+     where it was. */
   margin-right: -16px;
-  padding-right: 16px;
 }
 
 @media (min-width: 640px) {
-  .settings-tabs--modal :deep([role='tabpanel'][data-state='active']) {
+  .settings-modal-scroll {
     margin-right: -24px;
-    padding-right: 24px;
   }
 }
 </style>
