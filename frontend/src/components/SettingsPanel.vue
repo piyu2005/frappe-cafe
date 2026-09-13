@@ -6,7 +6,15 @@
     :class="{ 'settings-tabs--modal': variant === 'modal' }"
   >
     <template #tab-panel="{ tab: activeTab }">
-      <div :class="variant === 'modal' ? 'settings-modal-scroll' : ''">
+      <div
+        :ref="variant === 'modal' ? (el) => setOuterRef(activeTab.label, el) : undefined"
+        :class="variant === 'modal' ? 'settings-modal-scroll-outer' : ''"
+      >
+        <div
+          :ref="variant === 'modal' ? (el) => setPanelRef(activeTab.label, el) : undefined"
+          :class="variant === 'modal' ? 'settings-modal-scroll' : ''"
+          @scroll="variant === 'modal' ? updateThumb(activeTab.label) : undefined"
+        >
         <div v-if="activeTab.label === 'Account'" class="pt-4 divide-y divide-outline-gray-1">
           <div class="flex items-center justify-between py-6">
             <span class="text-base-medium text-ink-gray-8">Username</span>
@@ -82,13 +90,30 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
+      <!-- Teleported to <body>, positioned via fixed viewport coordinates
+           computed in the script block - see the comment on
+           `.settings-modal-scrollbar-thumb` below for why this can't just
+           be position:absolute inside the wrapper above. -->
+      <Teleport v-if="variant === 'modal'" to="body">
+        <div
+          v-if="thumbState[activeTab.label]?.visible"
+          class="settings-modal-scrollbar-thumb"
+          :style="{
+            height: thumbState[activeTab.label].height + 'px',
+            top: thumbState[activeTab.label].top + 'px',
+            left: thumbState[activeTab.label].left + 'px',
+          }"
+          @pointerdown="onThumbPointerDown(activeTab.label, $event)"
+        />
+      </Teleport>
     </template>
   </Tabs>
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Button, LoadingText, Switch, Tabs, dialog, toast, useCall } from 'frappe-ui'
 import { logout, session } from '@/data/session'
@@ -128,6 +153,137 @@ watch(tab, (idx) => {
   if (slug) query.tab = slug
   else delete query.tab
   router.replace({ query })
+})
+
+// Modal variant only: a hand-rolled scrollbar thumb, kept permanently
+// visible whenever a panel actually overflows - unlike either frappe-ui's
+// ScrollArea (its track isn't just faded via opacity while idle, reka-ui
+// doesn't mount it into the DOM at all until a hover/scroll interaction
+// begins) or a plain overflow-y:auto div's native scrollbar (macOS Chrome's
+// "automatically based on mouse or trackpad" overlay behavior overrides
+// *any* ::-webkit-scrollbar styling, native or custom, the same way).
+// Teleported to <body> and positioned via `position: fixed` (viewport
+// coordinates read from the panel's own getBoundingClientRect(), not
+// position:absolute relative to a wrapper in the normal DOM position) -
+// frappe-ui's Dialog wraps every dialog's content in a div with both
+// `overflow-hidden` and `transform` (DialogContent's own classes), and a
+// transform makes an element the containing block for its
+// absolutely-positioned descendants; combined with the sibling
+// `overflow-hidden`, a thin child positioned right at that box's edge was
+// silently failing to paint at all in testing, in both headless and a real
+// browser - teleporting clear of that ancestor chain avoids it entirely.
+// Tabs invokes the `#tab-panel` slot once per tab (Account and Saved both,
+// not just the active one), so state is keyed by tab label rather than a
+// single ref - each panel tracks its own scroll position independently.
+const panelEls = {}
+const panelOuterEls = {}
+const resizeObservers = {}
+const thumbState = reactive({
+  Account: { visible: false, height: 0, top: 0, left: 0 },
+  Saved: { visible: false, height: 0, top: 0, left: 0 },
+})
+
+function updateThumb(label) {
+  const el = panelEls[label]
+  const outer = panelOuterEls[label]
+  if (!el || !outer) return
+  const { scrollTop, scrollHeight, clientHeight } = el
+  const state = thumbState[label]
+  const visible = scrollHeight > clientHeight + 1
+  state.visible = visible
+  if (!visible) return
+  const outerRect = outer.getBoundingClientRect()
+  const thumbHeight = Math.max((clientHeight / scrollHeight) * clientHeight, 24)
+  const maxThumbTop = clientHeight - thumbHeight
+  const scrollRange = scrollHeight - clientHeight
+  state.height = thumbHeight
+  state.top = outerRect.top + (scrollRange > 0 ? (scrollTop / scrollRange) * maxThumbTop : 0)
+  // 6px thumb width + 3px gutter from the modal's true edge (outerRect's
+  // own right edge already lands there via its negative margin in CSS).
+  state.left = outerRect.right - 9
+}
+
+function setOuterRef(label, el) {
+  panelOuterEls[label] = el
+  // Whichever of the two refs (outer wrapper, inner scrollable panel) Vue
+  // happens to assign second is the one that can actually compute anything
+  // - the other bails out early since its counterpart isn't set yet.
+  if (el) updateThumb(label)
+}
+
+function setPanelRef(label, el) {
+  if (panelEls[label] === el) return
+  resizeObservers[label]?.disconnect()
+  panelEls[label] = el
+  if (!el) return
+  updateThumb(label)
+  // The scrollable div's own height is fixed - what changes is its
+  // *content*'s height (posts loading in, description text wrapping, ...),
+  // so the observer watches that first child rather than the div itself.
+  const target = el.firstElementChild
+  if (!target) return
+  const observer = new ResizeObserver(() => updateThumb(label))
+  observer.observe(target)
+  resizeObservers[label] = observer
+}
+
+let thumbDrag = null
+
+function onThumbPointerDown(label, event) {
+  const el = panelEls[label]
+  const state = thumbState[label]
+  if (!el || !state.visible) return
+  thumbDrag = {
+    label,
+    startClientY: event.clientY,
+    startScrollTop: el.scrollTop,
+    trackHeight: el.clientHeight,
+    thumbHeight: state.height,
+    scrollRange: el.scrollHeight - el.clientHeight,
+  }
+  window.addEventListener('pointermove', onThumbPointerMove)
+  window.addEventListener('pointerup', onThumbPointerUp)
+  event.preventDefault()
+  // The thumb is teleported to <body> as a *sibling* of the dialog's real
+  // content, not a DOM descendant of it, so reka-ui's own "did this click
+  // land outside the dialog?" check (plain DOM containment) reads a click
+  // here as outside and closes the dialog. That check runs from a listener
+  // on `document`, so stopping propagation here keeps it from ever seeing
+  // this pointerdown at all.
+  event.stopPropagation()
+}
+
+function onThumbPointerMove(event) {
+  if (!thumbDrag) return
+  const { label, startClientY, startScrollTop, trackHeight, thumbHeight, scrollRange } = thumbDrag
+  const el = panelEls[label]
+  if (!el) return
+  const maxThumbTop = trackHeight - thumbHeight
+  if (maxThumbTop <= 0) return
+  const deltaScroll = ((event.clientY - startClientY) / maxThumbTop) * scrollRange
+  el.scrollTop = Math.min(Math.max(startScrollTop + deltaScroll, 0), scrollRange)
+}
+
+function onThumbPointerUp() {
+  thumbDrag = null
+  window.removeEventListener('pointermove', onThumbPointerMove)
+  window.removeEventListener('pointerup', onThumbPointerUp)
+}
+
+// The dialog is centered via flex layout, so resizing the window can move
+// it without changing either panel's own scroll position - recompute both
+// panels' fixed coordinates (not just the active one) so whichever tab the
+// reader switches back to already has an up-to-date thumb.
+function handleWindowResize() {
+  Object.keys(thumbState).forEach(updateThumb)
+}
+window.addEventListener('resize', handleWindowResize)
+
+onBeforeUnmount(() => {
+  Object.values(resizeObservers).forEach((observer) => observer.disconnect())
+  window.removeEventListener('resize', handleWindowResize)
+  window.removeEventListener('pointermove', onThumbPointerMove)
+  window.removeEventListener('pointerup', onThumbPointerUp)
 })
 
 const username = computed(() => (session.user || '').split('@')[0])
@@ -281,62 +437,70 @@ function excerpt(content, length) {
 /* Modal variant only: the page can grow/shrink freely since it scrolls with
    the rest of the document, but the Dialog sizes itself to its content, so
    a short tab (e.g. "Saved" with no posts) would shrink the whole modal and
-   a long one (many saved posts) would grow it past a sane size. Pinning this
-   wrapper to a fixed height and letting IT scroll internally keeps the
-   modal itself a constant size either way.
-   frappe-ui's own <ScrollArea> was tried here first, but its scrollbar
-   track isn't just faded via opacity while idle - reka-ui only mounts it
-   into the DOM at all once a hover/scroll interaction begins, and unmounts
-   it again after. That's the right call for a full-page scroller (the
-   reader's cursor is already inside it), but in a fixed-size modal someone
-   can be looking straight at "Saved" without their pointer ever having
-   entered the panel, so nothing ever appears. A plain `overflow-y: auto`
-   div's own scrollbar, custom-styled below, has no such mount/unmount cycle
-   - it's simply visible the instant there's something to scroll, matching
-   Frappe Cloud/Gameplan's own always-on dialog scrollbar. */
-.settings-modal-scroll {
+   a long one (many saved posts) would grow it past a sane size. Pinning
+   this wrapper to a fixed height and letting the inner panel scroll
+   internally keeps the modal itself a constant size either way.
+   Two other approaches were tried and dropped before this one: frappe-ui's
+   own <ScrollArea> doesn't just fade its thumb via opacity while idle -
+   reka-ui doesn't mount it into the DOM at all until a hover/scroll
+   interaction begins, so a modal the reader is looking at without having
+   moved their pointer into it shows nothing. A plain overflow-y:auto div's
+   *native* scrollbar, even with ::-webkit-scrollbar styling, ran into the
+   same wall on macOS Chrome - "automatically based on mouse or trackpad"
+   (the default) makes the OS apply its own overlay show/hide behavior to
+   *any* scrollbar, custom-styled or not. Hand-rendering the thumb as a
+   plain positioned div below sidesteps both: nothing about its visibility
+   depends on the browser or OS's own scrollbar behavior. */
+.settings-modal-scroll-outer {
+  position: relative;
   height: 460px;
-  overflow-y: auto;
   /* Dialog's own body wrapper (frappe-ui's Dialog.vue) pads every side with
-     px-4 sm:px-6, so the scrollbar would otherwise sit well inside that
-     padding instead of flush against the modal's true edge. Extending past
-     it on the right only (negative margin) and adding the same amount back
-     as this element's own padding keeps row content visually aligned where
-     it was while the scrollbar itself lands on the true border. */
+     px-4 sm:px-6, so the thumb would otherwise sit well inside that padding
+     instead of flush against the modal's true edge. Extending past it on
+     the right only (negative margin) and adding the same amount back as
+     the inner scrollable panel's own padding keeps row content visually
+     aligned where it was while the thumb itself lands on the true border. */
   margin-right: -16px;
+}
+
+.settings-modal-scroll {
+  height: 100%;
+  overflow-y: auto;
   padding-right: 16px;
+  /* The real scrollbar is hidden entirely (not just unstyled) - our own
+     thumb next to it is the only one ever shown. */
+  scrollbar-width: none;
+}
+.settings-modal-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 @media (min-width: 640px) {
-  .settings-modal-scroll {
+  .settings-modal-scroll-outer {
     margin-right: -24px;
+  }
+  .settings-modal-scroll {
     padding-right: 24px;
   }
 }
 
-/* Firefox has no ::-webkit-scrollbar equivalent - this is its own always-on
-   (not overlay/hover-triggered) styling API, close enough to match. */
-.settings-modal-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: #9ca3af transparent;
-}
-
-/* Styled to match frappe-ui's own ScrollBar thumb (Tabs, ScrollArea, ...)
-   as closely as a native scrollbar allows: same ~10px width, gray-400,
-   fully rounded. `background-clip: padding-box` + a transparent border
-   insets the visible thumb slightly off the track's edges, the same way
-   ScrollBar.vue's own `p-0.5` on its track does. WebKit/Blink only -
-   Firefox uses the scrollbar-width/-color rule above instead. */
-.settings-modal-scroll::-webkit-scrollbar {
-  width: 10px;
-}
-.settings-modal-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.settings-modal-scroll::-webkit-scrollbar-thumb {
-  background-color: #9ca3af;
+/* Styled to match frappe-ui's own ScrollBar thumb (Tabs, ScrollArea, ...):
+   ~6px wide, gray-400, fully rounded. `position: fixed` (not absolute) and
+   teleported to <body> in the template - see the comment on `thumbState`
+   in the script block for why it can't live inside the wrapper above.
+   Height/top/left are set inline from the live viewport math there. */
+.settings-modal-scrollbar-thumb {
+  position: fixed;
+  z-index: 60;
+  width: 6px;
   border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+  background-color: #9ca3af;
+  cursor: pointer;
+  /* reka-ui's Dialog sets `pointer-events: none` directly on <body> while
+     open, to force interaction through the dialog's own content only. That
+     content re-enables it on itself, but our thumb - teleported to <body>
+     as a *sibling* of the dialog's content, not nested inside it - inherits
+     the disabled value instead and needs its own explicit override. */
+  pointer-events: auto;
 }
 </style>
