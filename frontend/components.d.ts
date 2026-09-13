@@ -25,6 +25,7 @@ declare module 'vue' {
     PostImageCarousel: typeof import('./src/components/PostImageCarousel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SettingsPanel: typeof import('./src/components/SettingsPanel.vue')['default']
     StoryPreviewDialog: typeof import('./src/components/StoryPreviewDialog.vue')['default']
   }
 }

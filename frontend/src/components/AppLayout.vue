@@ -68,12 +68,20 @@
           <div class="flex w-full flex-col items-center gap-3">
             <!-- Same brand mark as the expanded header below (size-8,
                  rounded - matches Frappe Cloud's own sidebar logo exactly:
-                 32x32px, 8px/0.5rem radius), just without the label. Purely
-                 branding while collapsed - it doesn't expand the sidebar;
-                 use the dedicated "Expand" toggle below for that. -->
-            <div class="flex size-8 shrink-0 items-center justify-center rounded bg-surface-gray-10">
-              <span class="lucide-feather size-4 text-ink-base" aria-hidden="true" />
-            </div>
+                 32x32px, 8px/0.5rem radius), just without the label. Doesn't
+                 expand the sidebar - use the dedicated "Expand" toggle below
+                 for that - but does open the account/app menu, same as the
+                 expanded header's logo. -->
+            <Dropdown :options="logoMenuItems" side="right" align="start">
+              <template #default>
+                <button
+                  type="button"
+                  class="flex size-8 shrink-0 items-center justify-center rounded bg-surface-gray-10"
+                >
+                  <span class="lucide-feather size-4 text-ink-base" aria-hidden="true" />
+                </button>
+              </template>
+            </Dropdown>
 
             <RailItem
               label="Home"
@@ -149,21 +157,28 @@
         <Sidebar disable-collapse width="14rem" class="border-r border-outline-gray-1">
           <!-- App switcher header — structure from frappe-ui's own official
                "bespoke header" reference (ui.frappe.io/docs/components/
-               sidebar's hand-rolled demo header, used instead of the
-               separate <SidebarHeader> component since that one's built
-               around a Dropdown for a workspace-switcher menu). Logo mark
-               sized to match Frappe Cloud's own real sidebar exactly:
-               size-8 (32x32px), rounded (8px/0.5rem radius) - verified
-               directly against its own devtools computed styles. Purely
-               branding - it doesn't collapse the sidebar; use the
-               dedicated "Collapse" item below for that. -->
+               sidebar's hand-rolled demo header), now driven by frappe-ui's
+               own Dropdown instead of the separate <SidebarHeader> (which is
+               built around the same pattern for a workspace-switcher menu).
+               Logo mark sized to match Frappe Cloud's own real sidebar
+               exactly: size-8 (32x32px), rounded (8px/0.5rem radius) -
+               verified directly against its own devtools computed styles.
+               Opens the account/app menu; it doesn't collapse the sidebar -
+               use the dedicated "Collapse" item below for that. -->
           <div class="flex shrink-0 items-center p-2">
-            <div class="flex h-10 w-full items-center gap-2 rounded p-1">
-              <div class="grid size-8 shrink-0 place-items-center rounded bg-surface-gray-10 text-ink-base">
-                <span class="lucide-feather size-4" aria-hidden="true" />
-              </div>
-              <span class="flex-1 truncate text-left text-base-medium text-ink-gray-8">{{ APP_NAME }}</span>
-            </div>
+            <Dropdown :options="logoMenuItems" side="bottom" align="start">
+              <template #default>
+                <button
+                  type="button"
+                  class="flex h-10 w-full items-center gap-2 rounded p-1 transition hover:bg-surface-gray-2"
+                >
+                  <div class="grid size-8 shrink-0 place-items-center rounded bg-surface-gray-10 text-ink-base">
+                    <span class="lucide-feather size-4" aria-hidden="true" />
+                  </div>
+                  <span class="flex-1 truncate text-left text-base-medium text-ink-gray-8">{{ APP_NAME }}</span>
+                </button>
+              </template>
+            </Dropdown>
           </div>
 
           <nav class="mt-0.5 flex flex-col gap-1.5 px-2">
@@ -246,6 +261,15 @@
     </DesktopShell>
 
     <NotificationsPanel v-model="notificationsOpen" :rail-offset="railOffset" :full-screen="isMobile" />
+
+    <!-- Experiment: Settings as a modal (opened from the logo menu above)
+         instead of navigating to the full Settings page - same content
+         (SettingsPanel), just reusing the app's own Dialog + Tabs. -->
+    <Dialog v-model="settingsModalOpen" title="Settings" size="lg">
+      <template #default>
+        <SettingsPanel :sync-route-query="false" @navigate="settingsModalOpen = false" />
+      </template>
+    </Dialog>
   </div>
 </template>
 
@@ -255,6 +279,8 @@ import { useRoute } from 'vue-router'
 import {
   Badge,
   DesktopShell,
+  Dialog,
+  Dropdown,
   MobileNav,
   MobileNavItem,
   MobileShell,
@@ -270,6 +296,7 @@ import { unreadMessageCount } from '@/data/messages'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { APP_NAME } from '@/utils/appName'
 import NotificationsPanel from './NotificationsPanel.vue'
+import SettingsPanel from './SettingsPanel.vue'
 
 const route = useRoute()
 const isMobile = useIsMobile()
@@ -299,6 +326,20 @@ watch(
 function blurTrigger(event) {
   event.currentTarget?.blur()
 }
+
+// Experiment: clicking the logo mark opens a small account/app menu (like
+// Frappe Cloud's own sidebar) instead of doing nothing. Only "Settings" for
+// now since that's the only thing this menu needs to hold today.
+const settingsModalOpen = ref(false)
+const logoMenuItems = [
+  {
+    icon: 'lucide-settings',
+    label: 'Settings',
+    onClick: () => {
+      settingsModalOpen.value = true
+    },
+  },
+]
 
 function handleNewMessage(payload) {
   unreadMessageCount.reload()
