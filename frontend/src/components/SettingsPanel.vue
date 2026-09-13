@@ -278,15 +278,18 @@ function excerpt(content, length) {
 
 /* Modal variant only: the page can grow/shrink freely since it scrolls with
    the rest of the document, but the Dialog sizes itself to its content, so
-   switching from "Account" (tall) to "Saved" (a one-line empty state) would
-   otherwise visibly shrink the whole modal. Pinning the panel to Account's
-   own natural height keeps the modal a constant size across tabs.
+   a short tab (e.g. "Saved" with no posts) would shrink the whole modal and
+   a long one (many saved posts) would grow it past a sane size. Pinning the
+   active panel to a fixed height and letting IT scroll internally (like
+   Gameplan's own settings modal) keeps the modal itself a constant size
+   either way - the scrollbar only ever appears on this panel, and only once
+   its content actually overflows the fixed height.
    [data-state='active'] only - reka-ui's TabsContent keeps the *inactive*
    panel's element in the DOM (empty, for a11y) rather than removing it, so
-   a min-height on every [role=tabpanel] would reserve that blank space too
-   and add it on top of the real active panel's height instead of replacing
-   it. */
+   sizing every [role=tabpanel] would reserve that blank space too and add
+   it on top of the real active panel instead of replacing it. */
 .settings-tabs--modal :deep([role='tabpanel'][data-state='active']) {
-  min-height: 440px;
+  height: 460px;
+  overflow-y: auto;
 }
 </style>
