@@ -151,22 +151,19 @@
                "bespoke header" reference (ui.frappe.io/docs/components/
                sidebar's hand-rolled demo header, used instead of the
                separate <SidebarHeader> component since that one's built
-               around a Dropdown for a workspace-switcher menu; this app
-               collapses to an icon rail on click instead). Logo mark sized
-               to match Frappe Cloud's own real sidebar exactly: size-8
-               (32x32px), rounded (8px/0.5rem radius) - verified directly
-               against its own devtools computed styles. -->
+               around a Dropdown for a workspace-switcher menu). Logo mark
+               sized to match Frappe Cloud's own real sidebar exactly:
+               size-8 (32x32px), rounded (8px/0.5rem radius) - verified
+               directly against its own devtools computed styles. Purely
+               branding - it doesn't collapse the sidebar; use the
+               dedicated "Collapse" item below for that. -->
           <div class="flex shrink-0 items-center p-2">
-            <button
-              type="button"
-              class="flex h-10 w-full items-center gap-2 rounded p-1 transition hover:bg-surface-gray-2"
-              @click="sidebarOpen = false"
-            >
+            <div class="flex h-10 w-full items-center gap-2 rounded p-1">
               <div class="grid size-8 shrink-0 place-items-center rounded bg-surface-gray-10 text-ink-base">
                 <span class="lucide-feather size-4" aria-hidden="true" />
               </div>
               <span class="flex-1 truncate text-left text-base-medium text-ink-gray-8">{{ APP_NAME }}</span>
-            </button>
+            </div>
           </div>
 
           <nav class="mt-0.5 flex flex-col gap-1.5 px-2">
