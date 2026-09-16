@@ -126,14 +126,6 @@
               :to="{ name: 'Profile' }"
               @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
-            <RailItem
-              label="Settings"
-              variant="ghost"
-              icon="lucide-settings"
-              :active="!notificationsOpen && route.name === 'Settings'"
-              :to="{ name: 'Settings' }"
-              @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
-            />
           </div>
 
           <!-- Mirrors frappe-ui's own SidebarCollapseToggle (same icon,
@@ -228,13 +220,6 @@
               :to="{ name: 'Profile' }"
               @click="notificationsOpen = false"
             />
-            <SidebarItem
-              label="Settings"
-              icon="lucide-settings"
-              :active="!notificationsOpen && route.name === 'Settings'"
-              :to="{ name: 'Settings' }"
-              @click="notificationsOpen = false"
-            />
           </nav>
 
           <!-- Same icon/rotation as frappe-ui's own SidebarCollapseToggle
@@ -276,7 +261,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   Badge,
@@ -307,6 +292,18 @@ const sidebarOpen = ref(false)
 // below, so the panel sits next to whichever is currently showing instead of
 // covering it.
 const railOffset = computed(() => (sidebarOpen.value ? '14rem' : '50px'))
+
+// The Settings modal (below) should center itself over the actual page
+// content column - which sits to the right of the rail/sidebar, not over
+// the full viewport - the same reasoning as NotificationsPanel's own
+// `railOffset` prop above. frappe-ui's Dialog centers itself with no way
+// to pass it an offset, and its centering wrapper is teleported to <body>
+// (see the settings-dialog :global() rules below), so this is exposed to
+// that plain CSS rule as a custom property on the root element instead of
+// a prop, updating live as the sidebar toggles.
+watchEffect(() => {
+  document.documentElement.style.setProperty('--settings-modal-rail-offset', railOffset.value)
+})
 
 // Navigating away (Home, Search, Messages, a profile link, ...) should close
 // the notifications panel rather than leaving it hanging open over whatever
@@ -389,9 +386,32 @@ onBeforeUnmount(() => {
    subtree - so normal scoped styles (even :deep()) can't reach it. `:global`
    opts this one rule out of scoping entirely; :has() keys it to the marker
    div this component itself renders inside the dialog, so it can't affect
-   any other Dialog on the page. 600px matches the standalone Settings
-   page's own `max-w-[600px]` container exactly. */
+   any other Dialog on the page.
+   700px is the target *content* width - but Dialog's own body wrapper
+   always adds its own px-4/sm:px-6 padding around whatever's inside it, so
+   setting the dialog box itself to exactly 700px would leave its content
+   narrower than that. Adding that padding back on top of 700px here makes
+   the dialog's inner content area come out to the true 700px either way. */
 :global(.dialog-content:has(.settings-modal-panel)) {
-  max-width: 600px;
+  max-width: 732px; /* 700px + 2 * 16px (Dialog's px-4 below the sm breakpoint) */
+}
+
+@media (min-width: 640px) {
+  :global(.dialog-content:has(.settings-modal-panel)) {
+    max-width: 748px; /* 700px + 2 * 24px (Dialog's sm:px-6) */
+  }
+}
+
+/* Dialog centers itself horizontally over the *entire* viewport with no way
+   to pass it an offset, but the actual page underneath (router-view) only
+   occupies the space to the right of the rail/sidebar - so a plain centered
+   modal reads as visibly off-center relative to the page content it's
+   sitting on top of. Padding the dialog's own centering wrapper on the
+   left by the same amount the rail/sidebar takes up (the CSS variable set
+   from `railOffset` in the script block) shrinks its effective centering
+   box to match that content column exactly, so the modal lines up with the
+   page underneath instead of the raw window. */
+:global([data-position]:has(.settings-modal-panel)) {
+  padding-left: var(--settings-modal-rail-offset, 50px);
 }
 </style>

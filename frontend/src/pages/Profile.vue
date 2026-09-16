@@ -14,7 +14,7 @@
       <template v-else-if="profile.data">
         <div class="flex items-start gap-4 sm:gap-8">
           <div
-            class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-gray-2 sm:size-25"
+            class="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-outline-gray-1 bg-surface-gray-2 sm:size-25"
           >
             <img
               v-if="profile.data.user_image && !avatarImageError"
@@ -32,7 +32,7 @@
                  block), so they only compete for width with the name - the
                  headline below stays free to use the column's full width. -->
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <h1 class="truncate text-3xl-semibold text-ink-gray-8 sm:text-7xl-semibold sm:tracking-[0.015em]">{{ profile.data.full_name }}</h1>
+              <h1 class="truncate text-3xl-semibold text-ink-gray-8 sm:text-7xl-semibold">{{ profile.data.full_name }}</h1>
               <div class="flex items-center gap-2">
                 <template v-if="isOwnProfile">
                   <Button variant="outline" label="Edit" @click="openEditHeader" />
@@ -54,7 +54,7 @@
                 {{ profile.data.job_title }}<template v-if="profile.data.company"> at {{ profile.data.company }}</template>
               </span>
               <span v-if="profile.data.job_title">·</span>
-              <span class="text-base">@{{ profile.data.username }}</span>
+              <span>@{{ profile.data.username }}</span>
             </div>
             <div v-if="profile.data.headline || isOwnProfile" class="mt-1 flex items-start gap-1.5">
               <p
