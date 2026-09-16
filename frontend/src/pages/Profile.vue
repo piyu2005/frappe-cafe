@@ -145,12 +145,15 @@
               </p>
             </div>
 
-            <div v-if="recentPosts.data && recentPosts.data.length === postsLimit" class="mt-3 flex justify-center">
+            <div
+              v-if="isOwnProfile || (recentPosts.data && recentPosts.data.length === postsLimit)"
+              class="mt-3 flex justify-center"
+            >
               <Button
                 variant="ghost"
                 theme="gray"
                 size="sm"
-                label="View all posts"
+                :label="isOwnProfile ? 'Manage all posts' : 'View all posts'"
                 :route="{ name: 'ProfilePosts', params: { userId: targetUser } }"
               />
             </div>
@@ -481,12 +484,15 @@ watch(
   { immediate: true },
 )
 
-// Just a preview here — "View all posts" now routes to its own dedicated
+// Just a preview here — the button below routes to its own dedicated
 // ProfilePosts page (matching Work History/Education's own "Show all"
 // pattern of a small capped preview, except those expand in place since
 // they're already fully loaded up front, while posts are paginated
 // server-side and get a real page instead). "Exactly a full page of 3 came
-// back" is the only signal more might exist, same heuristic those rely on.
+// back" is the pagination heuristic for a visitor's read-only view (same one
+// Work/Education rely on) — but it's also the only entry point to Drafts/
+// Archived, which have nothing to do with published-post pagination, so
+// isOwnProfile always gets the button regardless of this count.
 const postsLimit = 3
 const recentPosts = useCall({
   url: '/api/v2/method/my_new_app.api.list_profile_posts',
