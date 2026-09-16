@@ -126,14 +126,6 @@
               :to="{ name: 'Profile' }"
               @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
-            <RailItem
-              label="Settings"
-              variant="ghost"
-              icon="lucide-settings"
-              :active="!notificationsOpen && route.name === 'Settings'"
-              :to="{ name: 'Settings' }"
-              @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
-            />
           </div>
 
           <!-- Mirrors frappe-ui's own SidebarCollapseToggle (same icon,
@@ -226,13 +218,6 @@
               icon="lucide-user"
               :active="!notificationsOpen && route.name === 'Profile'"
               :to="{ name: 'Profile' }"
-              @click="notificationsOpen = false"
-            />
-            <SidebarItem
-              label="Settings"
-              icon="lucide-settings"
-              :active="!notificationsOpen && route.name === 'Settings'"
-              :to="{ name: 'Settings' }"
               @click="notificationsOpen = false"
             />
           </nav>
