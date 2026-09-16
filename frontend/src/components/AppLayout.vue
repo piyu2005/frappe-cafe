@@ -389,9 +389,21 @@ onBeforeUnmount(() => {
    subtree - so normal scoped styles (even :deep()) can't reach it. `:global`
    opts this one rule out of scoping entirely; :has() keys it to the marker
    div this component itself renders inside the dialog, so it can't affect
-   any other Dialog on the page. 600px matches the standalone Settings
-   page's own `max-w-[600px]` container exactly. */
+   any other Dialog on the page.
+   The goal is matching the standalone Settings page's own content width
+   (max-w-[600px], with zero horizontal padding at this breakpoint - see
+   Settings.vue's `sm:px-0`) - but Dialog's own body wrapper always adds its
+   own px-4/sm:px-6 padding around whatever's inside it, so setting the
+   dialog itself to exactly 600px would leave its *content* narrower than
+   the page's. Adding that padding back on top of 600px here makes the
+   dialog's inner content area come out to the same true 600px either way. */
 :global(.dialog-content:has(.settings-modal-panel)) {
-  max-width: 600px;
+  max-width: 632px; /* 600px + 2 * 16px (Dialog's px-4 below the sm breakpoint) */
+}
+
+@media (min-width: 640px) {
+  :global(.dialog-content:has(.settings-modal-panel)) {
+    max-width: 648px; /* 600px + 2 * 24px (Dialog's sm:px-6) */
+  }
 }
 </style>
