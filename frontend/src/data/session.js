@@ -49,6 +49,23 @@ export function verifySession() {
   return verifyPromise
 }
 
+// Unlike verifySession() below, this always hits the server fresh instead of
+// reusing a cached promise — for revalidating a tab that's had no navigation
+// (and so no chance for the router guard's own verifySession() call) since
+// logging out in a *different* tab. Cookies are shared across same-origin
+// tabs, but this tab's in-memory session.user isn't, so it has no way to
+// notice a stale session on its own without asking the server again.
+export async function revalidateSession() {
+  try {
+    const user = await call('frappe.auth.get_logged_user')
+    session.user = user && user !== 'Guest' ? user : null
+  } catch (err) {
+    if (err?.status === 401 || err?.status === 403) {
+      session.user = null
+    }
+  }
+}
+
 export async function login(email, password) {
   await call('login', { usr: email, pwd: password })
   session.refresh()

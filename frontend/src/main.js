@@ -2,7 +2,8 @@ import './index.css'
 
 import { createApp } from 'vue'
 import { FrappeUI } from 'frappe-ui'
-import router from './router'
+import router, { GUEST_ROUTE_NAMES } from './router'
+import { session, revalidateSession } from './data/session'
 import App from './App.vue'
 
 let app = createApp(App)
@@ -87,6 +88,21 @@ document.addEventListener('visibilitychange', () => {
     window.removeEventListener('mousemove', restore)
   }
   window.addEventListener('mousemove', restore, { passive: true })
+
+  // Catches a session change made in a *different* tab (most commonly:
+  // logging out there) while this tab sat in the background — cookies are
+  // shared across same-origin tabs, but this tab's in-memory session.user
+  // isn't, and with no navigation happening here there's no other chance for
+  // it to notice. Only acts on a logout (bounces to Login, same redirect
+  // logic the router guard itself uses) - it deliberately does NOT bounce a
+  // logged-out visitor away from a guest page just because they switched
+  // tabs, matching the guard's own isGuestPage carve-out.
+  revalidateSession().then(() => {
+    let current = router.currentRoute.value
+    if (!session.isLoggedIn && !GUEST_ROUTE_NAMES.includes(current.name)) {
+      router.push({ name: 'Login', query: { redirect: current.fullPath } })
+    }
+  })
 })
 
 // visibilitychange only fires for tab switches within the browser; blur/focus
