@@ -90,13 +90,14 @@ let router = createRouter({
   routes,
 })
 
+// Shared with main.js's visibilitychange handler — both need the same
+// definition of "a page a logged-out visitor is allowed to sit on" so a
+// stale-session revalidation on tab-focus can't disagree with what
+// navigating there directly would have decided.
+export const GUEST_ROUTE_NAMES = ['Login', 'Signup', 'ForgotPassword', 'ResetPassword', 'VerifyEmail']
+
 router.beforeEach(async (to) => {
-  let isGuestPage =
-    to.name === 'Login' ||
-    to.name === 'Signup' ||
-    to.name === 'ForgotPassword' ||
-    to.name === 'ResetPassword' ||
-    to.name === 'VerifyEmail'
+  let isGuestPage = GUEST_ROUTE_NAMES.includes(to.name)
   // ResetPassword and VerifyEmail are both reachable via an emailed link tied
   // to a one-time key, independent of whatever session (if any) is active in
   // this browser — unlike the other guest pages, a logged-in visitor
