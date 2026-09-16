@@ -39,12 +39,22 @@ app_license = "mit"
 # webform_include_js = {"doctype": "public/js/doctype.js"}
 # webform_include_css = {"doctype": "public/css/doctype.css"}
 
-# The frontend is a Vue SPA — every sub-path (e.g. /frontend/settings,
-# /frontend/write/abc123) needs to resolve to the same www/frontend.html
+# The frontend is a Vue SPA served at the site root — every sub-path (e.g.
+# /settings, /write/abc123) needs to resolve to the same www/index.html
 # entry point so Vue Router can take over client-side, not 404 on a direct
-# link or a page refresh.
+# link or a page refresh. Werkzeug's `path` converter requires at least one
+# path segment, so this only covers non-root paths; the bare "/" itself
+# goes through `home_page`/`role_home_page` below instead.
+#
+# "/update-password" is listed separately, ABOVE the catch-all, on purpose:
+# Werkzeug always matches a static rule before a dynamic one regardless of
+# list order, so without this the catch-all below would still win and swallow
+# frappe core's hardcoded password-reset email link (see user.py's
+# _reset_password) before it ever reaches our own www/update-password.html
+# redirect-forwarder (see that file for what it does with the `?key=`).
 website_route_rules = [
-	{"from_route": "/frontend/<path:app_path>", "to_route": "frontend"},
+	{"from_route": "/update-password", "to_route": "update-password"},
+	{"from_route": "/<path:app_path>", "to_route": "index"},
 ]
 
 # include js in page
@@ -77,7 +87,7 @@ website_route_rules = [
 # role_home_page for user_type == "Website User", they're hardcoded to
 # /desk regardless.
 role_home_page = {
-	"All": "frontend",
+	"All": "index",
 }
 
 # Generators

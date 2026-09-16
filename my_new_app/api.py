@@ -53,7 +53,7 @@ def signup(email, password, username):
 		expires_in_sec=SIGNUP_LINK_EXPIRY_SEC,
 	)
 
-	verify_url = frappe.utils.get_url(f"/frontend/verify-email?key={token}")
+	verify_url = frappe.utils.get_url(f"/verify-email?key={token}")
 	frappe.sendmail(
 		recipients=email,
 		subject="Verify your email for Cafe",
@@ -100,7 +100,7 @@ def verify_email(key):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_google_login_url(redirect_to="/frontend"):
+def get_google_login_url(redirect_to="/"):
 	if not frappe.db.exists(
 		"Social Login Key", {"social_login_provider": "Google", "enable_social_login": 1}
 	):
