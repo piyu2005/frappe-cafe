@@ -1,13 +1,26 @@
+import secrets
+import string
+
 import frappe
 from frappe.auth import LoginManager
 from frappe.rate_limiter import rate_limit
 
 
-SIGNUP_CACHE_PREFIX = "pending_signup:"
-SIGNUP_LINK_EXPIRY_SEC = 24 * 60 * 60
+SIGNUP_CODE_CACHE_PREFIX = "pending_signup:"
+LOGIN_CODE_CACHE_PREFIX = "login_code:"
+CODE_EXPIRY_SEC = 10 * 60
+CODE_MAX_ATTEMPTS = 5
 
 
-def _create_verified_user(email, username, password):
+def _generate_code():
+	return "".join(secrets.choice(string.digits) for _ in range(6))
+
+
+def _create_verified_user(email, username):
+	# No password is ever set - this app is passwordless throughout, so
+	# there's nothing for a User doc here to hold. Frappe doesn't require
+	# one; a User with no password simply has no password-based login path,
+	# which is exactly right since this app never offers one.
 	user = frappe.get_doc(
 		{
 			"doctype": "User",
@@ -17,7 +30,6 @@ def _create_verified_user(email, username, password):
 			"enabled": 1,
 			"user_type": "Website User",
 			"send_welcome_email": 0,
-			"new_password": password,
 		}
 	)
 	user.flags.ignore_permissions = True
@@ -27,11 +39,11 @@ def _create_verified_user(email, username, password):
 
 @frappe.whitelist(allow_guest=True)
 # Public, so without this an unauthenticated script could hammer it to
-# enumerate registered emails (via the "already exists" error) or queue up
-# mass account-creation attempts. IP-based, matching frappe core's own
-# guest-facing endpoints (e.g. User.clear_session).
+# enumerate registered emails (via the "already exists" error) or spam
+# accounts with unwanted verification emails. IP-based, matching frappe
+# core's own guest-facing endpoints (e.g. User.clear_session).
 @rate_limit(limit=10, seconds=60 * 60)
-def signup(email, password, username):
+def send_signup_code(email, username):
 	email = email.strip().lower()
 	if frappe.db.exists("User", email):
 		frappe.throw("An account with this email already exists. Please log in instead.")
@@ -41,26 +53,27 @@ def signup(email, password, username):
 		frappe.throw("This username is already taken. Please choose another.")
 
 	# No User is created yet - anyone could otherwise type in someone else's
-	# real email address and be logged in immediately as "them", with nothing
-	# ever confirming they actually own that inbox. The submitted details sit
-	# in cache under a one-time token until the emailed link proves it;
-	# _create_verified_user() (verify_email, below) is the only thing that
-	# ever actually inserts the User doc.
-	token = frappe.generate_hash(length=32)
+	# real email address and be signed up as "them", with nothing ever
+	# confirming they actually own that inbox. The submitted username sits in
+	# cache under the email until the emailed code proves it;
+	# verify_signup_code() is the only thing that ever actually inserts the
+	# User doc. Re-sending (e.g. clicking "Resend code") overwrites this same
+	# key with a fresh code, immediately invalidating whatever code was sent
+	# before.
+	code = _generate_code()
 	frappe.cache.set_value(
-		f"{SIGNUP_CACHE_PREFIX}{token}",
-		frappe.as_json({"email": email, "username": username, "password": password}),
-		expires_in_sec=SIGNUP_LINK_EXPIRY_SEC,
+		f"{SIGNUP_CODE_CACHE_PREFIX}{email}",
+		frappe.as_json({"code": code, "username": username, "attempts": 0}),
+		expires_in_sec=CODE_EXPIRY_SEC,
 	)
 
-	verify_url = frappe.utils.get_url(f"/verify-email?key={token}")
 	frappe.sendmail(
 		recipients=email,
-		subject="Verify your email for Cafe",
+		subject="Your Cafe verification code",
 		message=f"""
-			<p>Welcome to Cafe! Click the link below to verify your email and finish creating your account.</p>
-			<p><a href="{verify_url}">Verify your email</a></p>
-			<p>This link expires in 24 hours. If you didn't try to sign up, you can ignore this email.</p>
+			<p>Welcome to Cafe! Your verification code is:</p>
+			<h2>{code}</h2>
+			<p>This code expires in 10 minutes. If you didn't try to sign up, you can ignore this email.</p>
 		""",
 		now=True,
 	)
@@ -68,34 +81,104 @@ def signup(email, password, username):
 
 
 @frappe.whitelist(allow_guest=True)
-# Token is a 32-char cryptographically random hash - not realistically
-# guessable - but rate-limited anyway as cheap defense-in-depth, matching
-# frappe core's own treatment of its equivalent key-based endpoint
-# (frappe.www.login.login_via_key).
-@rate_limit(limit=20, seconds=60 * 60)
-def verify_email(key):
-	cache_key = f"{SIGNUP_CACHE_PREFIX}{key}"
+# Rate-limited on top of the cached attempt counter below: that counter
+# protects one specific pending signup, this protects against churning
+# through many different email addresses' codes from one IP.
+@rate_limit(limit=30, seconds=60 * 60)
+def verify_signup_code(email, code):
+	email = email.strip().lower()
+	code = code.strip()
+	cache_key = f"{SIGNUP_CODE_CACHE_PREFIX}{email}"
 	cached = frappe.cache.get_value(cache_key)
 	if not cached:
-		frappe.throw("This verification link is invalid or has expired. Please sign up again.")
+		frappe.throw("This code has expired or is invalid. Please sign up again.")
 
 	data = frappe.parse_json(cached)
 
-	# Re-check uniqueness rather than trusting the check already done at
-	# signup time - someone else could have registered (and verified) the
-	# same email or username while this link sat unused.
-	if frappe.db.exists("User", data["email"]):
+	if data["attempts"] >= CODE_MAX_ATTEMPTS:
+		frappe.cache.delete_value(cache_key)
+		frappe.throw("Too many incorrect attempts. Please sign up again.")
+
+	if code != data["code"]:
+		data["attempts"] += 1
+		frappe.cache.set_value(cache_key, frappe.as_json(data), expires_in_sec=CODE_EXPIRY_SEC)
+		frappe.throw("Incorrect code. Please try again.")
+
+	# Re-check uniqueness rather than trusting the check already done when
+	# the code was sent - someone else could have registered the same email
+	# or username while this code sat unused.
+	if frappe.db.exists("User", email):
 		frappe.cache.delete_value(cache_key)
 		frappe.throw("An account with this email already exists. Please log in instead.")
 	if frappe.db.exists("User", {"username": data["username"]}):
 		frappe.cache.delete_value(cache_key)
 		frappe.throw("This username was taken while your verification was pending. Please sign up again with a different username.")
 
-	_create_verified_user(data["email"], data["username"], data["password"])
+	_create_verified_user(email, data["username"])
 	frappe.cache.delete_value(cache_key)
 
 	login_manager = LoginManager()
-	login_manager.login_as(data["email"])
+	login_manager.login_as(email)
+	return "success"
+
+
+@frappe.whitelist(allow_guest=True)
+@rate_limit(limit=10, seconds=60 * 60)
+def send_login_code(email):
+	email = email.strip().lower()
+	if not frappe.db.exists("User", email):
+		# Deliberately explicit (unlike a typical "if this email exists, we
+		# sent a code" non-committal response) - this is a low-stakes social
+		# app, not a banking login, and the UX cost of a genuine visitor
+		# silently waiting on a code that will never arrive is worse than the
+		# minor email-enumeration risk of saying so plainly.
+		frappe.throw("No account found with this email.")
+
+	code = _generate_code()
+	frappe.cache.set_value(
+		f"{LOGIN_CODE_CACHE_PREFIX}{email}",
+		frappe.as_json({"code": code, "attempts": 0}),
+		expires_in_sec=CODE_EXPIRY_SEC,
+	)
+
+	frappe.sendmail(
+		recipients=email,
+		subject="Your Cafe verification code",
+		message=f"""
+			<p>Your verification code is:</p>
+			<h2>{code}</h2>
+			<p>This code expires in 10 minutes. If you didn't try to log in, you can ignore this email.</p>
+		""",
+		now=True,
+	)
+	return "success"
+
+
+@frappe.whitelist(allow_guest=True)
+@rate_limit(limit=30, seconds=60 * 60)
+def verify_login_code(email, code):
+	email = email.strip().lower()
+	code = code.strip()
+	cache_key = f"{LOGIN_CODE_CACHE_PREFIX}{email}"
+	cached = frappe.cache.get_value(cache_key)
+	if not cached:
+		frappe.throw("This code has expired or is invalid. Please request a new one.")
+
+	data = frappe.parse_json(cached)
+
+	if data["attempts"] >= CODE_MAX_ATTEMPTS:
+		frappe.cache.delete_value(cache_key)
+		frappe.throw("Too many incorrect attempts. Please request a new code.")
+
+	if code != data["code"]:
+		data["attempts"] += 1
+		frappe.cache.set_value(cache_key, frappe.as_json(data), expires_in_sec=CODE_EXPIRY_SEC)
+		frappe.throw("Incorrect code. Please try again.")
+
+	frappe.cache.delete_value(cache_key)
+
+	login_manager = LoginManager()
+	login_manager.login_as(email)
 	return "success"
 
 
@@ -250,32 +333,6 @@ def get_comment_counts(posts):
 	for c in frappe.db.get_all("Post Comment", filters={"post": ["in", posts]}, fields=["post"]):
 		counts[c.post] = counts.get(c.post, 0) + 1
 	return counts
-
-
-@frappe.whitelist()
-def change_password(old_password, new_password):
-	user = frappe.session.user
-	if user == "Guest":
-		frappe.throw("Not permitted", frappe.PermissionError)
-
-	from frappe.utils.password import check_password
-
-	# Deliberately not re-raising frappe.AuthenticationError here: Frappe's
-	# response middleware treats that exception type as a real login
-	# failure and clears the session cookie regardless of where it came
-	# from, which would silently log the user out just for mistyping their
-	# current password. A plain ValidationError (the frappe.throw default)
-	# surfaces the same message without that side effect.
-	try:
-		check_password(user, old_password)
-	except frappe.AuthenticationError:
-		frappe.throw("Current password is incorrect")
-
-	doc = frappe.get_doc("User", user)
-	doc.new_password = new_password
-	doc.flags.ignore_permissions = True
-	doc.save()
-	return "success"
 
 
 @frappe.whitelist()

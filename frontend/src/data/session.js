@@ -66,8 +66,20 @@ export async function revalidateSession() {
   }
 }
 
-export async function login(email, password) {
-  await call('login', { usr: email, pwd: password })
+// frappe-ui's call() throws an Error whose own .message is just a generic
+// "<method name> <ExceptionType>" label - the actual frappe.throw() text
+// lands in .messages (an array) instead. Centralized here since both
+// Login.vue and Signup.vue need to unwrap this the same way.
+export function errorMessage(e, fallback = 'Something went wrong. Please try again.') {
+  return e?.messages?.[0] || fallback
+}
+
+export async function sendLoginCode(email) {
+  await call('my_new_app.api.send_login_code', { email })
+}
+
+export async function verifyLoginCode(email, code) {
+  await call('my_new_app.api.verify_login_code', { email, code })
   session.refresh()
 }
 

@@ -21,6 +21,7 @@ declare module 'vue' {
     MentionChip: typeof import('./src/components/MentionChip.vue')['default']
     MobileNotificationBell: typeof import('./src/components/MobileNotificationBell.vue')['default']
     NotificationsPanel: typeof import('./src/components/NotificationsPanel.vue')['default']
+    OtpInput: typeof import('./src/components/OtpInput.vue')['default']
     PeoplePicker: typeof import('./src/components/PeoplePicker.vue')['default']
     PostImageCarousel: typeof import('./src/components/PostImageCarousel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
