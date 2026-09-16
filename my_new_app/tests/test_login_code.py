@@ -30,14 +30,25 @@ def _make_user(email, first_name):
 
 class TestSendLoginCode(IntegrationTestCase):
 	def test_rejects_email_with_no_account(self):
+		# Fails on the account-existence check, before ever reaching
+		# frappe.sendmail() - no email account needs to be configured to
+		# test this one.
 		with set_user("Guest"):
 			with self.assertRaises(frappe.ValidationError):
 				send_login_code(email="nobody_has_this_email@example.com")
 
-	def test_caches_a_code_for_an_existing_user(self):
+	@patch("frappe.sendmail")
+	def test_caches_a_code_for_an_existing_user(self, mock_sendmail):
+		# Actually sending mail is frappe core's own tested responsibility,
+		# not this function's - and CI has no outgoing Email Account
+		# configured, so a real frappe.sendmail() call here would fail with
+		# OutgoingEmailError regardless of whether the caching logic below is
+		# correct. Mocked out so this test isolates what send_login_code()
+		# itself is responsible for.
 		email = _make_user("login_code_send@example.com", "Sender")
 		with set_user("Guest"):
 			send_login_code(email=email)
+		mock_sendmail.assert_called_once()
 		cached = frappe.parse_json(frappe.cache.get_value(f"{LOGIN_CODE_CACHE_PREFIX}{email}"))
 		self.assertEqual(len(cached["code"]), 6)
 		self.assertEqual(cached["attempts"], 0)

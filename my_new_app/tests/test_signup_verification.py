@@ -47,6 +47,23 @@ class TestSendSignupCode(IntegrationTestCase):
 			with self.assertRaises(frappe.ValidationError):
 				send_signup_code(email="signup_fresh_email@example.com", username="signuptakenname")
 
+	@patch("frappe.sendmail")
+	def test_caches_a_code_for_a_new_signup(self, mock_sendmail):
+		# Actually sending mail is frappe core's own tested responsibility,
+		# not this function's - and CI has no outgoing Email Account
+		# configured, so a real frappe.sendmail() call here would fail with
+		# OutgoingEmailError regardless of whether the caching logic below is
+		# correct. Mocked out so this test isolates what send_signup_code()
+		# itself is responsible for.
+		email = "signup_fresh_send@example.com"
+		with set_user("Guest"):
+			send_signup_code(email=email, username="freshsignupuser")
+		mock_sendmail.assert_called_once()
+		cached = frappe.parse_json(frappe.cache.get_value(f"{SIGNUP_CODE_CACHE_PREFIX}{email}"))
+		self.assertEqual(len(cached["code"]), 6)
+		self.assertEqual(cached["username"], "freshsignupuser")
+		self.assertEqual(cached["attempts"], 0)
+
 
 class TestVerifySignupCode(IntegrationTestCase):
 	def setUp(self):
