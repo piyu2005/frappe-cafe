@@ -58,7 +58,7 @@
           </div>
           <div class="flex items-start gap-4">
             <div class="min-w-0 flex-1">
-              <div class="text-p-base-semibold text-ink-gray-8">
+              <div class="text-lg-semibold text-ink-gray-8">
                 {{ post.display_title || post.title || excerpt(post.content, 60) }}
               </div>
               <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">

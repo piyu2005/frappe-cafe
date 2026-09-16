@@ -49,7 +49,7 @@
                 >
                   <div class="flex min-w-0 flex-1 flex-col justify-between">
                     <div>
-                      <div class="text-p-base-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
+                      <div class="text-lg-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
                       <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">{{ post.excerpt || excerpt(post.content, 140) }}</p>
                     </div>
                     <div class="mt-2 text-xs text-ink-gray-5">
@@ -94,7 +94,7 @@
                   class="flex items-stretch justify-between gap-4 py-5 first:pt-0 last:pb-0"
                 >
                   <div class="min-w-0 flex-1">
-                    <div class="text-p-base-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
+                    <div class="text-lg-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
                     <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">{{ post.excerpt || excerpt(post.content, 140) }}</p>
                     <div class="mt-2 text-xs text-ink-gray-5">{{ formatDate(post.modified) }}</div>
                   </div>
@@ -122,7 +122,7 @@
             >
               <div class="flex min-w-0 flex-1 flex-col justify-between">
                 <div>
-                  <div class="text-p-base-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
+                  <div class="text-lg-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
                   <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">{{ post.excerpt || excerpt(post.content, 140) }}</p>
                 </div>
                 <div class="mt-2 text-xs text-ink-gray-5">
