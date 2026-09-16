@@ -68,7 +68,7 @@
               </div>
               <p v-else class="mt-6 text-base text-ink-gray-5">
                 You haven't published anything yet.
-                <router-link to="/write" class="text-base-medium text-ink-gray-8 underline">
+                <router-link to="/write" class="text-base-medium text-ink-gray-8">
                   Write your first blog.
                 </router-link>
               </p>

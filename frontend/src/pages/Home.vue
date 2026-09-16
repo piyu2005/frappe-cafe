@@ -26,7 +26,7 @@
     <div class="mx-auto max-w-[640px] px-4 py-4 sm:px-5 sm:py-6">
       <div v-if="!myPostCount.loading && myPostCount.data === 0" class="mb-6 text-base text-ink-gray-5">
         You haven't written anything yet.
-        <router-link to="/write" class="text-base-medium text-ink-gray-8 underline">Write your first blog.</router-link>
+        <router-link to="/write" class="text-base-medium text-ink-gray-8">Write your first blog.</router-link>
       </div>
 
       <h1 class="font-[Newsreader] text-[24px] font-medium leading-[1.5] tracking-[0.005em] text-ink-gray-8">
