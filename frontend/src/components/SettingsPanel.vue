@@ -35,13 +35,6 @@
           </div>
           <button
             class="flex w-full items-center justify-between py-6 text-left"
-            @click="openChangePassword"
-          >
-            <span class="text-base-medium text-ink-gray-8">Change Password</span>
-            <span class="lucide-arrow-right size-4 text-ink-gray-5" aria-hidden="true" />
-          </button>
-          <button
-            class="flex w-full items-center justify-between py-6 text-left"
             @click="handleLogout"
           >
             <span class="text-base-medium text-ink-gray-8">Log out</span>
@@ -312,14 +305,6 @@ function handlePrivacyToggle(value) {
   updatePrivacy.submit({ is_private: value ? 1 : 0 })
 }
 
-const changePassword = useCall({
-  url: '/api/v2/method/my_new_app.api.change_password',
-  method: 'POST',
-  immediate: false,
-  onSuccess: () => toast.success('Password updated'),
-  onError: (err) => toast.error(err.message),
-})
-
 function handleLogout() {
   dialog.confirm({
     title: 'Log out?',
@@ -328,28 +313,6 @@ function handleLogout() {
     onConfirm: async () => {
       await logout()
       router.replace('/login')
-    },
-  })
-}
-
-function openChangePassword() {
-  dialog.prompt({
-    title: 'Change password',
-    fields: [
-      { name: 'old_password', label: 'Current password', type: 'password', required: true },
-      { name: 'new_password', label: 'New password', type: 'password', required: true },
-      {
-        name: 'confirm_password',
-        label: 'Confirm new password',
-        type: 'password',
-        required: true,
-        validate: (value, allValues) =>
-          value !== allValues.new_password ? 'Passwords do not match' : undefined,
-      },
-    ],
-    onConfirm: ({ values, close }) => {
-      changePassword.submit({ old_password: values.old_password, new_password: values.new_password })
-      close()
     },
   })
 }

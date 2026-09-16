@@ -13,21 +13,6 @@ const routes = [
     component: () => import('@/pages/Signup.vue'),
   },
   {
-    path: '/forgot-password',
-    name: 'ForgotPassword',
-    component: () => import('@/pages/ForgotPassword.vue'),
-  },
-  {
-    path: '/reset-password',
-    name: 'ResetPassword',
-    component: () => import('@/pages/ResetPassword.vue'),
-  },
-  {
-    path: '/verify-email',
-    name: 'VerifyEmail',
-    component: () => import('@/pages/VerifyEmail.vue'),
-  },
-  {
     path: '/',
     component: () => import('@/components/AppLayout.vue'),
     children: [
@@ -94,16 +79,11 @@ let router = createRouter({
 // definition of "a page a logged-out visitor is allowed to sit on" so a
 // stale-session revalidation on tab-focus can't disagree with what
 // navigating there directly would have decided.
-export const GUEST_ROUTE_NAMES = ['Login', 'Signup', 'ForgotPassword', 'ResetPassword', 'VerifyEmail']
+export const GUEST_ROUTE_NAMES = ['Login', 'Signup']
 
 router.beforeEach(async (to) => {
   let isGuestPage = GUEST_ROUTE_NAMES.includes(to.name)
-  // ResetPassword and VerifyEmail are both reachable via an emailed link tied
-  // to a one-time key, independent of whatever session (if any) is active in
-  // this browser — unlike the other guest pages, a logged-in visitor
-  // shouldn't be bounced away from either before they can actually use the
-  // key (e.g. verifying a second account from the same browser).
-  let bounceIfLoggedIn = isGuestPage && to.name !== 'ResetPassword' && to.name !== 'VerifyEmail'
+  let bounceIfLoggedIn = isGuestPage
 
   // The fast, synchronous-cookie-only path is only safe for the specific
   // case of a guest page where the cookie *also* says logged out — skipping

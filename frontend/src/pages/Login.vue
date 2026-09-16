@@ -3,34 +3,24 @@
     :title="`Log in to ${APP_NAME}`"
     subtitle="Write, share, and connect."
   >
-    <form @submit.prevent="submit">
+    <form v-if="step === 'email'" @submit.prevent="sendCode">
       <FormControl type="email" label="Email" placeholder="name@example.com" v-model="email" required autofocus />
 
-      <FormControl
-        class="mt-4"
-        type="password"
-        label="Password"
-        placeholder="••••••••"
-        v-model="password"
-        required
-      />
-
-      <router-link
-        class="mt-1.5 block text-right text-sm text-ink-gray-5 underline"
-        :to="{ name: 'ForgotPassword' }"
-      >
-        Forgot password?
-      </router-link>
-
-      <ErrorMessage class="mt-3" :message="error" />
+      <ErrorMessage class="mt-3" :message="sendCodeError" />
+      <p v-if="showSignupLink" class="mt-2 text-sm text-ink-gray-5">
+        No account found with this email.
+        <router-link class="font-medium text-ink-gray-9 underline" :to="{ name: 'Signup' }">
+          Create one.
+        </router-link>
+      </p>
 
       <Button
         class="mt-4 w-full justify-center"
         variant="solid"
         theme="gray"
         type="submit"
-        :loading="loading"
-        label="Log in"
+        :loading="sendCodeLoading"
+        label="Send verification code"
       />
 
       <Button class="mt-2 w-full justify-center" variant="outline" type="button" @click="continueWithGoogle">
@@ -39,6 +29,35 @@
         </template>
         Continue with Google
       </Button>
+    </form>
+
+    <form v-else @submit.prevent="verifyCode">
+      <p class="text-p-sm text-ink-gray-5">We sent a 6 digit verification code to {{ email }}</p>
+
+      <OtpInput ref="otpInput" v-model="code" class="mt-4" @complete="verifyCode" />
+
+      <ErrorMessage class="mt-3" :message="verifyCodeError" />
+
+      <Button
+        class="mt-4 w-full justify-center"
+        variant="solid"
+        theme="gray"
+        type="submit"
+        :loading="verifyCodeLoading"
+        label="Verify"
+      />
+
+      <p class="mt-3 text-center text-sm text-ink-gray-5">
+        <button
+          v-if="resendCooldown === 0"
+          type="button"
+          class="font-medium text-ink-gray-9 underline"
+          @click="sendCode"
+        >
+          Resend code
+        </button>
+        <template v-else>Resend in {{ resendCooldown }} seconds</template>
+      </p>
     </form>
 
     <template #footer>
@@ -51,20 +70,43 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { Button, ErrorMessage, FormControl, toast, useCall } from 'frappe-ui'
 import { useRouter } from 'vue-router'
-import { login } from '@/data/session'
+import { errorMessage, sendLoginCode, verifyLoginCode } from '@/data/session'
 import AuthCard from '@/components/AuthCard.vue'
 import GoogleIcon from '@/components/GoogleIcon.vue'
+import OtpInput from '@/components/OtpInput.vue'
 import { APP_NAME } from '@/utils/appName'
 
 const router = useRouter()
 
+const step = ref('email') // 'email' | 'code'
 const email = ref('')
-const password = ref('')
-const loading = ref(false)
-const error = ref('')
+const code = ref('')
+const otpInput = ref(null)
+
+const sendCodeLoading = ref(false)
+const sendCodeError = ref('')
+const showSignupLink = ref(false)
+
+const verifyCodeLoading = ref(false)
+const verifyCodeError = ref('')
+
+const RESEND_COOLDOWN_SEC = 25
+const resendCooldown = ref(0)
+let cooldownTimer = null
+
+function startResendCooldown() {
+  resendCooldown.value = RESEND_COOLDOWN_SEC
+  clearInterval(cooldownTimer)
+  cooldownTimer = setInterval(() => {
+    resendCooldown.value -= 1
+    if (resendCooldown.value <= 0) clearInterval(cooldownTimer)
+  }, 1000)
+}
+
+onBeforeUnmount(() => clearInterval(cooldownTimer))
 
 const googleLoginUrl = useCall({
   url: '/api/v2/method/my_new_app.api.get_google_login_url',
@@ -79,17 +121,37 @@ const googleLoginUrl = useCall({
   },
 })
 
-async function submit() {
-  if (!email.value || !password.value) return
-  loading.value = true
-  error.value = ''
+async function sendCode() {
+  if (!email.value || sendCodeLoading.value) return
+  sendCodeLoading.value = true
+  sendCodeError.value = ''
+  showSignupLink.value = false
   try {
-    await login(email.value, password.value)
+    await sendLoginCode(email.value)
+    code.value = ''
+    step.value = 'code'
+    startResendCooldown()
+    otpInput.value?.focus()
+  } catch (e) {
+    sendCodeError.value = errorMessage(e)
+    showSignupLink.value = sendCodeError.value.includes('No account found')
+  } finally {
+    sendCodeLoading.value = false
+  }
+}
+
+async function verifyCode() {
+  if (code.value.length !== 6 || verifyCodeLoading.value) return
+  verifyCodeLoading.value = true
+  verifyCodeError.value = ''
+  try {
+    await verifyLoginCode(email.value, code.value)
     router.replace('/')
   } catch (e) {
-    error.value = e.message || 'Invalid email or password'
+    verifyCodeError.value = errorMessage(e, 'Incorrect code. Please try again.')
+    code.value = ''
   } finally {
-    loading.value = false
+    verifyCodeLoading.value = false
   }
 }
 

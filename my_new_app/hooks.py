@@ -46,14 +46,12 @@ app_license = "mit"
 # path segment, so this only covers non-root paths; the bare "/" itself
 # goes through `home_page`/`role_home_page` below instead.
 #
-# "/update-password" is listed separately, ABOVE the catch-all, on purpose:
-# Werkzeug always matches a static rule before a dynamic one regardless of
-# list order, so without this the catch-all below would still win and swallow
-# frappe core's hardcoded password-reset email link (see user.py's
-# _reset_password) before it ever reaches our own www/update-password.html
-# redirect-forwarder (see that file for what it does with the `?key=`).
+# No password anywhere in this app means frappe core's own password-reset
+# flow (and its hardcoded /update-password email link) never gets
+# triggered - no need for a dedicated static rule ahead of this catch-all
+# the way that path once needed (see git history for that mechanism, still
+# relevant if this app ever reintroduces password-based accounts).
 website_route_rules = [
-	{"from_route": "/update-password", "to_route": "update-password"},
 	{"from_route": "/<path:app_path>", "to_route": "index"},
 ]
 
