@@ -119,7 +119,7 @@
                 >
                   <div class="flex min-w-0 flex-1 flex-col justify-between">
                     <div>
-                      <div class="text-p-base-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
+                      <div class="text-lg-semibold text-ink-gray-8">{{ post.display_title || post.title || 'Untitled' }}</div>
                       <p class="mt-1 line-clamp-2 text-p-base text-ink-gray-6">{{ post.excerpt || excerpt(post.content, 140) }}</p>
                     </div>
                     <div class="mt-2 text-xs text-ink-gray-5">
@@ -137,7 +137,7 @@
               <p v-else class="text-base text-ink-gray-5">
                 <template v-if="isOwnProfile">
                   You haven't published anything yet.
-                  <router-link to="/write" class="text-base-medium text-ink-gray-8 underline">
+                  <router-link to="/write" class="text-base-medium text-ink-gray-8">
                     Write your first blog.
                   </router-link>
                 </template>
