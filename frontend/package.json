@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "postbuild": "cp ../my_new_app/www/index.html ../my_new_app/www/me.html",
     "preview": "vite preview"
   },
   "dependencies": {
