@@ -47,7 +47,6 @@
       <ScrollArea class="flex-1">
         <template v-if="!showingPeopleSearch">
           <button
-            v-if="messageRequests.data && messageRequests.data.length"
             class="flex w-full items-center justify-between gap-2 border-b border-outline-gray-1 px-3 py-2.5 text-left hover:bg-surface-gray-1"
             @click="showingRequests = !showingRequests"
           >
@@ -56,7 +55,10 @@
               Message requests
             </span>
             <span class="flex items-center gap-1.5">
-              <span class="grid h-5 min-w-5 place-content-center rounded-full bg-surface-gray-10 px-1 text-2xs text-ink-base">
+              <span
+                v-if="messageRequests.data && messageRequests.data.length"
+                class="grid h-5 min-w-5 place-content-center rounded-full bg-surface-gray-10 px-1 text-2xs text-ink-base"
+              >
                 {{ messageRequests.data.length }}
               </span>
               <span
