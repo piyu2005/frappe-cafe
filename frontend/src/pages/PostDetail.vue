@@ -530,10 +530,32 @@ const renderedContent = computed(() => ensureHtmlContent(post.data?.content))
 // objectPosition attribute to its own <img> — see positionableImage.js —
 // so the focal point chosen while writing has to be pushed onto the DOM
 // here too, once the read-only editor has actually rendered this content.
+// MediaNodeView renders a caption as a disabled <input> in read-only mode
+// (its own :disabled="!isEditable" binding) - browsers apply their own
+// low-contrast "disabled form control" rendering on top of it regardless of
+// its own color/opacity (the scoped style below tries to override that, but
+// a disabled control's actual paint isn't fully governed by ordinary CSS in
+// every browser). readonly blocks editing the exact same way, without that
+// treatment, since it's still a real, readable value - just not one this
+// page lets you change.
+function fixCaptionReadability(editor) {
+  if (!editor || editor.isDestroyed) return
+  editor.state.doc.descendants((node, pos) => {
+    if (!node.attrs.alt) return
+    const input = editor.view.nodeDOM(pos)?.querySelector?.('[aria-label="Media caption"]')
+    if (input?.disabled) {
+      input.disabled = false
+      input.readOnly = true
+      input.tabIndex = -1
+    }
+  })
+}
+
 const postEditorRef = ref(null)
 watch(renderedContent, async () => {
   await nextTick()
   applyImagePositions(postEditorRef.value?.editor)
+  fixCaptionReadability(postEditorRef.value?.editor)
 })
 
 const isImagePost = computed(
@@ -844,5 +866,15 @@ function timeAgo(value) {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
+}
+/* A caption renders as a disabled <input> here (read-only mode reuses the
+   same editable-mode markup) - browsers apply their own low-contrast
+   "disabled form control" text rendering on top of it regardless of the
+   element's own color/opacity, which is correct for an inert control but
+   makes an actual caption unreadable. This is meant to be read like a
+   caption, not recognized as a disabled control. */
+:deep(input[aria-label='Media caption']) {
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
 }
 </style>

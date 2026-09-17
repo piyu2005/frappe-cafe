@@ -65,7 +65,31 @@
           <div
             class="mt-4 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-outline-gray-2 bg-surface-base px-2 py-1 shadow-sm sm:w-fit [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
           >
-            <EditorFixedMenu :items="toolbar" button-size="sm" class="shrink-0" />
+            <EditorFixedMenu :items="marksToolbar" button-size="sm" class="shrink-0" />
+            <span class="mx-1 h-5 w-px shrink-0 bg-outline-gray-2" aria-hidden="true" />
+            <Dropdown :options="headingOptions">
+              <Button
+                size="sm"
+                variant="ghost"
+                icon="lucide-heading"
+                label="Heading"
+                class="shrink-0 aria-pressed:bg-surface-gray-3"
+                :aria-pressed="isHeadingActive"
+              />
+            </Dropdown>
+            <EditorFixedMenu :items="blockToolbar" button-size="sm" class="shrink-0" />
+            <span class="mx-1 h-5 w-px shrink-0 bg-outline-gray-2" aria-hidden="true" />
+            <Dropdown :options="alignOptions">
+              <Button
+                size="sm"
+                variant="ghost"
+                icon="lucide-align-left"
+                label="Align"
+                class="shrink-0 aria-pressed:bg-surface-gray-3"
+                :aria-pressed="isAlignActive"
+              />
+            </Dropdown>
+            <EditorFixedMenu :items="insertToolbar" button-size="sm" class="shrink-0" />
           </div>
 
           <input
@@ -143,13 +167,16 @@ import {
   EditorBubbleMenu,
   EditorContent,
   EditorFixedMenu,
-  HeadingGroup,
+  H2,
+  H3,
+  H4,
   ImageGroup,
   ImageViewer,
   InsertImage,
   InsertLink,
   Italic,
   OrderedList,
+  Paragraph,
   RichTextKit,
   Separator,
   Strike,
@@ -306,21 +333,13 @@ const UnderlineItem = {
 // Trimmed to a compact, always-visible set that fits a floating pill —
 // the exhaustive toolbar (undo/redo, colors, tables, attachments, ...)
 // doesn't fit the minimal Medium-style redesign, so it's gone from here.
-const toolbar = [
-  Bold,
-  Italic,
-  UnderlineItem,
-  Strike,
-  Separator,
-  HeadingGroup,
-  Blockquote,
-  Separator,
-  BulletList,
-  OrderedList,
-  Separator,
-  InsertImage,
-  InsertLink,
-]
+// Split into segments (rather than one flat array) because Heading and
+// Align render as their own single-icon dropdowns, not frappe-ui's
+// multi-button "group" style (label + one button per level) - see the
+// template below for how the segments and dropdowns interleave.
+const marksToolbar = [Bold, Italic, UnderlineItem, Strike]
+const blockToolbar = [Blockquote, BulletList, OrderedList]
+const insertToolbar = [InsertImage, InsertLink]
 
 const bubbleToolbar = [Bold, Italic, UnderlineItem, Strike, InsertLink, Separator, AlignLeft, AlignCenter, AlignRight]
 
@@ -333,27 +352,68 @@ const uploadFunction = async (file) => {
 
 const editorRef = ref(null)
 
-// When an image/video ends up as the very first block (the common case:
-// insert an image before typing anything), there's no paragraph above it to
-// click into — clicks near the top of the editor land inside/after the media
-// node instead of placing a cursor before it. Keeping a real empty paragraph
-// in front of any leading media block gives a stable, clickable line there.
-function ensureLeadingParagraph() {
-  const editor = editorRef.value?.editor
-  if (!editor) return
-  const firstNode = editor.state.doc.firstChild
-  if (!firstNode) return
-  // Media renders as an inline atom *inside* a paragraph, not as its own
-  // block sibling — so a leading image ends up as a paragraph whose only
-  // content is that atom (no text). With nothing but the atom on that line,
-  // there's no unambiguous "before it" position for a click to resolve to.
-  // A genuinely separate empty paragraph in front gives a real text line
-  // there instead.
-  const isLeadingMediaOnly = firstNode.type.name === 'paragraph' && firstNode.textContent === '' && firstNode.content.size > 0
-  if (firstNode.type.name !== 'paragraph' || isLeadingMediaOnly) {
-    editor.chain().insertContentAt(0, { type: 'paragraph' }).run()
+// Heading/Align render as single-icon Dropdowns rather than frappe-ui's
+// built-in multi-button "group" style, to match the compact one-icon-per-
+// control toolbar design. Reusing H2/H3/H4/Paragraph/AlignLeft/AlignCenter/
+// AlignRight's own .label/.icon/.action/.isActive (rather than re-deriving
+// tiptap commands by hand) keeps this in sync with frappe-ui's own command
+// definitions, edge cases (e.g. cell-selection handling) included.
+function menuItemToOption(item) {
+  return {
+    label: item.label,
+    icon: item.icon,
+    onClick: () => {
+      const editor = editorRef.value?.editor
+      if (!editor) return
+      // Capture the selection synchronously, before the dropdown closes -
+      // closing it returns focus to its own trigger button (standard menu
+      // accessibility behavior), and by the time item.action's own .focus()
+      // call runs afterward, that interruption has already lost track of
+      // where the selection was, landing back at the very start of the
+      // document instead (confirmed empirically). Restoring it explicitly
+      // from this snapshot, right before the item's own action, is what
+      // actually lands the heading/alignment change back where it was
+      // applied instead of at position 0.
+      const { from, to } = editor.state.selection
+      // Deferred: needs to run after Reka's own focus-return settles (a
+      // same-tick or 0ms-deferred call still loses that race, per the same
+      // timing test) - 150ms reliably lands after it.
+      setTimeout(() => {
+        editor.chain().focus().setTextSelection({ from, to }).run()
+        item.action(editor)
+      }, 150)
+    },
   }
 }
+const headingOptions = [H2, H3, H4, Paragraph].map(menuItemToOption)
+const alignOptions = [AlignLeft, AlignCenter, AlignRight].map(menuItemToOption)
+
+// The tiptap editor instance isn't itself a reactive ref (see frappe-ui's own
+// MenuItems.vue for the same trick) - bump a version on every transaction and
+// read it inside the active-state computeds below so the two dropdown
+// triggers highlight in step with the selection, same as every other
+// toolbar button.
+const toolbarVersion = ref(0)
+watch(
+  () => editorRef.value?.editor,
+  (editor, _old, onCleanup) => {
+    if (!editor) return
+    const bump = () => toolbarVersion.value++
+    editor.on('transaction', bump)
+    onCleanup(() => editor.off('transaction', bump))
+  },
+  { immediate: true },
+)
+const isHeadingActive = computed(() => {
+  toolbarVersion.value
+  const editor = editorRef.value?.editor
+  return !!editor && [H2, H3, H4].some((item) => item.isActive(editor))
+})
+const isAlignActive = computed(() => {
+  toolbarVersion.value
+  const editor = editorRef.value?.editor
+  return !!editor && [AlignLeft, AlignCenter, AlignRight].some((item) => item.isActive(editor))
+})
 
 // Content images are force-cropped to a fixed box (see the scoped style
 // below), so dragging inside that box picks *which part* of the image
@@ -385,6 +445,55 @@ function parseObjectPosition(el) {
   const raw = el.style.objectPosition || getComputedStyle(el).objectPosition || '50% 50%'
   const [x, y] = raw.split(' ').map((v) => parseFloat(v))
   return { x: Number.isNaN(x) ? 50 : x, y: Number.isNaN(y) ? 50 : y }
+}
+
+// frappe-ui's own MediaNodeView shows this button and the caption <input>
+// it reveals, but never focuses that input itself - a plain button click
+// leaves DOM focus whatever it already was (typically still the ProseMirror
+// editor), so it reads as "my cursor jumped into the document instead of
+// the caption line" even though the caption field is right there and usable
+// once clicked directly. The input renders asynchronously (Vue re-render
+// after the click, not synchronously in the same tick), hence the delay.
+function onEditorClick(e) {
+  const toggleBtn = e.target.closest?.('[aria-label="Toggle caption"]')
+  if (!toggleBtn) return
+  const wrapper = toggleBtn.closest('[data-node-view-wrapper]')
+  if (!wrapper) return
+  const existingInput = wrapper.querySelector('[aria-label="Media caption"]')
+  if (existingInput?.value) {
+    // A caption with real text is already showing - frappe-ui's own click
+    // handler would toggle it *off* here (clearing the text, since this is a
+    // plain on/off toggle, not an "edit" button), but re-clicking the same
+    // icon on a caption that's already there reads as "let me get back into
+    // editing this," not "erase what I wrote" - the actual erase-it path
+    // stays reachable by clearing the text by hand and clicking away. Only
+    // this already-has-text case is intercepted; an empty toggled-on-but-
+    // unused field still toggles off normally, since there's nothing to lose.
+    e.stopPropagation()
+    existingInput.focus()
+    return
+  }
+  // Turning the caption ON mounts a brand-new <input> (v-if, not v-show) -
+  // the very first toggle on a given image pays real one-time mount cost
+  // (Vue instantiating + inserting the element) on top of Reka's own
+  // focus-return delay, which a fixed wait tuned for the *steady-state* case
+  // wasn't long enough for - it fired before the input existed yet, so nothing
+  // was there to focus and the click's earlier .stopPropagation() meant the
+  // document never got a chance to grab focus either, leaving it wherever it
+  // last was. Polling for the input to actually exist - same pattern as
+  // attachDragHandler below - fixes it regardless of which case it is instead
+  // of guessing a delay long enough for both.
+  let attempts = 0
+  function tryFocus() {
+    const input = wrapper.querySelector('[aria-label="Media caption"]')
+    if (input) {
+      input.focus()
+      return
+    }
+    attempts += 1
+    if (attempts < 30) requestAnimationFrame(tryFocus)
+  }
+  requestAnimationFrame(tryFocus)
 }
 
 let dragImg = null
@@ -438,11 +547,6 @@ function commitImagePosition(imgEl) {
   editor.chain().setNodeSelection(pos).updateAttributes('image', { objectPosition: imgEl.style.objectPosition }).run()
 }
 
-onMounted(() => {
-  const editor = editorRef.value?.editor
-  if (editor) editor.on('update', ensureLeadingParagraph)
-})
-
 // Reading `editorRef.value?.editor` once inside onMounted and closing over
 // it isn't safe here: on the edit-existing-post path, the instance exposed
 // by editorRef some ticks later turns out to be a different object than
@@ -468,6 +572,12 @@ watch(
     function attachDragHandler() {
       if (attached || editor.isDestroyed) return
       editor.view.dom.addEventListener('mousedown', onImageMouseDown)
+      // Capture phase: the toggle button's own click handler calls
+      // stopPropagation() (frappe-ui's MediaNodeView, not ours to change),
+      // which would otherwise stop this from ever seeing the click at all
+      // on the way up. A capture listener runs on the way down, before that
+      // stop takes effect.
+      editor.view.dom.addEventListener('click', onEditorClick, true)
       attached = true
       applyImagePositions(editor)
     }
@@ -484,6 +594,7 @@ watch(
       editor.off('update', handleUpdate)
       if (attached && !editor.isDestroyed) {
         editor.view.dom.removeEventListener('mousedown', onImageMouseDown)
+        editor.view.dom.removeEventListener('click', onEditorClick, true)
       }
     })
   },
