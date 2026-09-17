@@ -15,6 +15,7 @@
    "fieldname": "reference_type",
    "fieldtype": "Select",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Reference Type",
    "options": "User\nPublication",
    "reqd": 1
@@ -23,6 +24,7 @@
    "fieldname": "reference_name",
    "fieldtype": "Data",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Reference Name",
    "reqd": 1
   },
@@ -30,6 +32,7 @@
    "fieldname": "subscriber",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Subscriber",
    "options": "User",
    "read_only": 1,

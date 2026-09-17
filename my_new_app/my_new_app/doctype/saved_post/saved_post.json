@@ -14,6 +14,7 @@
    "fieldname": "post",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Post",
    "options": "Post",
    "reqd": 1
@@ -22,6 +23,7 @@
    "fieldname": "user",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "User",
    "options": "User",
    "read_only": 1,

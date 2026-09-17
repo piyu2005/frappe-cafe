@@ -18,6 +18,7 @@
    "fieldname": "post",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Post",
    "options": "Post",
    "reqd": 1
@@ -26,6 +27,7 @@
    "fieldname": "parent_comment",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Parent Comment",
    "options": "Post Comment"
   },

@@ -15,6 +15,7 @@
    "fieldname": "poll",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Poll",
    "options": "Poll",
    "reqd": 1
@@ -23,6 +24,7 @@
    "fieldname": "poll_option",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Poll Option",
    "options": "Poll Option",
    "reqd": 1
