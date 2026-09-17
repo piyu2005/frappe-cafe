@@ -134,19 +134,23 @@
                   />
                 </router-link>
               </div>
-              <p v-else class="text-base text-ink-gray-5">
+              <p v-else class="flex items-center gap-1.5 text-base text-ink-gray-5">
                 <template v-if="isOwnProfile">
                   You haven't published anything yet.
                   <router-link to="/write" class="text-base-medium text-ink-gray-8">
                     Write your first blog.
                   </router-link>
                 </template>
+                <template v-else-if="contentGated">
+                  <span class="lucide-lock size-3.5 shrink-0" aria-hidden="true" />
+                  Follow to see their posts.
+                </template>
                 <template v-else>No posts yet.</template>
               </p>
             </div>
 
             <div
-              v-if="isOwnProfile || (recentPosts.data && recentPosts.data.length === postsLimit)"
+              v-if="!contentGated && (isOwnProfile || (recentPosts.data && recentPosts.data.length === postsLimit))"
               class="mt-3 flex justify-center"
             >
               <Button
@@ -159,7 +163,7 @@
             </div>
           </div>
 
-          <div>
+          <div v-if="!contentGated">
             <div class="rounded-md border border-outline-gray-1 p-5">
               <div class="flex items-center justify-between pb-4">
                 <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
@@ -228,7 +232,7 @@
             </div>
           </div>
 
-          <div>
+          <div v-if="!contentGated">
             <div class="rounded-md border border-outline-gray-1 p-5">
               <div class="flex items-center justify-between pb-4">
                 <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
@@ -483,6 +487,12 @@ watch(
   },
   { immediate: true },
 )
+
+// Private accounts gate Education/Work/Posts behind an approved follow - the
+// header above (name, avatar, headline, bio) stays visible to everyone. A
+// pending follow request doesn't count as approved, so it's excluded here
+// same as it is server-side in api.py's _can_view_private_content.
+const contentGated = computed(() => !isOwnProfile.value && !!profile.data?.is_private && !followingByMe.value)
 
 // Just a preview here — the button below routes to its own dedicated
 // ProfilePosts page (matching Work History/Education's own "Show all"

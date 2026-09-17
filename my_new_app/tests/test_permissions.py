@@ -6,7 +6,7 @@ can't silently regress."""
 import frappe
 from frappe.tests import IntegrationTestCase, set_user
 
-from my_new_app.api import add_education, delete_education, delete_work, update_education, update_work
+from my_new_app.api import add_education, delete_education, delete_work, toggle_like, update_education, update_work
 
 
 def _make_user(email, first_name):
@@ -113,3 +113,133 @@ class TestPostVisibility(IntegrationTestCase):
 		with set_user(self.reader):
 			doc = frappe.get_doc("Post", name)
 			self.assertFalse(doc.has_permission("write"))
+
+
+class TestToggleLikeOnCommentVisibility(IntegrationTestCase):
+	"""toggle_like checked a Post's own visibility directly, but for a Post
+	Comment it only confirmed the comment existed - never walking up to the
+	parent Post to check *that*'s still visible. A comment on a Draft (or,
+	since [[private-account-gating]], a private author's) post shouldn't be
+	likeable by someone who couldn't see the post itself."""
+
+	def setUp(self):
+		self.author = _make_user("perm_like_author@example.com", "LikeAuthor")
+		self.reader = _make_user("perm_like_reader@example.com", "LikeReader")
+
+	def _make_comment(self, status):
+		with set_user(self.author):
+			post = frappe.get_doc(
+				{"doctype": "Post", "content": "<p>hello</p>", "status": status, "post_type": "Blog"}
+			)
+			post.insert(ignore_permissions=True)
+			comment = frappe.get_doc({"doctype": "Post Comment", "post": post.name, "content": "nice"})
+			comment.insert(ignore_permissions=True)
+			return comment.name
+
+	def test_cannot_like_comment_on_draft_post(self):
+		name = self._make_comment("Draft")
+		with set_user(self.reader):
+			with self.assertRaises(frappe.PermissionError):
+				toggle_like("Post Comment", name)
+
+	def test_author_can_like_comment_on_own_draft_post(self):
+		name = self._make_comment("Draft")
+		with set_user(self.author):
+			result = toggle_like("Post Comment", name)
+		self.assertTrue(result["liked"])
+
+	def test_can_like_comment_on_published_post(self):
+		name = self._make_comment("Published")
+		with set_user(self.reader):
+			result = toggle_like("Post Comment", name)
+		self.assertTrue(result["liked"])
+
+
+class TestPublicationMemberPermissions(IntegrationTestCase):
+	"""list_publication_members reveals pending invites (who's been invited,
+	and as what role) - not something a stranger to the publication should
+	be able to see just by knowing its handle."""
+
+	def setUp(self):
+		# Unique per test method - setUp() reruns before every test in this
+		# class, but IntegrationTestCase's rollback is class-scoped, not
+		# per-test (same gotcha documented in test_signup_verification.py), so
+		# a literal handle here would have the first test's setUp "poison"
+		# every test after it with an "already taken" error.
+		unique = frappe.generate_hash(length=8)
+		self.admin = _make_user("perm_pub_admin@example.com", "PubAdmin")
+		self.outsider = _make_user("perm_pub_outsider@example.com", "PubOutsider")
+		with set_user(self.admin):
+			from my_new_app.api import create_publication
+
+			self.handle = create_publication(title="Perm Test Pub", handle=f"permtestpub{unique}")["handle"]
+
+	def test_non_member_cannot_list_members(self):
+		from my_new_app.api import list_publication_members
+
+		with set_user(self.outsider):
+			with self.assertRaises(frappe.PermissionError):
+				list_publication_members(self.handle)
+
+	def test_admin_can_list_members(self):
+		from my_new_app.api import list_publication_members
+
+		with set_user(self.admin):
+			result = list_publication_members(self.handle)
+		self.assertEqual(len(result["editors"]), 1)
+
+
+class TestFollowUserBlocking(IntegrationTestCase):
+	def setUp(self):
+		self.a = _make_user("perm_follow_a@example.com", "FollowA")
+		self.b = _make_user("perm_follow_b@example.com", "FollowB")
+
+	def test_blocked_user_cannot_follow(self):
+		from my_new_app.chat import block_user
+		from my_new_app.follow import follow_user
+
+		with set_user(self.a):
+			block_user(self.b)
+		with set_user(self.b):
+			with self.assertRaises(frappe.ValidationError):
+				follow_user(self.a)
+		self.assertFalse(frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": self.a, "subscriber": self.b}))
+
+	def test_unblocked_user_can_follow_again(self):
+		from my_new_app.chat import block_user, unblock_user
+		from my_new_app.follow import follow_user
+
+		with set_user(self.a):
+			block_user(self.b)
+			unblock_user(self.b)
+		with set_user(self.b):
+			follow_user(self.a)
+		self.assertTrue(frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": self.a, "subscriber": self.b}))
+
+
+class TestNotificationOwnership(IntegrationTestCase):
+	def setUp(self):
+		self.owner = _make_user("perm_notif_owner@example.com", "NotifOwner")
+		self.other = _make_user("perm_notif_other@example.com", "NotifOther")
+		self.notif_name = frappe.get_doc(
+			{
+				"doctype": "App Notification",
+				"recipient": self.owner,
+				"type": "New Follower",
+				"message": "test",
+			}
+		).insert(ignore_permissions=True).name
+
+	def test_other_user_cannot_mark_someone_elses_notification_read(self):
+		from my_new_app.follow import mark_notification_read
+
+		with set_user(self.other):
+			mark_notification_read(self.notif_name)
+		self.assertEqual(frappe.db.get_value("App Notification", self.notif_name, "is_read"), 0)
+
+	def test_owner_can_mark_their_own_notification_read(self):
+		from my_new_app.follow import mark_notification_read
+
+		with set_user(self.owner):
+			mark_notification_read(self.notif_name)
+		self.assertEqual(frappe.db.get_value("App Notification", self.notif_name, "is_read"), 1)

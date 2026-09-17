@@ -256,6 +256,26 @@ def toggle_subscribe(reference_doctype, reference_name):
 	return {"subscribed": subscribed, "count": _subscriber_count(reference_doctype, reference_name)}
 
 
+def _can_view_private_content(target_user):
+	"""Whether the caller may see target_user's education/work/posts. The
+	profile header (name, avatar, headline, bio) stays visible to everyone
+	regardless of privacy - this only gates the actual content for a private
+	account, per the same rule everywhere it's applied: the owner, an
+	approved follower, or anyone at all if the account isn't private."""
+	me = frappe.session.user
+	if me == target_user:
+		return True
+	if not frappe.db.get_value("User", target_user, "is_private"):
+		return True
+	if me == "Guest":
+		return False
+	return bool(
+		frappe.db.exists(
+			"Subscription", {"reference_doctype": "User", "reference_name": target_user, "subscriber": me}
+		)
+	)
+
+
 @frappe.whitelist()
 def get_profile(user=None):
 	user = user or frappe.session.user
@@ -291,17 +311,27 @@ def get_profile(user=None):
 	follow_state = get_follow_state(user) if frappe.session.user != "Guest" else {"following": False, "pending": False}
 	profile.following_by_me = follow_state["following"]
 	profile.follow_pending = follow_state["pending"]
-	profile.education = frappe.db.get_all(
-		"Education Entry",
-		filters={"user": user},
-		fields=["name", "school", "degree", "field_of_study", "start_year", "end_year"],
-		order_by="creation asc",
+
+	can_view = _can_view_private_content(user)
+	profile.education = (
+		frappe.db.get_all(
+			"Education Entry",
+			filters={"user": user},
+			fields=["name", "school", "degree", "field_of_study", "start_year", "end_year"],
+			order_by="creation asc",
+		)
+		if can_view
+		else []
 	)
-	profile.work = frappe.db.get_all(
-		"Work Entry",
-		filters={"user": user},
-		fields=["name", "company", "title", "start_date", "end_date", "description"],
-		order_by="creation asc",
+	profile.work = (
+		frappe.db.get_all(
+			"Work Entry",
+			filters={"user": user},
+			fields=["name", "company", "title", "start_date", "end_date", "description"],
+			order_by="creation asc",
+		)
+		if can_view
+		else []
 	)
 	return profile
 
@@ -309,6 +339,8 @@ def get_profile(user=None):
 @frappe.whitelist()
 def list_profile_posts(user=None, limit=3):
 	user = user or frappe.session.user
+	if not _can_view_private_content(user):
+		return []
 	rows = frappe.db.get_all(
 		"Post",
 		filters={"author": user, "status": "Published"},
@@ -496,6 +528,14 @@ def get_publication(handle):
 def list_publication_members(publication):
 	if not frappe.db.exists("Publication", publication):
 		frappe.throw("Publication not found")
+	# Pending invites (who's been invited, and as what role) aren't public -
+	# matches list_group_members' own membership gate for the identical
+	# feature shape in chat.py. Anyone actually authorized to use this (a
+	# publication admin, via the invite flow) is a member by definition, so
+	# this doesn't block any real usage - only an outsider probing a
+	# publication they have no relation to.
+	if not frappe.db.exists("Publication Member", {"publication": publication, "user": frappe.session.user}):
+		frappe.throw("Not permitted", frappe.PermissionError)
 
 	rows = frappe.db.get_all(
 		"Publication Member",
@@ -670,6 +710,11 @@ def set_publication_member_role(publication, user, role):
 def get_post(post_id):
 	post = frappe.get_doc("Post", post_id)
 	post.check_permission("read")
+	# Publication/draft status is covered above - this covers the author's
+	# own account privacy, so a private user's post isn't reachable just by
+	# knowing/guessing its URL once it's hidden from their profile feed.
+	if not _can_view_private_content(post.author):
+		frappe.throw("This account is private. Follow to view their posts.", frappe.PermissionError)
 	post = post.as_dict()
 
 	post.like_count = frappe.db.count("Like", {"reference_doctype": "Post", "reference_name": post_id})
@@ -712,6 +757,8 @@ def _check_post_visible(post_id):
 		frappe.throw("Post not found", frappe.DoesNotExistError)
 	if row.status != "Published" and row.author != frappe.session.user:
 		frappe.throw("Not permitted", frappe.PermissionError)
+	if not _can_view_private_content(row.author):
+		frappe.throw("Not permitted", frappe.PermissionError)
 
 
 @frappe.whitelist()
@@ -721,6 +768,11 @@ def toggle_like(reference_doctype, reference_name):
 		frappe.throw("Not permitted", frappe.PermissionError)
 	if reference_doctype == "Post":
 		_check_post_visible(reference_name)
+	elif reference_doctype == "Post Comment":
+		parent_post = frappe.db.get_value("Post Comment", reference_name, "post")
+		if not parent_post:
+			frappe.throw("Not found", frappe.DoesNotExistError)
+		_check_post_visible(parent_post)
 
 	existing = frappe.db.exists(
 		"Like", {"reference_doctype": reference_doctype, "reference_name": reference_name, "user": user}

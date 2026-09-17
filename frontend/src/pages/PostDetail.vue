@@ -19,7 +19,11 @@
       <div v-else-if="post.error && !post.data" class="flex flex-col items-center gap-3 py-24 text-center">
         <span class="lucide-lock size-8 text-ink-gray-3" aria-hidden="true" />
         <p class="text-p-base text-ink-gray-5">
-          This post isn't available. It may be a draft, archived, or removed.
+          {{
+            post.error?.message?.includes('private')
+              ? 'This account is private. Follow to see their posts.'
+              : "This post isn't available. It may be a draft, archived, or removed."
+          }}
         </p>
       </div>
 
