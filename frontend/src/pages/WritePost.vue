@@ -415,34 +415,6 @@ const isAlignActive = computed(() => {
   return !!editor && [AlignLeft, AlignCenter, AlignRight].some((item) => item.isActive(editor))
 })
 
-// When an image/video ends up as the very first block (the common case:
-// insert an image before typing anything), there's no paragraph above it to
-// click into — clicks near the top of the editor land inside/after the media
-// node instead of placing a cursor before it. Keeping a real empty paragraph
-// in front of any leading media block gives a stable, clickable line there.
-function ensureLeadingParagraph() {
-  const editor = editorRef.value?.editor
-  if (!editor) return
-  const firstNode = editor.state.doc.firstChild
-  if (!firstNode) return
-  // Media renders as an inline atom *inside* a paragraph, not as its own
-  // block sibling — so a leading image ends up as a paragraph whose only
-  // content is that atom (no text). With nothing but the atom on that line,
-  // there's no unambiguous "before it" position for a click to resolve to.
-  // A genuinely separate empty paragraph in front gives a real text line
-  // there instead. This is the *only* case this should fire for - an
-  // earlier `firstNode.type.name !== 'paragraph'` fallback here also caught
-  // any other non-paragraph first block (heading, blockquote, list, ...),
-  // which are all normal text nodes with a perfectly clickable start - that
-  // extra branch just meant turning the very first block into a heading
-  // silently inserted a phantom empty paragraph above it and threw the
-  // cursor there instead of leaving it in the heading you just made.
-  const isLeadingMediaOnly = firstNode.type.name === 'paragraph' && firstNode.textContent === '' && firstNode.content.size > 0
-  if (isLeadingMediaOnly) {
-    editor.chain().insertContentAt(0, { type: 'paragraph' }).run()
-  }
-}
-
 // Content images are force-cropped to a fixed box (see the scoped style
 // below), so dragging inside that box picks *which part* of the image
 // stays visible rather than resizing/moving it — same idea as the cover
@@ -525,11 +497,6 @@ function commitImagePosition(imgEl) {
   if (pos === null) return
   editor.chain().setNodeSelection(pos).updateAttributes('image', { objectPosition: imgEl.style.objectPosition }).run()
 }
-
-onMounted(() => {
-  const editor = editorRef.value?.editor
-  if (editor) editor.on('update', ensureLeadingParagraph)
-})
 
 // Reading `editorRef.value?.editor` once inside onMounted and closing over
 // it isn't safe here: on the edit-existing-post path, the instance exposed
