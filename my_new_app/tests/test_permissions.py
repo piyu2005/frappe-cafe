@@ -6,7 +6,7 @@ can't silently regress."""
 import frappe
 from frappe.tests import IntegrationTestCase, set_user
 
-from my_new_app.api import add_education, delete_education, delete_work, update_education, update_work
+from my_new_app.api import add_education, delete_education, delete_work, toggle_like, update_education, update_work
 
 
 def _make_user(email, first_name):
@@ -113,6 +113,46 @@ class TestPostVisibility(IntegrationTestCase):
 		with set_user(self.reader):
 			doc = frappe.get_doc("Post", name)
 			self.assertFalse(doc.has_permission("write"))
+
+
+class TestToggleLikeOnCommentVisibility(IntegrationTestCase):
+	"""toggle_like checked a Post's own visibility directly, but for a Post
+	Comment it only confirmed the comment existed - never walking up to the
+	parent Post to check *that*'s still visible. A comment on a Draft (or,
+	since [[private-account-gating]], a private author's) post shouldn't be
+	likeable by someone who couldn't see the post itself."""
+
+	def setUp(self):
+		self.author = _make_user("perm_like_author@example.com", "LikeAuthor")
+		self.reader = _make_user("perm_like_reader@example.com", "LikeReader")
+
+	def _make_comment(self, status):
+		with set_user(self.author):
+			post = frappe.get_doc(
+				{"doctype": "Post", "content": "<p>hello</p>", "status": status, "post_type": "Blog"}
+			)
+			post.insert(ignore_permissions=True)
+			comment = frappe.get_doc({"doctype": "Post Comment", "post": post.name, "content": "nice"})
+			comment.insert(ignore_permissions=True)
+			return comment.name
+
+	def test_cannot_like_comment_on_draft_post(self):
+		name = self._make_comment("Draft")
+		with set_user(self.reader):
+			with self.assertRaises(frappe.PermissionError):
+				toggle_like("Post Comment", name)
+
+	def test_author_can_like_comment_on_own_draft_post(self):
+		name = self._make_comment("Draft")
+		with set_user(self.author):
+			result = toggle_like("Post Comment", name)
+		self.assertTrue(result["liked"])
+
+	def test_can_like_comment_on_published_post(self):
+		name = self._make_comment("Published")
+		with set_user(self.reader):
+			result = toggle_like("Post Comment", name)
+		self.assertTrue(result["liked"])
 
 
 class TestPublicationMemberPermissions(IntegrationTestCase):

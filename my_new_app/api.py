@@ -768,6 +768,11 @@ def toggle_like(reference_doctype, reference_name):
 		frappe.throw("Not permitted", frappe.PermissionError)
 	if reference_doctype == "Post":
 		_check_post_visible(reference_name)
+	elif reference_doctype == "Post Comment":
+		parent_post = frappe.db.get_value("Post Comment", reference_name, "post")
+		if not parent_post:
+			frappe.throw("Not found", frappe.DoesNotExistError)
+		_check_post_visible(parent_post)
 
 	existing = frappe.db.exists(
 		"Like", {"reference_doctype": reference_doctype, "reference_name": reference_name, "user": user}
