@@ -447,6 +447,21 @@ function parseObjectPosition(el) {
   return { x: Number.isNaN(x) ? 50 : x, y: Number.isNaN(y) ? 50 : y }
 }
 
+// frappe-ui's own MediaNodeView shows this button and the caption <input>
+// it reveals, but never focuses that input itself - a plain button click
+// leaves DOM focus whatever it already was (typically still the ProseMirror
+// editor), so it reads as "my cursor jumped into the document instead of
+// the caption line" even though the caption field is right there and usable
+// once clicked directly. The input renders asynchronously (Vue re-render
+// after the click, not synchronously in the same tick), hence the delay.
+function onEditorClick(e) {
+  const toggleBtn = e.target.closest?.('[aria-label="Toggle caption"]')
+  if (!toggleBtn) return
+  setTimeout(() => {
+    toggleBtn.closest('[data-node-view-wrapper]')?.querySelector('[aria-label="Media caption"]')?.focus()
+  }, 50)
+}
+
 let dragImg = null
 let dragMoved = false
 let dragStartX = 0
@@ -523,6 +538,12 @@ watch(
     function attachDragHandler() {
       if (attached || editor.isDestroyed) return
       editor.view.dom.addEventListener('mousedown', onImageMouseDown)
+      // Capture phase: the toggle button's own click handler calls
+      // stopPropagation() (frappe-ui's MediaNodeView, not ours to change),
+      // which would otherwise stop this from ever seeing the click at all
+      // on the way up. A capture listener runs on the way down, before that
+      // stop takes effect.
+      editor.view.dom.addEventListener('click', onEditorClick, true)
       attached = true
       applyImagePositions(editor)
     }
@@ -539,6 +560,7 @@ watch(
       editor.off('update', handleUpdate)
       if (attached && !editor.isDestroyed) {
         editor.view.dom.removeEventListener('mousedown', onImageMouseDown)
+        editor.view.dom.removeEventListener('click', onEditorClick, true)
       }
     })
   },
