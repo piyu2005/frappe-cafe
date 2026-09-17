@@ -61,6 +61,15 @@ def follow_user(user):
 	if user == me:
 		frappe.throw("You can't follow yourself")
 
+	# Local import: chat.py already imports _notify from this module at load
+	# time, so importing _is_blocked from chat.py up at the top here would be
+	# circular - deferring it to call time (matching how get_profile/get_post
+	# already import get_follow_state from this same module) sidesteps that.
+	from my_new_app.chat import _is_blocked
+
+	if _is_blocked(me, user):
+		frappe.throw("You can't follow this user")
+
 	if frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": me}):
 		return {"status": "following"}
 
@@ -188,7 +197,11 @@ def unread_notification_count():
 @frappe.whitelist()
 def mark_notification_read(name=None):
 	if name:
-		frappe.db.set_value("App Notification", name, "is_read", 1)
+		# Filtered on recipient too, not just name - otherwise any caller who
+		# somehow learned another user's notification id could mark it read
+		# for them. A name that isn't actually this user's just matches
+		# nothing and no-ops, same as it would for one that doesn't exist.
+		frappe.db.set_value("App Notification", {"name": name, "recipient": frappe.session.user}, "is_read", 1)
 	else:
 		frappe.db.set_value("App Notification", {"recipient": frappe.session.user, "is_read": 0}, "is_read", 1)
 	return "success"

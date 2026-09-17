@@ -496,6 +496,14 @@ def get_publication(handle):
 def list_publication_members(publication):
 	if not frappe.db.exists("Publication", publication):
 		frappe.throw("Publication not found")
+	# Pending invites (who's been invited, and as what role) aren't public -
+	# matches list_group_members' own membership gate for the identical
+	# feature shape in chat.py. Anyone actually authorized to use this (a
+	# publication admin, via the invite flow) is a member by definition, so
+	# this doesn't block any real usage - only an outsider probing a
+	# publication they have no relation to.
+	if not frappe.db.exists("Publication Member", {"publication": publication, "user": frappe.session.user}):
+		frappe.throw("Not permitted", frappe.PermissionError)
 
 	rows = frappe.db.get_all(
 		"Publication Member",
