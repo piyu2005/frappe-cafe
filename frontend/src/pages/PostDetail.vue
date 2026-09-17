@@ -845,4 +845,14 @@ function timeAgo(value) {
   height: 100% !important;
   object-fit: cover;
 }
+/* A caption renders as a disabled <input> here (read-only mode reuses the
+   same editable-mode markup) - browsers apply their own low-contrast
+   "disabled form control" text rendering on top of it regardless of the
+   element's own color/opacity, which is correct for an inert control but
+   makes an actual caption unreadable. This is meant to be read like a
+   caption, not recognized as a disabled control. */
+:deep(input[aria-label='Media caption']) {
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+}
 </style>
