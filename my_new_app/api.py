@@ -207,20 +207,20 @@ def get_google_login_url(redirect_to="/"):
 	return get_oauth2_authorize_url("google", redirect_to)
 
 
-def _subscriber_count(reference_type, reference_name):
+def _subscriber_count(reference_doctype, reference_name):
 	return frappe.db.count(
-		"Subscription", {"reference_type": reference_type, "reference_name": reference_name}
+		"Subscription", {"reference_doctype": reference_doctype, "reference_name": reference_name}
 	)
 
 
-def _subscribed_by_me(reference_type, reference_name):
+def _subscribed_by_me(reference_doctype, reference_name):
 	if frappe.session.user == "Guest":
 		return False
 	return bool(
 		frappe.db.exists(
 			"Subscription",
 			{
-				"reference_type": reference_type,
+				"reference_doctype": reference_doctype,
 				"reference_name": reference_name,
 				"subscriber": frappe.session.user,
 			},
@@ -229,14 +229,14 @@ def _subscribed_by_me(reference_type, reference_name):
 
 
 @frappe.whitelist()
-def toggle_subscribe(reference_type, reference_name):
+def toggle_subscribe(reference_doctype, reference_name):
 	user = frappe.session.user
 	if user == "Guest":
 		frappe.throw("Not permitted", frappe.PermissionError)
 
 	existing = frappe.db.exists(
 		"Subscription",
-		{"reference_type": reference_type, "reference_name": reference_name, "subscriber": user},
+		{"reference_doctype": reference_doctype, "reference_name": reference_name, "subscriber": user},
 	)
 	if existing:
 		frappe.delete_doc("Subscription", existing, ignore_permissions=True)
@@ -245,7 +245,7 @@ def toggle_subscribe(reference_type, reference_name):
 		sub = frappe.get_doc(
 			{
 				"doctype": "Subscription",
-				"reference_type": reference_type,
+				"reference_doctype": reference_doctype,
 				"reference_name": reference_name,
 			}
 		)
@@ -253,7 +253,7 @@ def toggle_subscribe(reference_type, reference_name):
 		sub.insert()
 		subscribed = True
 
-	return {"subscribed": subscribed, "count": _subscriber_count(reference_type, reference_name)}
+	return {"subscribed": subscribed, "count": _subscriber_count(reference_doctype, reference_name)}
 
 
 @frappe.whitelist()
@@ -672,13 +672,13 @@ def get_post(post_id):
 	post.check_permission("read")
 	post = post.as_dict()
 
-	post.like_count = frappe.db.count("Like", {"reference_type": "Post", "reference_name": post_id})
+	post.like_count = frappe.db.count("Like", {"reference_doctype": "Post", "reference_name": post_id})
 	post.comment_count = frappe.db.count("Post Comment", {"post": post_id})
 	post.liked_by_me = bool(
 		frappe.session.user != "Guest"
 		and frappe.db.exists(
 			"Like",
-			{"reference_type": "Post", "reference_name": post_id, "user": frappe.session.user},
+			{"reference_doctype": "Post", "reference_name": post_id, "user": frappe.session.user},
 		)
 	)
 	post.tags = [t.strip() for t in (post.tags or "").split(",") if t.strip()]
@@ -715,15 +715,15 @@ def _check_post_visible(post_id):
 
 
 @frappe.whitelist()
-def toggle_like(reference_type, reference_name):
+def toggle_like(reference_doctype, reference_name):
 	user = frappe.session.user
 	if user == "Guest":
 		frappe.throw("Not permitted", frappe.PermissionError)
-	if reference_type == "Post":
+	if reference_doctype == "Post":
 		_check_post_visible(reference_name)
 
 	existing = frappe.db.exists(
-		"Like", {"reference_type": reference_type, "reference_name": reference_name, "user": user}
+		"Like", {"reference_doctype": reference_doctype, "reference_name": reference_name, "user": user}
 	)
 	if existing:
 		frappe.delete_doc("Like", existing, ignore_permissions=True)
@@ -732,7 +732,7 @@ def toggle_like(reference_type, reference_name):
 		like = frappe.get_doc(
 			{
 				"doctype": "Like",
-				"reference_type": reference_type,
+				"reference_doctype": reference_doctype,
 				"reference_name": reference_name,
 			}
 		)
@@ -740,18 +740,18 @@ def toggle_like(reference_type, reference_name):
 		like.insert()
 		liked = True
 
-		if reference_type == "Post":
+		if reference_doctype == "Post":
 			from my_new_app.follow import _notify
 
 			post_author = frappe.db.get_value("Post", reference_name, "author")
 			_notify(post_author, user, "Like", "liked your post", "Post", reference_name)
-		elif reference_type == "Post Comment":
+		elif reference_doctype == "Post Comment":
 			from my_new_app.follow import _notify
 
 			comment_author = frappe.db.get_value("Post Comment", reference_name, "comment_by")
 			_notify(comment_author, user, "Like", "liked your comment", "Post Comment", reference_name)
 
-	count = frappe.db.count("Like", {"reference_type": reference_type, "reference_name": reference_name})
+	count = frappe.db.count("Like", {"reference_doctype": reference_doctype, "reference_name": reference_name})
 	return {"liked": liked, "count": count}
 
 
@@ -779,7 +779,7 @@ def list_comments(post):
 			frappe.db.get_all(
 				"Like",
 				filters={
-					"reference_type": "Post Comment",
+					"reference_doctype": "Post Comment",
 					"reference_name": ["in", [r.name for r in rows]],
 					"user": frappe.session.user,
 				},
@@ -791,7 +791,7 @@ def list_comments(post):
 	if rows:
 		for reference_name in frappe.db.get_all(
 			"Like",
-			filters={"reference_type": "Post Comment", "reference_name": ["in", [r.name for r in rows]]},
+			filters={"reference_doctype": "Post Comment", "reference_name": ["in", [r.name for r in rows]]},
 			pluck="reference_name",
 		):
 			like_counts[reference_name] = like_counts.get(reference_name, 0) + 1
