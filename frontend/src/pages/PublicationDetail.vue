@@ -141,7 +141,7 @@ const subscribe = useCall({
 })
 
 function toggleSubscribe() {
-  subscribe.submit({ reference_type: 'Publication', reference_name: route.params.handle })
+  subscribe.submit({ reference_doctype: 'Publication', reference_name: route.params.handle })
 }
 
 function copyLink() {

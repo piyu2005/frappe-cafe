@@ -310,7 +310,7 @@ def _poll_payload(poll_name):
 		return None
 
 	options = frappe.db.get_all(
-		"Poll Option", filters={"poll": poll_name}, fields=["name", "option_text"], order_by="creation asc"
+		"Poll Option", filters={"parent": poll_name}, fields=["name", "option_text"], order_by="idx asc"
 	)
 	votes = frappe.db.get_all("Poll Vote", filters={"poll": poll_name}, fields=["poll_option", "user"])
 
@@ -362,13 +362,10 @@ def create_poll(conversation, question, options, allow_multiple=0, anonymous=0, 
 			"allow_multiple": 1 if int(allow_multiple or 0) else 0,
 			"anonymous": 1 if int(anonymous or 0) else 0,
 			"close_at": close_at or None,
+			"options": [{"option_text": text} for text in options],
 		}
 	)
 	poll.insert(ignore_permissions=True)
-
-	for text in options:
-		option = frappe.get_doc({"doctype": "Poll Option", "poll": poll.name, "option_text": text})
-		option.insert(ignore_permissions=True)
 
 	doc = frappe.get_doc({"doctype": "Message", "conversation": conversation, "poll": poll.name})
 	doc.insert(ignore_permissions=True)
@@ -385,12 +382,15 @@ def create_poll(conversation, question, options, allow_multiple=0, anonymous=0, 
 
 @frappe.whitelist()
 def toggle_poll_vote(option):
-	poll_option = frappe.db.get_value("Poll Option", option, ["poll"], as_dict=True)
+	# "parent" here is the option's owning Poll, now that Poll Option is a
+	# child table - the field used to be called "poll" back when it was a
+	# standalone doctype with its own explicit Link back to Poll.
+	poll_option = frappe.db.get_value("Poll Option", option, ["parent"], as_dict=True)
 	if not poll_option:
 		frappe.throw("Option not found", frappe.DoesNotExistError)
 
-	poll = frappe.db.get_value("Poll", poll_option.poll, ["allow_multiple", "close_at"], as_dict=True)
-	message = frappe.db.get_value("Message", {"poll": poll_option.poll}, ["name", "conversation"], as_dict=True)
+	poll = frappe.db.get_value("Poll", poll_option.parent, ["allow_multiple", "close_at"], as_dict=True)
+	message = frappe.db.get_value("Message", {"poll": poll_option.parent}, ["name", "conversation"], as_dict=True)
 	if not message:
 		frappe.throw("Not permitted", frappe.PermissionError)
 	_require_member(message.conversation)
@@ -405,13 +405,13 @@ def toggle_poll_vote(option):
 	else:
 		if not poll.allow_multiple:
 			for other_vote in frappe.db.get_all(
-				"Poll Vote", filters={"poll": poll_option.poll, "user": user}, pluck="name"
+				"Poll Vote", filters={"poll": poll_option.parent, "user": user}, pluck="name"
 			):
 				frappe.delete_doc("Poll Vote", other_vote, ignore_permissions=True)
-		vote = frappe.get_doc({"doctype": "Poll Vote", "poll": poll_option.poll, "poll_option": option})
+		vote = frappe.get_doc({"doctype": "Poll Vote", "poll": poll_option.parent, "poll_option": option})
 		vote.insert(ignore_permissions=True)
 
-	result = _poll_payload(poll_option.poll)
+	result = _poll_payload(poll_option.parent)
 	for other in _other_members(message.conversation):
 		frappe.publish_realtime(
 			"chat:poll_update", {"message": message.name, "poll_data": result}, user=other, after_commit=True

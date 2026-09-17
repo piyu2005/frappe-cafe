@@ -28,6 +28,7 @@
    "fieldname": "conversation",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Conversation",
    "options": "Conversation",
    "reqd": 1

@@ -21,6 +21,7 @@
    "fieldname": "recipient",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Recipient",
    "options": "User",
    "reqd": 1
@@ -47,18 +48,22 @@
    "fieldname": "type",
    "fieldtype": "Select",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Type",
    "options": "Follow Request\nFollow Accepted\nNew Follower\nNew Post\nLike\nComment\nMention\nGroup Invite\nPublication Invite",
    "reqd": 1
   },
   {
    "fieldname": "reference_doctype",
-   "fieldtype": "Data",
+   "fieldtype": "Link",
+   "options": "DocType",
+   "search_index": 1,
    "label": "Reference Doctype"
   },
   {
    "fieldname": "reference_name",
    "fieldtype": "Data",
+   "search_index": 1,
    "label": "Reference Name"
   },
   {
@@ -71,6 +76,7 @@
    "fieldname": "is_read",
    "fieldtype": "Check",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Is Read"
   }
  ],

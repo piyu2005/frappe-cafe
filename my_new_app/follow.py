@@ -29,7 +29,7 @@ def _notify(recipient, actor, notif_type, message, reference_doctype=None, refer
 
 def notify_followers_of_new_post(post):
 	followers = frappe.db.get_all(
-		"Subscription", filters={"reference_type": "User", "reference_name": post.author}, fields=["subscriber"]
+		"Subscription", filters={"reference_doctype": "User", "reference_name": post.author}, fields=["subscriber"]
 	)
 	title = post.title or "a new post"
 	for f in followers:
@@ -47,7 +47,7 @@ def notify_followers_of_new_post(post):
 def get_follow_state(user):
 	me = frappe.session.user
 	following = bool(
-		frappe.db.exists("Subscription", {"reference_type": "User", "reference_name": user, "subscriber": me})
+		frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": me})
 	)
 	pending = bool(
 		frappe.db.exists("Follow Request", {"from_user": me, "to_user": user, "status": "Pending"})
@@ -61,7 +61,7 @@ def follow_user(user):
 	if user == me:
 		frappe.throw("You can't follow yourself")
 
-	if frappe.db.exists("Subscription", {"reference_type": "User", "reference_name": user, "subscriber": me}):
+	if frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": me}):
 		return {"status": "following"}
 
 	is_private = frappe.db.get_value("User", user, "is_private")
@@ -73,7 +73,7 @@ def follow_user(user):
 		_notify(user, me, "Follow Request", "requested to follow you", "Follow Request", req.name)
 		return {"status": "requested"}
 
-	sub = frappe.get_doc({"doctype": "Subscription", "reference_type": "User", "reference_name": user})
+	sub = frappe.get_doc({"doctype": "Subscription", "reference_doctype": "User", "reference_name": user})
 	sub.flags.ignore_permissions = True
 	sub.insert()
 	_notify(user, me, "New Follower", "started following you", "User", me)
@@ -83,7 +83,7 @@ def follow_user(user):
 @frappe.whitelist()
 def unfollow_user(user):
 	me = frappe.session.user
-	frappe.db.delete("Subscription", {"reference_type": "User", "reference_name": user, "subscriber": me})
+	frappe.db.delete("Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": me})
 	frappe.db.delete("Follow Request", {"from_user": me, "to_user": user, "status": "Pending"})
 	return {"status": "not_following"}
 
@@ -126,12 +126,12 @@ def respond_to_follow_request(name, accept):
 	if accept:
 		if not frappe.db.exists(
 			"Subscription",
-			{"reference_type": "User", "reference_name": frappe.session.user, "subscriber": req.from_user},
+			{"reference_doctype": "User", "reference_name": frappe.session.user, "subscriber": req.from_user},
 		):
 			sub = frappe.get_doc(
 				{
 					"doctype": "Subscription",
-					"reference_type": "User",
+					"reference_doctype": "User",
 					"reference_name": frappe.session.user,
 					"subscriber": req.from_user,
 				}

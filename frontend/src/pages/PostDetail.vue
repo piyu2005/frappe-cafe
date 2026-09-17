@@ -587,7 +587,7 @@ function like() {
   likedByMe.value = !wasLiked
   likeCount.value = wasLiked ? previousCount - 1 : previousCount + 1
 
-  toggleLike.submit({ reference_type: 'Post', reference_name: route.params.postId }).then((result) => {
+  toggleLike.submit({ reference_doctype: 'Post', reference_name: route.params.postId }).then((result) => {
     if (result) {
       likedByMe.value = result.liked
       likeCount.value = result.count
@@ -612,7 +612,7 @@ function toggleCommentLike(comment) {
   target.liked_by_me = !wasLiked
   target.like_count = wasLiked ? previousCount - 1 : previousCount + 1
 
-  toggleCommentLikeCall.submit({ reference_type: 'Post Comment', reference_name: comment.name }).then((result) => {
+  toggleCommentLikeCall.submit({ reference_doctype: 'Post Comment', reference_name: comment.name }).then((result) => {
     if (result) {
       target.liked_by_me = result.liked
       target.like_count = result.count

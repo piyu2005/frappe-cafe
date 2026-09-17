@@ -14,6 +14,7 @@
    "fieldname": "blocker",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Blocker",
    "options": "User",
    "read_only": 1,
@@ -23,6 +24,7 @@
    "fieldname": "blocked",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Blocked",
    "options": "User",
    "reqd": 1

@@ -17,6 +17,7 @@
    "fieldname": "conversation",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Conversation",
    "options": "Conversation",
    "reqd": 1
@@ -25,6 +26,7 @@
    "fieldname": "user",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "User",
    "options": "User",
    "reqd": 1

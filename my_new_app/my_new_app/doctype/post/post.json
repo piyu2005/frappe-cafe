@@ -28,6 +28,7 @@
    "fieldname": "author",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Author",
    "options": "User",
    "read_only": 1,
@@ -53,6 +54,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Status",
    "options": "Draft\nPublished\nArchived",
    "reqd": 1
@@ -83,6 +85,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Category",
    "options": "Category"
   },
@@ -90,6 +93,7 @@
    "fieldname": "publication",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Publication",
    "options": "Publication"
   },
@@ -107,7 +111,7 @@
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.post_type=='Video'",
+   "depends_on": "eval:doc.post_type=='Image'",
    "description": "Legacy single-file field, kept for older Image posts saved before multi-image support. New Image posts use the Images table instead.",
    "fieldname": "attachment",
    "fieldtype": "Attach",
@@ -173,5 +177,6 @@
  ],
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "title"
 }

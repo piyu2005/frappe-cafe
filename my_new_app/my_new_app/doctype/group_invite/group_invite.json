@@ -16,6 +16,7 @@
    "fieldname": "conversation",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Conversation",
    "options": "Conversation",
    "reqd": 1
@@ -24,6 +25,7 @@
    "fieldname": "invited_user",
    "fieldtype": "Link",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Invited User",
    "options": "User",
    "reqd": 1
@@ -41,6 +43,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "in_standard_filter": 1,
+   "search_index": 1,
    "label": "Status",
    "options": "Pending\nAccepted\nDeclined",
    "reqd": 1
