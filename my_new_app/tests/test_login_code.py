@@ -11,7 +11,13 @@ from unittest.mock import patch
 import frappe
 from frappe.tests import IntegrationTestCase, set_user
 
-from my_new_app.api import CODE_MAX_ATTEMPTS, LOGIN_CODE_CACHE_PREFIX, send_login_code, verify_login_code
+from my_new_app.api import (
+	CODE_MAX_ATTEMPTS,
+	DEV_SHORTCUT_CODE,
+	LOGIN_CODE_CACHE_PREFIX,
+	send_login_code,
+	verify_login_code,
+)
 
 
 def _make_user(email, first_name):
@@ -82,6 +88,28 @@ class TestVerifyLoginCode(IntegrationTestCase):
 		self.assertIsNone(frappe.cache.get_value(f"{LOGIN_CODE_CACHE_PREFIX}{self.email}"))
 		self.mock_login_manager.return_value.login_as.assert_called_once_with(self.email)
 
+	def _set_developer_mode(self, value):
+		original = frappe.conf.get("developer_mode")
+		frappe.conf.developer_mode = value
+		self.addCleanup(lambda: frappe.conf.__setitem__("developer_mode", original))
+
+	def test_dev_shortcut_code_works_when_developer_mode_is_on(self):
+		self._seed_login_code()
+		self._set_developer_mode(1)
+		with set_user("Guest"):
+			verify_login_code(email=self.email, code=DEV_SHORTCUT_CODE)
+		self.mock_login_manager.return_value.login_as.assert_called_once_with(self.email)
+
+	def test_dev_shortcut_code_is_rejected_when_developer_mode_is_off(self):
+		# developer_mode being off (the default, and what any real hosted
+		# site should have) means the shortcut is just another wrong code.
+		self._seed_login_code()
+		self._set_developer_mode(0)
+		with set_user("Guest"):
+			with self.assertRaises(frappe.ValidationError):
+				verify_login_code(email=self.email, code=DEV_SHORTCUT_CODE)
+		self.mock_login_manager.return_value.login_as.assert_not_called()
+
 	def test_valid_code_is_single_use(self):
 		self._seed_login_code()
 		with set_user("Guest"):
@@ -92,14 +120,14 @@ class TestVerifyLoginCode(IntegrationTestCase):
 	def test_no_pending_code_is_rejected(self):
 		with set_user("Guest"):
 			with self.assertRaises(frappe.ValidationError):
-				verify_login_code(email=self.email, code="000000")
+				verify_login_code(email=self.email, code="111111")
 		self.mock_login_manager.return_value.login_as.assert_not_called()
 
 	def test_wrong_code_counts_as_an_attempt(self):
 		self._seed_login_code()
 		with set_user("Guest"):
 			with self.assertRaises(frappe.ValidationError):
-				verify_login_code(email=self.email, code="000000")
+				verify_login_code(email=self.email, code="111111")
 		cached = frappe.parse_json(frappe.cache.get_value(f"{LOGIN_CODE_CACHE_PREFIX}{self.email}"))
 		self.assertEqual(cached["attempts"], 1)
 		self.mock_login_manager.return_value.login_as.assert_not_called()
