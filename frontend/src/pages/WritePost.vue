@@ -65,7 +65,31 @@
           <div
             class="mt-4 flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-outline-gray-2 bg-surface-base px-2 py-1 shadow-sm sm:w-fit [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
           >
-            <EditorFixedMenu :items="toolbar" button-size="sm" class="shrink-0" />
+            <EditorFixedMenu :items="marksToolbar" button-size="sm" class="shrink-0" />
+            <span class="mx-1 h-5 w-px shrink-0 bg-outline-gray-2" aria-hidden="true" />
+            <Dropdown :options="headingOptions">
+              <Button
+                size="sm"
+                variant="ghost"
+                icon="lucide-heading"
+                label="Heading"
+                class="shrink-0 aria-pressed:bg-surface-gray-3"
+                :aria-pressed="isHeadingActive"
+              />
+            </Dropdown>
+            <EditorFixedMenu :items="blockToolbar" button-size="sm" class="shrink-0" />
+            <span class="mx-1 h-5 w-px shrink-0 bg-outline-gray-2" aria-hidden="true" />
+            <Dropdown :options="alignOptions">
+              <Button
+                size="sm"
+                variant="ghost"
+                icon="lucide-align-left"
+                label="Align"
+                class="shrink-0 aria-pressed:bg-surface-gray-3"
+                :aria-pressed="isAlignActive"
+              />
+            </Dropdown>
+            <EditorFixedMenu :items="insertToolbar" button-size="sm" class="shrink-0" />
           </div>
 
           <input
@@ -143,13 +167,16 @@ import {
   EditorBubbleMenu,
   EditorContent,
   EditorFixedMenu,
-  HeadingGroup,
+  H2,
+  H3,
+  H4,
   ImageGroup,
   ImageViewer,
   InsertImage,
   InsertLink,
   Italic,
   OrderedList,
+  Paragraph,
   RichTextKit,
   Separator,
   Strike,
@@ -306,21 +333,13 @@ const UnderlineItem = {
 // Trimmed to a compact, always-visible set that fits a floating pill —
 // the exhaustive toolbar (undo/redo, colors, tables, attachments, ...)
 // doesn't fit the minimal Medium-style redesign, so it's gone from here.
-const toolbar = [
-  Bold,
-  Italic,
-  UnderlineItem,
-  Strike,
-  Separator,
-  HeadingGroup,
-  Blockquote,
-  Separator,
-  BulletList,
-  OrderedList,
-  Separator,
-  InsertImage,
-  InsertLink,
-]
+// Split into segments (rather than one flat array) because Heading and
+// Align render as their own single-icon dropdowns, not frappe-ui's
+// multi-button "group" style (label + one button per level) - see the
+// template below for how the segments and dropdowns interleave.
+const marksToolbar = [Bold, Italic, UnderlineItem, Strike]
+const blockToolbar = [Blockquote, BulletList, OrderedList]
+const insertToolbar = [InsertImage, InsertLink]
 
 const bubbleToolbar = [Bold, Italic, UnderlineItem, Strike, InsertLink, Separator, AlignLeft, AlignCenter, AlignRight]
 
@@ -332,6 +351,69 @@ const uploadFunction = async (file) => {
 }
 
 const editorRef = ref(null)
+
+// Heading/Align render as single-icon Dropdowns rather than frappe-ui's
+// built-in multi-button "group" style, to match the compact one-icon-per-
+// control toolbar design. Reusing H2/H3/H4/Paragraph/AlignLeft/AlignCenter/
+// AlignRight's own .label/.icon/.action/.isActive (rather than re-deriving
+// tiptap commands by hand) keeps this in sync with frappe-ui's own command
+// definitions, edge cases (e.g. cell-selection handling) included.
+function menuItemToOption(item) {
+  return {
+    label: item.label,
+    icon: item.icon,
+    onClick: () => {
+      const editor = editorRef.value?.editor
+      if (!editor) return
+      // Capture the selection synchronously, before the dropdown closes -
+      // closing it returns focus to its own trigger button (standard menu
+      // accessibility behavior), and by the time item.action's own .focus()
+      // call runs afterward, that interruption has already lost track of
+      // where the selection was, landing back at the very start of the
+      // document instead (confirmed empirically). Restoring it explicitly
+      // from this snapshot, right before the item's own action, is what
+      // actually lands the heading/alignment change back where it was
+      // applied instead of at position 0.
+      const { from, to } = editor.state.selection
+      // Deferred: needs to run after Reka's own focus-return settles (a
+      // same-tick or 0ms-deferred call still loses that race, per the same
+      // timing test) - 150ms reliably lands after it.
+      setTimeout(() => {
+        editor.chain().focus().setTextSelection({ from, to }).run()
+        item.action(editor)
+      }, 150)
+    },
+  }
+}
+const headingOptions = [H2, H3, H4, Paragraph].map(menuItemToOption)
+const alignOptions = [AlignLeft, AlignCenter, AlignRight].map(menuItemToOption)
+
+// The tiptap editor instance isn't itself a reactive ref (see frappe-ui's own
+// MenuItems.vue for the same trick) - bump a version on every transaction and
+// read it inside the active-state computeds below so the two dropdown
+// triggers highlight in step with the selection, same as every other
+// toolbar button.
+const toolbarVersion = ref(0)
+watch(
+  () => editorRef.value?.editor,
+  (editor, _old, onCleanup) => {
+    if (!editor) return
+    const bump = () => toolbarVersion.value++
+    editor.on('transaction', bump)
+    onCleanup(() => editor.off('transaction', bump))
+  },
+  { immediate: true },
+)
+const isHeadingActive = computed(() => {
+  toolbarVersion.value
+  const editor = editorRef.value?.editor
+  return !!editor && [H2, H3, H4].some((item) => item.isActive(editor))
+})
+const isAlignActive = computed(() => {
+  toolbarVersion.value
+  const editor = editorRef.value?.editor
+  return !!editor && [AlignLeft, AlignCenter, AlignRight].some((item) => item.isActive(editor))
+})
 
 // When an image/video ends up as the very first block (the common case:
 // insert an image before typing anything), there's no paragraph above it to
@@ -348,9 +430,15 @@ function ensureLeadingParagraph() {
   // content is that atom (no text). With nothing but the atom on that line,
   // there's no unambiguous "before it" position for a click to resolve to.
   // A genuinely separate empty paragraph in front gives a real text line
-  // there instead.
+  // there instead. This is the *only* case this should fire for - an
+  // earlier `firstNode.type.name !== 'paragraph'` fallback here also caught
+  // any other non-paragraph first block (heading, blockquote, list, ...),
+  // which are all normal text nodes with a perfectly clickable start - that
+  // extra branch just meant turning the very first block into a heading
+  // silently inserted a phantom empty paragraph above it and threw the
+  // cursor there instead of leaving it in the heading you just made.
   const isLeadingMediaOnly = firstNode.type.name === 'paragraph' && firstNode.textContent === '' && firstNode.content.size > 0
-  if (firstNode.type.name !== 'paragraph' || isLeadingMediaOnly) {
+  if (isLeadingMediaOnly) {
     editor.chain().insertContentAt(0, { type: 'paragraph' }).run()
   }
 }
