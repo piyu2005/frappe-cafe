@@ -103,7 +103,12 @@
             </p>
           </div>
 
-          <div>
+          <p v-if="contentGated" class="flex items-center gap-1.5 text-base text-ink-gray-5">
+            <span class="lucide-lock size-3.5 shrink-0" aria-hidden="true" />
+            Follow {{ profile.data.full_name }} to know more about them.
+          </p>
+
+          <div v-else>
             <div class="rounded-md border border-outline-gray-1 p-5">
               <div class="flex items-center gap-1.5 pb-4 text-base-medium text-ink-gray-8">
                 <span class="lucide-notebook-pen size-4" aria-hidden="true" />
@@ -134,23 +139,19 @@
                   />
                 </router-link>
               </div>
-              <p v-else class="flex items-center gap-1.5 text-base text-ink-gray-5">
+              <p v-else class="text-base text-ink-gray-5">
                 <template v-if="isOwnProfile">
                   You haven't published anything yet.
                   <router-link to="/write" class="text-base-medium text-ink-gray-8">
                     Write your first blog.
                   </router-link>
                 </template>
-                <template v-else-if="contentGated">
-                  <span class="lucide-lock size-3.5 shrink-0" aria-hidden="true" />
-                  Follow to see their posts.
-                </template>
                 <template v-else>No posts yet.</template>
               </p>
             </div>
 
             <div
-              v-if="!contentGated && (isOwnProfile || (recentPosts.data && recentPosts.data.length === postsLimit))"
+              v-if="isOwnProfile || (recentPosts.data && recentPosts.data.length === postsLimit)"
               class="mt-3 flex justify-center"
             >
               <Button
