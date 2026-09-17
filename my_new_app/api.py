@@ -10,10 +10,24 @@ SIGNUP_CODE_CACHE_PREFIX = "pending_signup:"
 LOGIN_CODE_CACHE_PREFIX = "login_code:"
 CODE_EXPIRY_SEC = 10 * 60
 CODE_MAX_ATTEMPTS = 5
+DEV_SHORTCUT_CODE = "000000"
 
 
 def _generate_code():
 	return "".join(secrets.choice(string.digits) for _ in range(6))
+
+
+def _is_dev_shortcut_code(code):
+	# Skips needing to actually read the emailed/cached code during local
+	# development - developer_mode is Frappe's own standard signal for "this
+	# is not a production site" (real hosted sites don't run with it on, and
+	# this app's hosted site specifically does not - checked directly in its
+	# Frappe Cloud site config), so this has no effect there. The real code
+	# is still generated, cached, and "sent" exactly as in production either
+	# way; this only ever provides an alternate way to pass the match check
+	# below, once a real send_login_code/send_signup_code call has already
+	# put a pending code in cache - it doesn't skip that step.
+	return bool(frappe.conf.developer_mode) and code == DEV_SHORTCUT_CODE
 
 
 def _create_verified_user(email, username):
@@ -99,7 +113,7 @@ def verify_signup_code(email, code):
 		frappe.cache.delete_value(cache_key)
 		frappe.throw("Too many incorrect attempts. Please sign up again.")
 
-	if code != data["code"]:
+	if code != data["code"] and not _is_dev_shortcut_code(code):
 		data["attempts"] += 1
 		frappe.cache.set_value(cache_key, frappe.as_json(data), expires_in_sec=CODE_EXPIRY_SEC)
 		frappe.throw("Incorrect code. Please try again.")
@@ -170,7 +184,7 @@ def verify_login_code(email, code):
 		frappe.cache.delete_value(cache_key)
 		frappe.throw("Too many incorrect attempts. Please request a new code.")
 
-	if code != data["code"]:
+	if code != data["code"] and not _is_dev_shortcut_code(code):
 		data["attempts"] += 1
 		frappe.cache.set_value(cache_key, frappe.as_json(data), expires_in_sec=CODE_EXPIRY_SEC)
 		frappe.throw("Incorrect code. Please try again.")
