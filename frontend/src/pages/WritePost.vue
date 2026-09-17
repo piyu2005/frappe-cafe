@@ -457,9 +457,43 @@ function parseObjectPosition(el) {
 function onEditorClick(e) {
   const toggleBtn = e.target.closest?.('[aria-label="Toggle caption"]')
   if (!toggleBtn) return
-  setTimeout(() => {
-    toggleBtn.closest('[data-node-view-wrapper]')?.querySelector('[aria-label="Media caption"]')?.focus()
-  }, 50)
+  const wrapper = toggleBtn.closest('[data-node-view-wrapper]')
+  if (!wrapper) return
+  const existingInput = wrapper.querySelector('[aria-label="Media caption"]')
+  if (existingInput?.value) {
+    // A caption with real text is already showing - frappe-ui's own click
+    // handler would toggle it *off* here (clearing the text, since this is a
+    // plain on/off toggle, not an "edit" button), but re-clicking the same
+    // icon on a caption that's already there reads as "let me get back into
+    // editing this," not "erase what I wrote" - the actual erase-it path
+    // stays reachable by clearing the text by hand and clicking away. Only
+    // this already-has-text case is intercepted; an empty toggled-on-but-
+    // unused field still toggles off normally, since there's nothing to lose.
+    e.stopPropagation()
+    existingInput.focus()
+    return
+  }
+  // Turning the caption ON mounts a brand-new <input> (v-if, not v-show) -
+  // the very first toggle on a given image pays real one-time mount cost
+  // (Vue instantiating + inserting the element) on top of Reka's own
+  // focus-return delay, which a fixed wait tuned for the *steady-state* case
+  // wasn't long enough for - it fired before the input existed yet, so nothing
+  // was there to focus and the click's earlier .stopPropagation() meant the
+  // document never got a chance to grab focus either, leaving it wherever it
+  // last was. Polling for the input to actually exist - same pattern as
+  // attachDragHandler below - fixes it regardless of which case it is instead
+  // of guessing a delay long enough for both.
+  let attempts = 0
+  function tryFocus() {
+    const input = wrapper.querySelector('[aria-label="Media caption"]')
+    if (input) {
+      input.focus()
+      return
+    }
+    attempts += 1
+    if (attempts < 30) requestAnimationFrame(tryFocus)
+  }
+  requestAnimationFrame(tryFocus)
 }
 
 let dragImg = null
