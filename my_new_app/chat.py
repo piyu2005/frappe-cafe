@@ -355,6 +355,13 @@ def create_poll(conversation, question, options, allow_multiple=0, anonymous=0, 
 	if len(others) == 1 and _is_blocked(frappe.session.user, others[0]):
 		frappe.throw("You can't message this user")
 
+	frappe.db.set_value(
+		"Conversation Member",
+		{"conversation": conversation, "user": frappe.session.user, "status": "Pending"},
+		"status",
+		"Accepted",
+	)
+
 	poll = frappe.get_doc(
 		{
 			"doctype": "Poll",
@@ -419,11 +426,12 @@ def toggle_poll_vote(option):
 	return result
 
 
-@frappe.whitelist()
-def list_conversations():
+def _list_conversations(status_filter):
 	user = frappe.session.user
 	memberships = frappe.db.get_all(
-		"Conversation Member", filters={"user": user}, fields=["conversation", "muted", "last_read"]
+		"Conversation Member",
+		filters={"user": user, "status": status_filter},
+		fields=["conversation", "muted", "last_read"],
 	)
 	if not memberships:
 		return []
@@ -544,10 +552,32 @@ def list_conversations():
 
 
 @frappe.whitelist()
+def list_conversations():
+	return _list_conversations(["not in", ["Pending", "Declined"]])
+
+
+@frappe.whitelist()
+def list_message_requests():
+	return _list_conversations("Pending")
+
+
+@frappe.whitelist()
+def respond_to_message_request(conversation, accept):
+	_require_member(conversation)
+	status = "Accepted" if int(accept) else "Declined"
+	frappe.db.set_value(
+		"Conversation Member", {"conversation": conversation, "user": frappe.session.user}, "status", status
+	)
+	return {"status": status}
+
+
+@frappe.whitelist()
 def unread_message_count():
 	user = frappe.session.user
 	memberships = frappe.db.get_all(
-		"Conversation Member", filters={"user": user, "muted": 0}, fields=["conversation", "last_read"]
+		"Conversation Member",
+		filters={"user": user, "muted": 0, "status": ["not in", ["Pending", "Declined"]]},
+		fields=["conversation", "last_read"],
 	)
 	if not memberships:
 		return 0
@@ -587,9 +617,25 @@ def start_dm(other_user):
 
 	conv = frappe.get_doc({"doctype": "Conversation", "is_group": 0})
 	conv.insert(ignore_permissions=True)
-	for u in (user, other_user):
-		member = frappe.get_doc({"doctype": "Conversation Member", "conversation": conv.name, "user": u})
-		member.insert(ignore_permissions=True)
+
+	# The recipient's own row is what starts Pending, never the sender's -
+	# they already know they're messaging someone, there's nothing for them
+	# to accept. "Already follows back" skips the request step entirely,
+	# matching how DMs already worked before this existed.
+	recipient_follows_sender = frappe.db.exists(
+		"Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": other_user}
+	)
+	sender = frappe.get_doc({"doctype": "Conversation Member", "conversation": conv.name, "user": user})
+	sender.insert(ignore_permissions=True)
+	recipient = frappe.get_doc(
+		{
+			"doctype": "Conversation Member",
+			"conversation": conv.name,
+			"user": other_user,
+			"status": "Accepted" if recipient_follows_sender else "Pending",
+		}
+	)
+	recipient.insert(ignore_permissions=True)
 
 	return {"conversation": conv.name}
 
@@ -600,7 +646,10 @@ def get_conversation(conversation):
 	conv = frappe.db.get_value("Conversation", conversation, ["is_group", "title"], as_dict=True)
 	others = _other_members(conversation)
 	my_membership = frappe.db.get_value(
-		"Conversation Member", {"conversation": conversation, "user": frappe.session.user}, ["muted"], as_dict=True
+		"Conversation Member",
+		{"conversation": conversation, "user": frappe.session.user},
+		["muted", "status"],
+		as_dict=True,
 	)
 
 	if conv.is_group:
@@ -628,6 +677,7 @@ def get_conversation(conversation):
 			and frappe.db.exists("Blocked User", {"blocker": frappe.session.user, "blocked": other_user})
 		),
 		"muted": my_membership.muted if my_membership else False,
+		"my_status": my_membership.status if my_membership else "Accepted",
 		"other_last_read": other_last_read,
 	}
 
@@ -1027,6 +1077,16 @@ def send_message(conversation, content=None, attachments=None, shared_post=None,
 	others = _other_members(conversation)
 	if len(others) == 1 and _is_blocked(frappe.session.user, others[0]):
 		frappe.throw("You can't message this user")
+
+	# Replying to a still-pending message request is itself an acceptance -
+	# same as tapping "Accept" explicitly (respond_to_message_request), just
+	# implicit. Only ever touches the sender's own row.
+	frappe.db.set_value(
+		"Conversation Member",
+		{"conversation": conversation, "user": frappe.session.user, "status": "Pending"},
+		"status",
+		"Accepted",
+	)
 
 	if reply_to:
 		# Reply previews expose sender_name/content straight off the target

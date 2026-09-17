@@ -10,7 +10,8 @@
   "user",
   "muted",
   "last_read",
-  "is_admin"
+  "is_admin",
+  "status"
  ],
  "fields": [
   {
@@ -48,6 +49,16 @@
    "fieldname": "is_admin",
    "fieldtype": "Check",
    "label": "Is Admin"
+  },
+  {
+   "default": "Accepted",
+   "description": "A DM from someone the recipient doesn't already follow back starts life as Pending on the recipient's own row only (the sender's row is always Accepted) - it's hidden from their main conversation list until they accept or reply. Group membership is always Accepted; Group Invite already gates joining a group before this row ever exists.",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "search_index": 1,
+   "label": "Status",
+   "options": "Accepted\nPending\nDeclined"
   }
  ],
  "links": [],
