@@ -46,32 +46,76 @@
 
       <ScrollArea class="flex-1">
         <template v-if="!showingPeopleSearch">
-          <LoadingText v-if="conversations.loading && !conversations.data" class="p-3" :lines="4" />
-          <p v-else-if="!conversations.data || !conversations.data.length" class="p-4 text-center text-p-sm text-ink-gray-5">
-            No conversations yet.
-          </p>
           <button
-            v-for="c in conversations.data"
-            :key="c.conversation"
-            class="flex w-full items-center gap-3 px-3 py-3 text-left hover:bg-surface-gray-1"
-            :class="{ 'bg-surface-gray-2': c.conversation === activeConversationId }"
-            @click="openConversation(c.conversation)"
+            class="flex w-full items-center justify-between gap-2 border-b border-outline-gray-1 px-3 py-2.5 text-left hover:bg-surface-gray-1"
+            @click="showingRequests = !showingRequests"
           >
-            <Avatar :image="c.display_image" :label="c.display_name" size="md" />
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-1.5">
-                <span class="truncate text-base-medium text-ink-gray-9">{{ c.display_name }}</span>
-                <span v-if="c.muted" class="lucide-bell-off size-3 shrink-0 text-ink-gray-4" aria-hidden="true" />
-              </div>
-              <p class="truncate text-sm text-ink-gray-5">{{ c.last_message || 'No messages yet' }}</p>
-            </div>
-            <span
-              v-if="c.unread_count > 0"
-              class="grid h-5 min-w-5 shrink-0 place-content-center rounded-full bg-surface-gray-10 px-1 text-2xs text-ink-base"
-            >
-              {{ c.unread_count }}
+            <span class="flex items-center gap-1.5 text-sm text-ink-gray-6">
+              <span class="lucide-inbox size-3.5" aria-hidden="true" />
+              Message requests
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span
+                v-if="messageRequests.data && messageRequests.data.length"
+                class="grid h-5 min-w-5 place-content-center rounded-full bg-surface-gray-10 px-1 text-2xs text-ink-base"
+              >
+                {{ messageRequests.data.length }}
+              </span>
+              <span
+                :class="showingRequests ? 'lucide-chevron-up' : 'lucide-chevron-down'"
+                class="size-3.5 text-ink-gray-4"
+                aria-hidden="true"
+              />
             </span>
           </button>
+
+          <template v-if="showingRequests">
+            <p v-if="!messageRequests.data || !messageRequests.data.length" class="p-4 text-center text-p-sm text-ink-gray-5">
+              No message requests.
+            </p>
+            <button
+              v-for="c in messageRequests.data"
+              :key="c.conversation"
+              class="flex w-full items-center gap-3 px-3 py-3 text-left hover:bg-surface-gray-1"
+              :class="{ 'bg-surface-gray-2': c.conversation === activeConversationId }"
+              @click="openConversation(c.conversation)"
+            >
+              <Avatar :image="c.display_image" :label="c.display_name" size="md" />
+              <div class="min-w-0 flex-1">
+                <span class="truncate text-base-medium text-ink-gray-9">{{ c.display_name }}</span>
+                <p class="truncate text-sm text-ink-gray-5">{{ c.last_message || 'No messages yet' }}</p>
+              </div>
+            </button>
+          </template>
+
+          <template v-else>
+            <LoadingText v-if="conversations.loading && !conversations.data" class="p-3" :lines="4" />
+            <p v-else-if="!conversations.data || !conversations.data.length" class="p-4 text-center text-p-sm text-ink-gray-5">
+              No conversations yet.
+            </p>
+            <button
+              v-for="c in conversations.data"
+              :key="c.conversation"
+              class="flex w-full items-center gap-3 px-3 py-3 text-left hover:bg-surface-gray-1"
+              :class="{ 'bg-surface-gray-2': c.conversation === activeConversationId }"
+              @click="openConversation(c.conversation)"
+            >
+              <Avatar :image="c.display_image" :label="c.display_name" size="md" />
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="truncate text-base-medium text-ink-gray-9">{{ c.display_name }}</span>
+                  <span v-if="c.muted" class="lucide-bell-off size-3 shrink-0 text-ink-gray-4" aria-hidden="true" />
+                </div>
+                <p class="truncate text-sm text-ink-gray-5">{{ c.last_message || 'No messages yet' }}</p>
+              </div>
+              <span
+                v-if="c.unread_count > 0"
+                class="grid h-5 min-w-5 shrink-0 place-content-center rounded-full bg-surface-gray-10 px-1 text-2xs text-ink-base"
+              >
+                {{ c.unread_count }}
+              </span>
+            </button>
+          </template>
         </template>
 
         <template v-else>
@@ -162,6 +206,17 @@
             You've blocked this user. Unblock them to send messages.
           </template>
           <template v-else>You can't reply to this conversation.</template>
+        </div>
+
+        <div
+          v-else-if="conversation.data.my_status === 'Pending'"
+          class="flex items-center justify-between gap-3 border-b border-outline-gray-1 bg-surface-amber-2 px-4 py-2 text-sm text-ink-gray-7"
+        >
+          <span>{{ conversation.data.display_name }} isn't following you. Accept to start chatting, or decline to ignore.</span>
+          <div class="flex shrink-0 gap-2">
+            <Button size="sm" variant="outline" theme="gray" label="Decline" @click="respondToRequest(0)" />
+            <Button size="sm" variant="solid" theme="gray" label="Accept" @click="respondToRequest(1)" />
+          </div>
         </div>
 
         <ScrollArea ref="scrollAreaRef" class="flex-1" viewport-class="px-4 pb-3 pt-6">
@@ -997,6 +1052,11 @@ const conversations = useCall({
   refetch: true,
 })
 
+const messageRequests = useCall({
+  url: '/api/v2/method/my_new_app.chat.list_message_requests',
+  refetch: true,
+})
+
 const conversation = useCall({
   url: '/api/v2/method/my_new_app.chat.get_conversation',
   params: () => ({ conversation: activeConversationId.value }),
@@ -1030,6 +1090,7 @@ watch(
 )
 
 const showingPeopleSearch = computed(() => search.value.trim().length > 0)
+const showingRequests = ref(false)
 
 const peopleSearch = useCall({
   url: '/api/v2/method/my_new_app.chat.search_people_to_message',
@@ -1153,6 +1214,30 @@ const startDm = useCall({
   },
   onError: (err) => toast.error(err.message),
 })
+
+const respondToMessageRequest = useCall({
+  url: '/api/v2/method/my_new_app.chat.respond_to_message_request',
+  method: 'POST',
+  immediate: false,
+  onSuccess: (data) => {
+    conversations.reload()
+    messageRequests.reload()
+    // Declining hides the conversation from both lists - nothing left here
+    // worth looking at, so back out to the list rather than leave the
+    // thread open on a conversation that just vanished from the sidebar.
+    if (data.status === 'Declined') {
+      router.push({ name: 'Messages' })
+    } else {
+      conversation.reload()
+    }
+  },
+  onError: (err) => toast.error(err.message),
+})
+
+function respondToRequest(accept) {
+  if (!activeConversationId.value) return
+  respondToMessageRequest.submit({ conversation: activeConversationId.value, accept })
+}
 
 const showCreateGroupDialog = ref(false)
 const showGroupMembersDialog = ref(false)
@@ -1760,6 +1845,7 @@ const threadOptions = computed(() => {
 
 function handleNewMessage(payload) {
   conversations.reload()
+  messageRequests.reload()
   if (payload.conversation === activeConversationId.value) {
     messageList.value = [...messageList.value, payload]
     scrollToBottom()
