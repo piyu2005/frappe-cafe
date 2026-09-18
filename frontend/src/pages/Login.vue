@@ -39,7 +39,6 @@
 
       <ErrorMessage class="mt-3" :message="sendCodeError" />
       <p v-if="showSignupLink" class="mt-2 text-sm text-ink-gray-5">
-        No account found with this email.
         <router-link class="font-medium text-ink-gray-9 underline" :to="{ name: 'Signup' }">
           Create one.
         </router-link>
