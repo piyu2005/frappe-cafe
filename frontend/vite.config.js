@@ -84,12 +84,36 @@ export default defineConfig({
       '@tiptap/suggestion',
       '@tiptap/markdown',
     ],
+    // frappe-ui is excluded above, so Vite's auto-discovery crawler never
+    // scans its source to find what *it* imports - these plain-JS/TS
+    // packages (unlike tiptap/prosemirror, none of them are singleton-keyed
+    // the way ProseMirror plugins are, so there's no duplicate-instance risk
+    // pre-bundling them) are pulled in directly by frappe-ui's own
+    // components on effectively every page (Menu/Dropdown/Dialog/Popover
+    // all sit on reka-ui; echarts/lowlight/grid-layout-plus/vue-sonner are
+    // reached the same way even on pages that never render a chart, code
+    // block, or toast). Left off this list, each one is served as dozens to
+    // hundreds of individual unbundled files instead of one pre-bundled
+    // chunk - the actual reason every route's first load was so slow: this
+    // fixed cost was being paid on every single page, not something
+    // specific to any one of them.
     include: [
       'feather-icons',
       'tippy.js',
       'engine.io-client',
       'socket.io-client',
       'debug',
+      'reka-ui',
+      'echarts',
+      'lowlight',
+      '@headlessui/vue',
+      '@popperjs/core',
+      'dayjs',
+      'grid-layout-plus',
+      '@floating-ui/dom',
+      'vue-sonner',
+      'dompurify',
+      'idb-keyval',
     ],
   },
 })
