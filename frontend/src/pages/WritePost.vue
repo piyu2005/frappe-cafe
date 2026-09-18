@@ -845,15 +845,20 @@ const mobileMoreOptions = computed(() => {
    comment for the full rationale) — without this, an inserted image shows
    at its raw natural size while writing, then jumps to a differently-shaped,
    cropped size the moment it's actually posted. Keeping both identical
-   makes the editor a true preview of the published result. */
+   makes the editor a true preview of the published result. The fixed ratio
+   goes on the inner div (the image area), not .not-prose itself —
+   .not-prose also holds the caption <input> as a later sibling, and forcing
+   the ratio directly on .not-prose (which keeps the component's own
+   overflow-hidden class) pinned its height to the image alone, clipping the
+   caption out of view below it (same bug PostDetail.vue had). */
 :deep(.not-prose) {
   width: 100% !important;
-  height: auto !important;
-  aspect-ratio: 16 / 9 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 :deep(.not-prose > div) {
-  height: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9 !important;
 }
 :deep(.not-prose img),
 :deep(.not-prose video) {
