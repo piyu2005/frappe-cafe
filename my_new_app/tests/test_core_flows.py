@@ -1,8 +1,7 @@
 """End-to-end checks for the everyday social flows: creating a post, liking
-it, commenting on it, saving it, and following/unfollowing another user.
-These exercise the normal path a real user takes, as opposed to
-test_permissions.py (who's allowed to do what) or test_chat_security.py
-(the chat-specific security fixes)."""
+it, commenting on it, and saving it. These exercise the normal path a real
+user takes, as opposed to test_permissions.py (who's allowed to do what) or
+test_chat_security.py (the chat-specific security fixes)."""
 
 import frappe
 from frappe.tests import IntegrationTestCase, set_user
@@ -14,10 +13,9 @@ from my_new_app.api import (
 	toggle_like,
 	toggle_save_post,
 )
-from my_new_app.follow import follow_user, get_follow_state, respond_to_follow_request, unfollow_user
 
 
-def _make_user(email, first_name, is_private=0):
+def _make_user(email, first_name):
 	if not frappe.db.exists("User", email):
 		frappe.get_doc(
 			{
@@ -26,11 +24,8 @@ def _make_user(email, first_name, is_private=0):
 				"first_name": first_name,
 				"send_welcome_email": 0,
 				"user_type": "Website User",
-				"is_private": is_private,
 			}
 		).insert(ignore_permissions=True)
-	elif frappe.db.get_value("User", email, "is_private") != is_private:
-		frappe.db.set_value("User", email, "is_private", is_private)
 	return email
 
 
@@ -142,52 +137,3 @@ class TestSavePostFlow(IntegrationTestCase):
 			result = toggle_save_post(self.post)
 			self.assertFalse(result["saved"])
 			self.assertNotIn(self.post, [p["name"] for p in list_saved_posts()])
-
-
-class TestFollowFlow(IntegrationTestCase):
-	def setUp(self):
-		# IntegrationTestCase only rolls back once per *class*, not per test
-		# method (see frappe/tests/classes/integration_test_case.py) — so a
-		# Subscription/Follow Request created by one test method would
-		# otherwise still be there when the next method's setUp runs. A fresh,
-		# test-specific user triple keeps every test's follow state isolated.
-		suffix = self._testMethodName
-		self.me = _make_user(f"core_follow_me_{suffix}@example.com", "Me")
-		self.public_user = _make_user(f"core_follow_public_{suffix}@example.com", "PublicUser", is_private=0)
-		self.private_user = _make_user(f"core_follow_private_{suffix}@example.com", "PrivateUser", is_private=1)
-
-	def test_following_a_public_user_is_immediate(self):
-		with set_user(self.me):
-			result = follow_user(self.public_user)
-			self.assertEqual(result["status"], "following")
-			self.assertTrue(get_follow_state(self.public_user)["following"])
-
-	def test_unfollowing_removes_the_subscription(self):
-		with set_user(self.me):
-			follow_user(self.public_user)
-			unfollow_user(self.public_user)
-			self.assertFalse(get_follow_state(self.public_user)["following"])
-
-	def test_cannot_follow_yourself(self):
-		with set_user(self.me):
-			with self.assertRaises(frappe.ValidationError):
-				follow_user(self.me)
-
-	def test_following_a_private_user_creates_a_pending_request_not_a_subscription(self):
-		with set_user(self.me):
-			result = follow_user(self.private_user)
-			self.assertEqual(result["status"], "requested")
-			state = get_follow_state(self.private_user)
-			self.assertFalse(state["following"])
-			self.assertTrue(state["pending"])
-
-	def test_accepting_a_follow_request_creates_the_subscription(self):
-		with set_user(self.me):
-			follow_user(self.private_user)
-		request_name = frappe.db.get_value(
-			"Follow Request", {"from_user": self.me, "to_user": self.private_user, "status": "Pending"}
-		)
-		with set_user(self.private_user):
-			respond_to_follow_request(request_name, accept=1)
-		with set_user(self.me):
-			self.assertTrue(get_follow_state(self.private_user)["following"])

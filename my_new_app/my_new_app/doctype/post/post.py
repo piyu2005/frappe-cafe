@@ -30,12 +30,6 @@ class Post(Document):
 			if thumbnail_url:
 				self.cover_image = thumbnail_url
 
-	def on_update(self):
-		if self.status == "Published" and self.has_value_changed("status"):
-			from my_new_app.follow import notify_followers_of_new_post
-
-			notify_followers_of_new_post(self)
-
 	def on_trash(self):
 		_delete_comment_thread(self.name)
 		frappe.db.delete("Saved Post", {"post": self.name})

@@ -620,11 +620,10 @@ def start_dm(other_user):
 
 	# The recipient's own row is what starts Pending, never the sender's -
 	# they already know they're messaging someone, there's nothing for them
-	# to accept. "Already follows back" skips the request step entirely,
-	# matching how DMs already worked before this existed.
-	recipient_follows_sender = frappe.db.exists(
-		"Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": other_user}
-	)
+	# to accept. Every start_dm call is by definition the FIRST message
+	# between these two (the loop above returns early for an existing
+	# conversation), so the recipient always gets a request to accept or
+	# decline before the conversation opens for real.
 	sender = frappe.get_doc({"doctype": "Conversation Member", "conversation": conv.name, "user": user})
 	sender.insert(ignore_permissions=True)
 	recipient = frappe.get_doc(
@@ -632,7 +631,7 @@ def start_dm(other_user):
 			"doctype": "Conversation Member",
 			"conversation": conv.name,
 			"user": other_user,
-			"status": "Accepted" if recipient_follows_sender else "Pending",
+			"status": "Pending",
 		}
 	)
 	recipient.insert(ignore_permissions=True)

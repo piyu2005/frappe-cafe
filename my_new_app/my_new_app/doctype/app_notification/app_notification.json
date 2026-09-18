@@ -50,7 +50,7 @@
    "in_standard_filter": 1,
    "search_index": 1,
    "label": "Type",
-   "options": "Follow Request\nFollow Accepted\nNew Follower\nNew Post\nLike\nComment\nMention\nGroup Invite\nPublication Invite",
+   "options": "Like\nComment\nMention\nGroup Invite\nPublication Invite",
    "reqd": 1
   },
   {

@@ -189,34 +189,6 @@ class TestPublicationMemberPermissions(IntegrationTestCase):
 		self.assertEqual(len(result["editors"]), 1)
 
 
-class TestFollowUserBlocking(IntegrationTestCase):
-	def setUp(self):
-		self.a = _make_user("perm_follow_a@example.com", "FollowA")
-		self.b = _make_user("perm_follow_b@example.com", "FollowB")
-
-	def test_blocked_user_cannot_follow(self):
-		from my_new_app.chat import block_user
-		from my_new_app.follow import follow_user
-
-		with set_user(self.a):
-			block_user(self.b)
-		with set_user(self.b):
-			with self.assertRaises(frappe.ValidationError):
-				follow_user(self.a)
-		self.assertFalse(frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": self.a, "subscriber": self.b}))
-
-	def test_unblocked_user_can_follow_again(self):
-		from my_new_app.chat import block_user, unblock_user
-		from my_new_app.follow import follow_user
-
-		with set_user(self.a):
-			block_user(self.b)
-			unblock_user(self.b)
-		with set_user(self.b):
-			follow_user(self.a)
-		self.assertTrue(frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": self.a, "subscriber": self.b}))
-
-
 class TestNotificationOwnership(IntegrationTestCase):
 	def setUp(self):
 		self.owner = _make_user("perm_notif_owner@example.com", "NotifOwner")
@@ -225,7 +197,7 @@ class TestNotificationOwnership(IntegrationTestCase):
 			{
 				"doctype": "App Notification",
 				"recipient": self.owner,
-				"type": "New Follower",
+				"type": "Like",
 				"message": "test",
 			}
 		).insert(ignore_permissions=True).name

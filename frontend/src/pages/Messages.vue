@@ -227,7 +227,7 @@
           v-else-if="conversation.data.my_status === 'Pending'"
           class="flex items-center justify-between gap-3 border-b border-outline-gray-1 bg-surface-amber-2 px-4 py-2 text-sm text-ink-gray-7"
         >
-          <span>{{ conversation.data.display_name }} isn't following you. Accept to start chatting, or decline to ignore.</span>
+          <span>{{ conversation.data.display_name }} wants to message you. Accept to start chatting, or decline to ignore.</span>
           <div class="flex shrink-0 gap-2">
             <Button size="sm" variant="outline" theme="gray" label="Decline" @click="respondToRequest(0)" />
             <Button size="sm" variant="solid" theme="gray" label="Accept" @click="respondToRequest(1)" />

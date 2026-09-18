@@ -139,13 +139,7 @@
               />
             </router-link>
           </div>
-          <p v-else class="mt-6 flex items-center gap-1.5 text-base text-ink-gray-5">
-            <template v-if="contentGated">
-              <span class="lucide-lock size-3.5 shrink-0" aria-hidden="true" />
-              Follow to see their posts.
-            </template>
-            <template v-else>No posts yet.</template>
-          </p>
+          <p v-else class="mt-6 flex items-center gap-1.5 text-base text-ink-gray-5">No posts yet.</p>
         </template>
       </template>
     </div>
@@ -191,13 +185,6 @@ const posts = useCall({
   params: () => ({ user: targetUser.value, limit: 0 }),
   refetch: true,
 })
-
-// Same gating rule as Profile.vue's own contentGated - no follow button
-// lives on this page, so there's no optimistic local state to read, just
-// profile.data directly.
-const contentGated = computed(
-  () => !isOwnProfile.value && !!profile.data?.is_private && !profile.data?.following_by_me,
-)
 
 const ownTabs = [{ label: 'Published' }, { label: 'Drafts' }, { label: 'Archived' }]
 

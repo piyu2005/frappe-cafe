@@ -38,13 +38,6 @@ def after_migrate():
 					"insert_after": "job_title",
 				},
 				{
-					"fieldname": "is_private",
-					"label": "Private Account",
-					"fieldtype": "Check",
-					"insert_after": "company",
-					"default": "0",
-				},
-				{
 					# Short one-line tagline shown under the name/username row,
 					# distinct from the longer `bio` shown in the Introduction card -
 					# fieldname stays `headline` (no migration needed), but every
@@ -54,7 +47,7 @@ def after_migrate():
 					"fieldname": "headline",
 					"label": "Bio",
 					"fieldtype": "Data",
-					"insert_after": "is_private",
+					"insert_after": "company",
 				},
 			]
 		}

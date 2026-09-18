@@ -190,13 +190,6 @@ async function onMarkAllReadClick() {
   toast.success('All notifications marked as read')
 }
 
-const respondFollow = useCall({
-  url: '/api/v2/method/my_new_app.follow.respond_to_follow_request',
-  method: 'POST',
-  immediate: false,
-  onSuccess: () => notifications.reload(),
-})
-
 const respondGroupInvite = useCall({
   url: '/api/v2/method/my_new_app.chat.respond_to_group_invite',
   method: 'POST',
@@ -214,7 +207,6 @@ const respondPublicationInvite = useCall({
 // All three request types share the exact same pending/accept/decline shape
 // — dispatch to whichever endpoint actually owns this notification's type.
 const RESPOND_CALLS = {
-  'Follow Request': respondFollow,
   'Group Invite': respondGroupInvite,
   'Publication Invite': respondPublicationInvite,
 }
@@ -277,10 +269,6 @@ function decline(n) {
 const ICONS = {
   Like: 'lucide-heart',
   Comment: 'lucide-message-circle',
-  'New Post': 'lucide-pen-line',
-  'New Follower': 'lucide-user-plus',
-  'Follow Request': 'lucide-user-plus',
-  'Follow Accepted': 'lucide-user-check',
   Mention: 'lucide-at-sign',
   'Group Invite': 'lucide-users',
   'Publication Invite': 'lucide-newspaper',
@@ -292,14 +280,10 @@ function iconFor(type) {
 
 // Color encodes notification type here — deliberate, not decorative (the
 // badge is meaningless without it: it's the only thing distinguishing a
-// like from a comment from a follow at a glance).
+// like from a comment at a glance).
 const ICON_BG = {
   Like: 'bg-surface-red-6',
   Comment: 'bg-surface-blue-6',
-  'New Post': 'bg-surface-violet-6',
-  'New Follower': 'bg-surface-green-6',
-  'Follow Request': 'bg-surface-amber-6',
-  'Follow Accepted': 'bg-surface-green-6',
   Mention: 'bg-surface-cyan-6',
   'Group Invite': 'bg-surface-amber-6',
   'Publication Invite': 'bg-surface-violet-6',

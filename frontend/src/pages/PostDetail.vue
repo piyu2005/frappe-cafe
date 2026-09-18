@@ -19,11 +19,7 @@
       <div v-else-if="post.error && !post.data" class="flex flex-col items-center gap-3 py-24 text-center">
         <span class="lucide-lock size-8 text-ink-gray-3" aria-hidden="true" />
         <p class="text-p-base text-ink-gray-5">
-          {{
-            post.error?.message?.includes('private')
-              ? 'This account is private. Follow to see their posts.'
-              : "This post isn't available. It may be a draft, archived, or removed."
-          }}
+          This post isn't available. It may be a draft, archived, or removed.
         </p>
       </div>
 
@@ -47,13 +43,6 @@
               {{ formatDate(post.data.creation) }} · {{ readTime(post.data.content) }} min read
             </div>
           </div>
-          <Button
-            v-if="post.data.author !== session.user"
-            :variant="authorFollowingByMe || authorFollowPending ? 'outline' : 'solid'"
-            theme="gray"
-            :label="authorFollowLabel"
-            @click="handleFollowClick"
-          />
           <Dropdown :options="moreOptions">
             <Button icon="lucide-more-horizontal" />
           </Dropdown>
@@ -499,7 +488,7 @@ function confirmDeleteComment(comment) {
   })
 }
 
-// Like/save/follow all need to flip the instant they're clicked, before the
+// Like/save both need to flip the instant they're clicked, before the
 // server confirms — but post.data is useCall's read-only computed (see the
 // comment on commentList above for why mutating into it doesn't reliably
 // re-render), so these live in their own local refs instead, kept in sync
@@ -509,8 +498,6 @@ function confirmDeleteComment(comment) {
 const likedByMe = ref(false)
 const likeCount = ref(0)
 const savedByMe = ref(false)
-const authorFollowingByMe = ref(false)
-const authorFollowPending = ref(false)
 watch(
   () => post.data,
   (data) => {
@@ -518,8 +505,6 @@ watch(
     likedByMe.value = !!data.liked_by_me
     likeCount.value = data.like_count || 0
     savedByMe.value = !!data.saved_by_me
-    authorFollowingByMe.value = !!data.author_following_by_me
-    authorFollowPending.value = !!data.author_follow_pending
   },
   { immediate: true },
 )
@@ -667,59 +652,6 @@ function handleSave() {
       savedByMe.value = wasSaved
     }
   })
-}
-
-const followUser = useCall({
-  url: '/api/v2/method/my_new_app.follow.follow_user',
-  method: 'POST',
-  immediate: false,
-})
-
-const unfollowUser = useCall({
-  url: '/api/v2/method/my_new_app.follow.unfollow_user',
-  method: 'POST',
-  immediate: false,
-})
-
-const authorFollowLabel = computed(() => {
-  if (authorFollowingByMe.value) return 'Following'
-  if (authorFollowPending.value) return 'Requested'
-  return 'Follow'
-})
-
-function handleFollowClick() {
-  const wasFollowing = authorFollowingByMe.value
-  const wasPending = authorFollowPending.value
-
-  if (wasFollowing || wasPending) {
-    authorFollowingByMe.value = false
-    authorFollowPending.value = false
-    unfollowUser.submit({ user: post.data.author }).then((result) => {
-      if (!result) {
-        authorFollowingByMe.value = wasFollowing
-        authorFollowPending.value = wasPending
-      }
-    })
-  } else {
-    // Only a private account's follow lands as "requested" — optimistically
-    // guessing that unconditionally made a public author's button flash
-    // "Requested" for a moment before the real "following" response landed.
-    if (post.data?.author_is_private) {
-      authorFollowPending.value = true
-    } else {
-      authorFollowingByMe.value = true
-    }
-    followUser.submit({ user: post.data.author }).then((result) => {
-      if (result) {
-        authorFollowingByMe.value = result.status === 'following'
-        authorFollowPending.value = result.status === 'requested'
-        if (result.status === 'requested') toast.info('Follow request sent')
-      } else {
-        authorFollowingByMe.value = false
-        authorFollowPending.value = false
-      }
-    })
-  }
 }
 
 function submitComment() {
