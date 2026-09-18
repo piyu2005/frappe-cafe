@@ -24,15 +24,6 @@
             <span class="text-base-medium text-ink-gray-8">Email Address</span>
             <span class="text-sm text-ink-gray-5">{{ session.user }}</span>
           </div>
-          <div class="flex items-center justify-between py-6">
-            <div>
-              <div class="text-base-medium text-ink-gray-8">Private account</div>
-              <p class="text-sm text-ink-gray-5">
-                When on, people must send a follow request to follow you.
-              </p>
-            </div>
-            <Switch v-model="isPrivate" :disabled="updatePrivacy.loading" @update:model-value="handlePrivacyToggle" />
-          </div>
           <button
             class="flex w-full items-center justify-between py-6 text-left"
             @click="handleLogout"
@@ -108,7 +99,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Button, LoadingText, Switch, Tabs, dialog, toast, useCall } from 'frappe-ui'
+import { Button, LoadingText, Tabs, dialog, toast, useCall } from 'frappe-ui'
 import { logout, session } from '@/data/session'
 
 // When embedded in the standalone page (variant: 'page', the default) the
@@ -280,30 +271,6 @@ onBeforeUnmount(() => {
 })
 
 const username = computed(() => (session.user || '').split('@')[0])
-const isPrivate = ref(false)
-
-const profile = useCall({
-  url: '/api/v2/method/my_new_app.api.get_profile',
-  params: { user: session.user },
-  onSuccess: (data) => {
-    isPrivate.value = !!data.is_private
-  },
-})
-
-const updatePrivacy = useCall({
-  url: '/api/v2/method/my_new_app.api.update_profile',
-  method: 'POST',
-  immediate: false,
-  onSuccess: () => toast.success(isPrivate.value ? 'Account is now private' : 'Account is now public'),
-  onError: (err) => {
-    toast.error(err.message)
-    isPrivate.value = !isPrivate.value
-  },
-})
-
-function handlePrivacyToggle(value) {
-  updatePrivacy.submit({ is_private: value ? 1 : 0 })
-}
 
 function handleLogout() {
   dialog.confirm({

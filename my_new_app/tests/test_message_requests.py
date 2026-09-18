@@ -1,8 +1,8 @@
-"""Message requests: a DM from someone the recipient doesn't already follow
-back starts life as Pending on the recipient's own Conversation Member row -
-hidden from their main conversation list until they explicitly accept, or
-implicitly accept by replying. The sender's own row is always Accepted, so
-they see the conversation normally regardless of the recipient's decision."""
+"""Message requests: a first DM to someone always starts life as Pending on
+the recipient's own Conversation Member row - hidden from their main
+conversation list until they explicitly accept, or implicitly accept by
+replying. The sender's own row is always Accepted, so they see the
+conversation normally regardless of the recipient's decision."""
 
 import frappe
 from frappe.tests import IntegrationTestCase, set_user
@@ -54,24 +54,11 @@ class TestMessageRequestCreation(IntegrationTestCase):
 	def setUp(self):
 		self.sender, self.recipient = _unique_pair("msgreq_create")
 
-	def test_dm_to_a_non_follower_is_pending_for_the_recipient(self):
+	def test_first_dm_is_pending_for_the_recipient(self):
 		with set_user(self.sender):
 			conv = start_dm(self.recipient)["conversation"]
 		self.assertEqual(_member_status(conv, self.recipient), "Pending")
 		self.assertEqual(_member_status(conv, self.sender), "Accepted")
-
-	def test_dm_to_someone_who_already_follows_you_is_accepted(self):
-		frappe.get_doc(
-			{
-				"doctype": "Subscription",
-				"reference_doctype": "User",
-				"reference_name": self.sender,
-				"subscriber": self.recipient,
-			}
-		).insert(ignore_permissions=True)
-		with set_user(self.sender):
-			conv = start_dm(self.recipient)["conversation"]
-		self.assertEqual(_member_status(conv, self.recipient), "Accepted")
 
 
 class TestMessageRequestVisibility(IntegrationTestCase):

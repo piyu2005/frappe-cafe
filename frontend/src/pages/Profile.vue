@@ -37,14 +37,6 @@
                 <template v-if="isOwnProfile">
                   <Button variant="outline" label="Edit" @click="openEditHeader" />
                 </template>
-                <template v-else>
-                  <Button
-                    :variant="followingByMe ? 'subtle' : followPending ? 'outline' : 'solid'"
-                    theme="gray"
-                    :label="followLabel"
-                    @click="handleFollowClick"
-                  />
-                </template>
                 <Button variant="outline" icon="lucide-share-2" @click="copyLink" />
               </div>
             </div>
@@ -103,12 +95,7 @@
             </p>
           </div>
 
-          <p v-if="contentGated" class="flex items-center gap-1.5 text-base text-ink-gray-5">
-            <span class="lucide-lock size-3.5 shrink-0" aria-hidden="true" />
-            Follow {{ profile.data.full_name }} to know more about them.
-          </p>
-
-          <div v-else>
+          <div>
             <div class="rounded-md border border-outline-gray-1 p-5">
               <div class="flex items-center gap-1.5 pb-4 text-base-medium text-ink-gray-8">
                 <span class="lucide-notebook-pen size-4" aria-hidden="true" />
@@ -164,7 +151,7 @@
             </div>
           </div>
 
-          <div v-if="!contentGated">
+          <div>
             <div class="rounded-md border border-outline-gray-1 p-5">
               <div class="flex items-center justify-between pb-4">
                 <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
@@ -233,7 +220,7 @@
             </div>
           </div>
 
-          <div v-if="!contentGated">
+          <div>
             <div class="rounded-md border border-outline-gray-1 p-5">
               <div class="flex items-center justify-between pb-4">
                 <div class="flex items-center gap-1.5 text-base-medium text-ink-gray-8">
@@ -473,28 +460,6 @@ const breadcrumbItems = computed(() => {
   ]
 })
 
-// Follow state needs to flip the instant it's clicked, before the server
-// confirms — but profile.data is useCall's read-only computed, so this lives
-// in its own local refs (same pattern as PostDetail.vue's like/save/follow),
-// kept in sync with profile.data whenever a real fetch lands.
-const followingByMe = ref(false)
-const followPending = ref(false)
-watch(
-  () => profile.data,
-  (data) => {
-    if (!data) return
-    followingByMe.value = !!data.following_by_me
-    followPending.value = !!data.follow_pending
-  },
-  { immediate: true },
-)
-
-// Private accounts gate Education/Work/Posts behind an approved follow - the
-// header above (name, avatar, headline, bio) stays visible to everyone. A
-// pending follow request doesn't count as approved, so it's excluded here
-// same as it is server-side in api.py's _can_view_private_content.
-const contentGated = computed(() => !isOwnProfile.value && !!profile.data?.is_private && !followingByMe.value)
-
 // Just a preview here — the button below routes to its own dedicated
 // ProfilePosts page (matching Work History/Education's own "Show all"
 // pattern of a small capped preview, except those expand in place since
@@ -596,59 +561,6 @@ const updateProfile = useCall({
   immediate: false,
   onSuccess: () => profile.reload(),
 })
-
-const followUser = useCall({
-  url: '/api/v2/method/my_new_app.follow.follow_user',
-  method: 'POST',
-  immediate: false,
-})
-
-const unfollowUser = useCall({
-  url: '/api/v2/method/my_new_app.follow.unfollow_user',
-  method: 'POST',
-  immediate: false,
-})
-
-const followLabel = computed(() => {
-  if (followingByMe.value) return 'Following'
-  if (followPending.value) return 'Requested'
-  return 'Follow'
-})
-
-function handleFollowClick() {
-  const wasFollowing = followingByMe.value
-  const wasPending = followPending.value
-
-  if (wasFollowing || wasPending) {
-    followingByMe.value = false
-    followPending.value = false
-    unfollowUser.submit({ user: targetUser.value }).then((result) => {
-      if (!result) {
-        followingByMe.value = wasFollowing
-        followPending.value = wasPending
-      }
-    })
-  } else {
-    // Only a private account's follow lands as "requested" — optimistically
-    // guessing that unconditionally made a public account's button flash
-    // "Requested" for a moment before the real "following" response landed.
-    if (profile.data?.is_private) {
-      followPending.value = true
-    } else {
-      followingByMe.value = true
-    }
-    followUser.submit({ user: targetUser.value }).then((result) => {
-      if (result) {
-        followingByMe.value = result.status === 'following'
-        followPending.value = result.status === 'requested'
-        if (result.status === 'requested') toast.info('Follow request sent')
-      } else {
-        followingByMe.value = false
-        followPending.value = false
-      }
-    })
-  }
-}
 
 const addEducation = useCall({
   url: '/api/v2/method/my_new_app.api.add_education',

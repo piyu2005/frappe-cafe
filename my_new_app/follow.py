@@ -27,138 +27,6 @@ def _notify(recipient, actor, notif_type, message, reference_doctype=None, refer
 	frappe.publish_realtime("notification:new", doc.as_dict(), user=recipient, after_commit=True)
 
 
-def notify_followers_of_new_post(post):
-	followers = frappe.db.get_all(
-		"Subscription", filters={"reference_doctype": "User", "reference_name": post.author}, fields=["subscriber"]
-	)
-	title = post.title or "a new post"
-	for f in followers:
-		_notify(
-			f.subscriber,
-			post.author,
-			"New Post",
-			f"published {title}",
-			"Post",
-			post.name,
-		)
-
-
-@frappe.whitelist()
-def get_follow_state(user):
-	me = frappe.session.user
-	following = bool(
-		frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": me})
-	)
-	pending = bool(
-		frappe.db.exists("Follow Request", {"from_user": me, "to_user": user, "status": "Pending"})
-	)
-	return {"following": following, "pending": pending}
-
-
-@frappe.whitelist()
-def follow_user(user):
-	me = frappe.session.user
-	if user == me:
-		frappe.throw("You can't follow yourself")
-
-	# Local import: chat.py already imports _notify from this module at load
-	# time, so importing _is_blocked from chat.py up at the top here would be
-	# circular - deferring it to call time (matching how get_profile/get_post
-	# already import get_follow_state from this same module) sidesteps that.
-	from my_new_app.chat import _is_blocked
-
-	if _is_blocked(me, user):
-		frappe.throw("You can't follow this user")
-
-	if frappe.db.exists("Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": me}):
-		return {"status": "following"}
-
-	is_private = frappe.db.get_value("User", user, "is_private")
-	if is_private:
-		if frappe.db.exists("Follow Request", {"from_user": me, "to_user": user, "status": "Pending"}):
-			return {"status": "requested"}
-		req = frappe.get_doc({"doctype": "Follow Request", "to_user": user})
-		req.insert(ignore_permissions=True)
-		_notify(user, me, "Follow Request", "requested to follow you", "Follow Request", req.name)
-		return {"status": "requested"}
-
-	sub = frappe.get_doc({"doctype": "Subscription", "reference_doctype": "User", "reference_name": user})
-	sub.flags.ignore_permissions = True
-	sub.insert()
-	_notify(user, me, "New Follower", "started following you", "User", me)
-	return {"status": "following"}
-
-
-@frappe.whitelist()
-def unfollow_user(user):
-	me = frappe.session.user
-	frappe.db.delete("Subscription", {"reference_doctype": "User", "reference_name": user, "subscriber": me})
-	frappe.db.delete("Follow Request", {"from_user": me, "to_user": user, "status": "Pending"})
-	return {"status": "not_following"}
-
-
-@frappe.whitelist()
-def list_follow_requests():
-	rows = frappe.db.get_all(
-		"Follow Request",
-		filters={"to_user": frappe.session.user, "status": "Pending"},
-		fields=["name", "from_user", "creation"],
-		order_by="creation desc",
-	)
-	if not rows:
-		return rows
-
-	users_by_id = {
-		u.name: u
-		for u in frappe.db.get_all(
-			"User", filters={"name": ["in", [r.from_user for r in rows]]}, fields=["name", "full_name", "user_image"]
-		)
-	}
-	for r in rows:
-		u = users_by_id.get(r.from_user)
-		r.from_user_name = u.full_name if u else None
-		r.from_user_image = u.user_image if u else None
-	return rows
-
-
-@frappe.whitelist()
-def respond_to_follow_request(name, accept):
-	req = frappe.get_doc("Follow Request", name)
-	if req.to_user != frappe.session.user:
-		frappe.throw("Not permitted", frappe.PermissionError)
-
-	accept = int(accept)
-	req.status = "Accepted" if accept else "Declined"
-	req.flags.ignore_permissions = True
-	req.save()
-
-	if accept:
-		if not frappe.db.exists(
-			"Subscription",
-			{"reference_doctype": "User", "reference_name": frappe.session.user, "subscriber": req.from_user},
-		):
-			sub = frappe.get_doc(
-				{
-					"doctype": "Subscription",
-					"reference_doctype": "User",
-					"reference_name": frappe.session.user,
-					"subscriber": req.from_user,
-				}
-			)
-			sub.flags.ignore_permissions = True
-			sub.insert()
-		_notify(
-			req.from_user,
-			frappe.session.user,
-			"Follow Accepted",
-			"accepted your follow request",
-			"User",
-			frappe.session.user,
-		)
-
-	return {"status": req.status}
-
-
 @frappe.whitelist()
 def list_notifications():
 	rows = frappe.db.get_all(
@@ -180,9 +48,7 @@ def list_notifications():
 		limit_page_length=50,
 	)
 	for r in rows:
-		if r.type == "Follow Request" and r.reference_doctype == "Follow Request":
-			r.request_status = frappe.db.get_value("Follow Request", r.reference_name, "status")
-		elif r.type == "Group Invite" and r.reference_doctype == "Group Invite":
+		if r.type == "Group Invite" and r.reference_doctype == "Group Invite":
 			r.request_status = frappe.db.get_value("Group Invite", r.reference_name, "status")
 		elif r.type == "Publication Invite" and r.reference_doctype == "Publication Invite":
 			r.request_status = frappe.db.get_value("Publication Invite", r.reference_name, "status")

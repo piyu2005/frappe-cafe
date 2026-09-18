@@ -256,26 +256,6 @@ def toggle_subscribe(reference_doctype, reference_name):
 	return {"subscribed": subscribed, "count": _subscriber_count(reference_doctype, reference_name)}
 
 
-def _can_view_private_content(target_user):
-	"""Whether the caller may see target_user's education/work/posts. The
-	profile header (name, avatar, headline, bio) stays visible to everyone
-	regardless of privacy - this only gates the actual content for a private
-	account, per the same rule everywhere it's applied: the owner, an
-	approved follower, or anyone at all if the account isn't private."""
-	me = frappe.session.user
-	if me == target_user:
-		return True
-	if not frappe.db.get_value("User", target_user, "is_private"):
-		return True
-	if me == "Guest":
-		return False
-	return bool(
-		frappe.db.exists(
-			"Subscription", {"reference_doctype": "User", "reference_name": target_user, "subscriber": me}
-		)
-	)
-
-
 @frappe.whitelist()
 def get_profile(user=None):
 	user = user or frappe.session.user
@@ -295,7 +275,6 @@ def get_profile(user=None):
 			"location",
 			"job_title",
 			"company",
-			"is_private",
 			"creation",
 		],
 		as_dict=True,
@@ -303,35 +282,20 @@ def get_profile(user=None):
 	if not profile:
 		frappe.throw("User not found")
 
-	from my_new_app.follow import get_follow_state
-
 	profile.username = profile.username or profile.name.split("@")[0]
 	profile.post_count = frappe.db.count("Post", {"author": user, "status": "Published"})
-	profile.follower_count = _subscriber_count("User", user)
-	follow_state = get_follow_state(user) if frappe.session.user != "Guest" else {"following": False, "pending": False}
-	profile.following_by_me = follow_state["following"]
-	profile.follow_pending = follow_state["pending"]
 
-	can_view = _can_view_private_content(user)
-	profile.education = (
-		frappe.db.get_all(
-			"Education Entry",
-			filters={"user": user},
-			fields=["name", "school", "degree", "field_of_study", "start_year", "end_year"],
-			order_by="creation asc",
-		)
-		if can_view
-		else []
+	profile.education = frappe.db.get_all(
+		"Education Entry",
+		filters={"user": user},
+		fields=["name", "school", "degree", "field_of_study", "start_year", "end_year"],
+		order_by="creation asc",
 	)
-	profile.work = (
-		frappe.db.get_all(
-			"Work Entry",
-			filters={"user": user},
-			fields=["name", "company", "title", "start_date", "end_date", "description"],
-			order_by="creation asc",
-		)
-		if can_view
-		else []
+	profile.work = frappe.db.get_all(
+		"Work Entry",
+		filters={"user": user},
+		fields=["name", "company", "title", "start_date", "end_date", "description"],
+		order_by="creation asc",
 	)
 	return profile
 
@@ -339,8 +303,6 @@ def get_profile(user=None):
 @frappe.whitelist()
 def list_profile_posts(user=None, limit=3):
 	user = user or frappe.session.user
-	if not _can_view_private_content(user):
-		return []
 	rows = frappe.db.get_all(
 		"Post",
 		filters={"author": user, "status": "Published"},
@@ -710,11 +672,6 @@ def set_publication_member_role(publication, user, role):
 def get_post(post_id):
 	post = frappe.get_doc("Post", post_id)
 	post.check_permission("read")
-	# Publication/draft status is covered above - this covers the author's
-	# own account privacy, so a private user's post isn't reachable just by
-	# knowing/guessing its URL once it's hidden from their profile feed.
-	if not _can_view_private_content(post.author):
-		frappe.throw("This account is private. Follow to view their posts.", frappe.PermissionError)
 	post = post.as_dict()
 
 	post.like_count = frappe.db.count("Like", {"reference_doctype": "Post", "reference_name": post_id})
@@ -733,16 +690,6 @@ def get_post(post_id):
 	if post.post_type == "Image" and not post.images and post.attachment:
 		post.images = [{"image": post.attachment}]
 	post.author_bio = frappe.db.get_value("User", post.author, "bio")
-	post.author_follower_count = _subscriber_count("User", post.author)
-	post.author_is_private = frappe.db.get_value("User", post.author, "is_private")
-
-	from my_new_app.follow import get_follow_state
-
-	follow_state = (
-		get_follow_state(post.author) if frappe.session.user != "Guest" else {"following": False, "pending": False}
-	)
-	post.author_following_by_me = follow_state["following"]
-	post.author_follow_pending = follow_state["pending"]
 	post.saved_by_me = bool(
 		frappe.session.user != "Guest"
 		and frappe.db.exists("Saved Post", {"post": post_id, "user": frappe.session.user})
@@ -756,8 +703,6 @@ def _check_post_visible(post_id):
 	if not row:
 		frappe.throw("Post not found", frappe.DoesNotExistError)
 	if row.status != "Published" and row.author != frappe.session.user:
-		frappe.throw("Not permitted", frappe.PermissionError)
-	if not _can_view_private_content(row.author):
 		frappe.throw("Not permitted", frappe.PermissionError)
 
 
@@ -909,7 +854,6 @@ def update_profile(
 	location=None,
 	job_title=None,
 	company=None,
-	is_private=None,
 ):
 	user = frappe.session.user
 	if user == "Guest":
@@ -935,8 +879,6 @@ def update_profile(
 		doc.job_title = job_title
 	if company is not None:
 		doc.company = company
-	if is_private is not None:
-		doc.is_private = int(is_private)
 
 	doc.flags.ignore_permissions = True
 	doc.save()
