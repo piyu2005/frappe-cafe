@@ -146,7 +146,22 @@
         <p class="text-p-base text-ink-gray-5">Select a conversation to start messaging.</p>
       </div>
 
-      <template v-else-if="conversation.data">
+      <!-- `conversation.data`/`messages.data` are useCall's own read-only
+           refs, which keep holding whatever they last resolved to until a
+           new fetch actually completes (see openConversationData below) -
+           they don't reset just because a *different* conversation's reload
+           was kicked off. Without this guard, clicking person B while still
+           looking at person A's thread would keep A's header and messages
+           on screen, fully interactive, for the entire network round trip -
+           looking exactly like the app is "stuck" on the old chat rather
+           than loading the new one. Checking the fetched payload's own
+           `conversation` id against the route is what actually detects
+           "this data belongs to the chat I just left." -->
+      <div v-else-if="!isConversationDataCurrent" class="p-4">
+        <LoadingText :lines="6" />
+      </div>
+
+      <template v-else>
         <div class="flex items-center justify-between border-b border-outline-gray-1 px-3 py-3 sm:px-4">
           <div class="flex min-w-0 items-center gap-1 sm:gap-3">
             <button
@@ -1063,6 +1078,14 @@ const conversation = useCall({
   immediate: false,
 })
 
+// See the template comment above: conversation.data lags behind
+// activeConversationId until its own reload resolves, so this is the only
+// reliable way to tell "the currently displayed data is for the currently
+// selected conversation" apart from "still showing whoever was open before."
+const isConversationDataCurrent = computed(
+  () => conversation.data?.conversation === activeConversationId.value,
+)
+
 // Bumped past the backend's default 50 only when jumping to a search result
 // older than what's currently loaded (see jumpToMessage) — reset on every
 // conversation switch so a normal open doesn't fetch more than it needs.
@@ -1181,7 +1204,16 @@ async function jumpToMessage(messageId) {
   }, 1500)
 }
 
+// Guards against the same out-of-order-response problem searchRequestId
+// solves for message search below: if the user clicks person B before
+// person A's reload has resolved, A's response can still land after B's -
+// without this, A's messages/markRead/scroll/focus would run *after* B's,
+// clobbering the conversation actually on screen with data for the one the
+// user already navigated away from.
+let conversationRequestId = 0
+
 async function openConversationData(id) {
+  const requestId = ++conversationRequestId
   typingUser.value = null
   searchOpen.value = false
   messageSearchQuery.value = ''
@@ -1189,8 +1221,15 @@ async function openConversationData(id) {
   messagesFetchLimit.value = 50
   replyingTo.value = null
   editingMessage.value = null
+  // Cleared synchronously, not left for the `messages.data` watcher to catch
+  // up on - that watcher only fires once the new conversation's fetch
+  // actually resolves, which is exactly the multi-second window where the
+  // previous conversation's messages would otherwise keep rendering under
+  // the new (or loading) header.
+  messageList.value = []
   if (!id) return
   await Promise.all([conversation.reload(), messages.reload(), mentionableUsers.reload()])
+  if (requestId !== conversationRequestId) return
   markRead.submit({ conversation: id })
   scrollToBottom()
   await nextTick()
