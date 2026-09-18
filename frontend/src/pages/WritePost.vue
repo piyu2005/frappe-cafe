@@ -863,6 +863,13 @@ const mobileMoreOptions = computed(() => {
   width: 100% !important;
   overflow: visible !important;
   border-radius: 0 !important;
+  /* frappe-ui puts its "this node is selected" ring (ring-2 ring-outline-
+     gray-3 ring-offset-2) directly on .not-prose - fine when it only wrapped
+     the image, but now that it also wraps the caption (see above), selecting
+     a captioned image drew that ring around the caption text too, reading as
+     its own separate grey box below the picture. The floating toolbar and
+     resize handles already make the selected state obvious without it. */
+  box-shadow: none !important;
 }
 :deep(.not-prose > div) {
   width: 100% !important;
