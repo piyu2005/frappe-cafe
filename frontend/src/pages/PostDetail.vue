@@ -843,8 +843,6 @@ function timeAgo(value) {
  */
 :deep(.not-prose) {
   width: 100% !important;
-  height: auto !important;
-  aspect-ratio: 16 / 9 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 /* The image sits in its own wrapper div carrying the editor's generic `my-2`
@@ -855,11 +853,19 @@ function timeAgo(value) {
   margin-top: 16px !important;
   margin-bottom: 16px !important;
 }
-/* The <img>/<video> sit inside their own unsized wrapper div — a percentage
-   height can't resolve through an auto-height ancestor, so that wrapper
-   needs to be stretched too before height:100% on the media itself works. */
+/* The fixed aspect ratio belongs on this inner div (the actual image area),
+   not .not-prose itself - .not-prose also holds the caption (MediaNodeView's
+   <input>) as a later sibling, and .not-prose keeps the component's own
+   `overflow-hidden` class. Forcing the ratio directly on .not-prose used to
+   pin its height to the image alone, so overflow-hidden clipped the caption
+   completely out of view below it - present in the DOM and holding the
+   right text the whole time, just never visible. Sizing this inner div
+   instead lets .not-prose grow to fit the ratio-boxed image *and* the
+   caption stacked under it, so nothing needs to be clipped. */
 :deep(.not-prose > div) {
-  height: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9 !important;
 }
 :deep(.not-prose img),
 :deep(.not-prose video) {
