@@ -846,19 +846,25 @@ const mobileMoreOptions = computed(() => {
    at its raw natural size while writing, then jumps to a differently-shaped,
    cropped size the moment it's actually posted. Keeping both identical
    makes the editor a true preview of the published result. The fixed ratio
-   goes on the inner div (the image area), not .not-prose itself —
-   .not-prose also holds the caption <input> as a later sibling, and forcing
-   the ratio directly on .not-prose (which keeps the component's own
-   overflow-hidden class) pinned its height to the image alone, clipping the
-   caption out of view below it (same bug PostDetail.vue had). */
+   (and the rounding/shadow, also moved here) goes on the inner div, the
+   image area — not .not-prose itself, which also holds the caption <input>
+   as a later sibling. Forcing them directly on .not-prose pinned its height
+   to the image alone (clipping the caption below it, same bug PostDetail.vue
+   had) and stretched its own rounded/shadowed box down around the caption
+   too once that was fixed, reading as if the caption sat inside a
+   continuation of the image's own card instead of plain text under it. */
 :deep(.not-prose) {
   width: 100% !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: visible !important;
+  border-radius: 0 !important;
 }
 :deep(.not-prose > div) {
   width: 100% !important;
   height: auto !important;
   aspect-ratio: 16 / 9 !important;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 :deep(.not-prose img),
 :deep(.not-prose video) {

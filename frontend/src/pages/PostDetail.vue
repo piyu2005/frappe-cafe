@@ -841,9 +841,19 @@ function timeAgo(value) {
  * above), cropping via object-fit so every content image reads as the same
  * consistent size regardless of the source photo's own aspect ratio.
  */
+/* .not-prose ships its own `rounded overflow-hidden` classes and used to
+   also carry the box-shadow below - fine while it only ever wrapped the
+   image, but once its height grew to fit the caption stacked under it too
+   (see the inner-div comment below), that same rounded/shadowed box
+   stretched down around the caption as well, reading as if the caption
+   sat inside a continuation of the image's own card instead of plain text
+   underneath it (not what the Figma design shows). Canceling both here and
+   moving them to the inner image-only div keeps the rounded, shadowed
+   treatment on the image alone, with the caption sitting outside it. */
 :deep(.not-prose) {
   width: 100% !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: visible !important;
+  border-radius: 0 !important;
 }
 /* The image sits in its own wrapper div carrying the editor's generic `my-2`
    (8px) block spacing — Figma's image blocks use 16px above and below, so
@@ -853,19 +863,22 @@ function timeAgo(value) {
   margin-top: 16px !important;
   margin-bottom: 16px !important;
 }
-/* The fixed aspect ratio belongs on this inner div (the actual image area),
-   not .not-prose itself - .not-prose also holds the caption (MediaNodeView's
-   <input>) as a later sibling, and .not-prose keeps the component's own
-   `overflow-hidden` class. Forcing the ratio directly on .not-prose used to
-   pin its height to the image alone, so overflow-hidden clipped the caption
-   completely out of view below it - present in the DOM and holding the
-   right text the whole time, just never visible. Sizing this inner div
-   instead lets .not-prose grow to fit the ratio-boxed image *and* the
-   caption stacked under it, so nothing needs to be clipped. */
+/* The fixed aspect ratio (and now the rounding/shadow moved off .not-prose
+   above) belongs on this inner div, the actual image area - not .not-prose
+   itself, which also holds the caption (MediaNodeView's <input>) as a later
+   sibling. Forcing the ratio directly on .not-prose used to pin its height
+   to the image alone, so its overflow-hidden clipped the caption completely
+   out of view below it - present in the DOM and holding the right text the
+   whole time, just never visible. Sizing this inner div instead lets
+   .not-prose grow to fit the ratio-boxed image *and* the caption stacked
+   under it, so nothing needs to be clipped. */
 :deep(.not-prose > div) {
   width: 100% !important;
   height: auto !important;
   aspect-ratio: 16 / 9 !important;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 :deep(.not-prose img),
 :deep(.not-prose video) {
