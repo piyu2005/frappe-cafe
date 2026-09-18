@@ -346,7 +346,13 @@ const bubbleToolbar = [Bold, Italic, UnderlineItem, Strike, InsertLink, Separato
 const { upload: uploadFile } = useFileUpload()
 
 const uploadFunction = async (file) => {
-  const result = await uploadFile(file, {})
+  // `optimize` is silently ignored server-side for non-image content types
+  // (videos included), so this is safe to pass unconditionally rather than
+  // branching on file type here. Without it, a phone photo dropped straight
+  // into a post (often several MB, thousands of pixels wide) got stored and
+  // served at that full original size to every single reader, even though
+  // it only ever renders at the post's own content-column width.
+  const result = await uploadFile(file, { optimize: true, max_width: 1600, max_height: 1600 })
   return { file_url: result.file_url, file_name: result.file_name }
 }
 

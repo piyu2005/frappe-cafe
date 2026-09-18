@@ -1562,6 +1562,14 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onLightboxKeydown))
 
 const { upload: uploadFile } = useFileUpload()
 
+// `optimize` is silently ignored server-side for non-image content types, so
+// this is safe on both call sites below even though onAttachFilesSelected
+// also handles plain (non-image) file attachments. Without it, a phone
+// photo sent as a chat attachment (often several MB) got stored and served
+// at that full original size, even though it only ever renders as a small
+// grid thumbnail or, at most, a lightbox capped well under 1600px.
+const IMAGE_UPLOAD_OPTIONS = { optimize: true, max_width: 1600, max_height: 1600 }
+
 function onFileUploaded(file) {
   pendingAttachments.value = [
     ...pendingAttachments.value,
@@ -1583,7 +1591,7 @@ async function onAttachFilesSelected(event) {
   try {
     for (const file of files) {
       try {
-        const uploaded = await uploadFile(file, { private: true })
+        const uploaded = await uploadFile(file, { private: true, ...IMAGE_UPLOAD_OPTIONS })
         onFileUploaded(uploaded)
       } catch (err) {
         toast.error(err?.message || `Error uploading ${file.name}`)
@@ -1611,7 +1619,7 @@ async function onComposerPaste(event) {
     const file = item.getAsFile()
     if (!file) continue
     try {
-      const uploaded = await uploadFile(file, { private: true })
+      const uploaded = await uploadFile(file, { private: true, ...IMAGE_UPLOAD_OPTIONS })
       onFileUploaded(uploaded)
     } catch (err) {
       toast.error(err?.message || 'Error uploading image')
