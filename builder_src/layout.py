@@ -1,7 +1,7 @@
 """The frame every page shares: shell, header with breadcrumbs, scroll area and
 a centered container."""
 
-from blocks import INK, INK_BLACK, MUTED, OUTLINE, block, html_el, instance_of, raw_block, svg
+from blocks import INK, INK_BLACK, MUTED, OUTLINE, attribute, block, html_el, instance_of, raw_block, show, svg, text_style
 
 
 def crumb_link(label, href, styles=None, name=None):
@@ -84,15 +84,16 @@ def page_header(crumbs):
 	)
 
 
-def page_layout(shell_id, shell_block, crumbs, content, max_width, mobile_header=None):
+def page_layout(shell_id, shell_block, crumbs, content, max_width, mobile_header=None, container_class=None, padding="32px 20px"):
 	"""The page body: `crumbs` go in the header and `content` in the container,
-	which is `max_width` wide including its 20px side padding. A page can add a
-	`mobile_header`, a top bar that only shows on a phone."""
+	which is `max_width` wide including its side padding. A page can add a
+	`mobile_header`, a top bar that only shows on a phone, and a `container_class`
+	to give the container its own phone padding in styles.css."""
 	container = block(
 		"section",
 		"Container",
-		["mna-container"],
-		styles={"width": "100%", "maxWidth": max_width, "margin": "0 auto", "padding": "32px 20px"},
+		["mna-container", *([container_class] if container_class else [])],
+		styles={"width": "100%", "maxWidth": max_width, "margin": "0 auto", "padding": padding},
 		children=content,
 	)
 	main = block(
@@ -137,3 +138,66 @@ def page_layout(shell_id, shell_block, crumbs, content, max_width, mobile_header
 	root["blockId"] = "root"
 	root["originalElement"] = "body"
 	return [root]
+
+
+def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
+	"""The top bar on a phone: a back chevron and the title. The Vue pages also
+	have a notification bell on the right; the bell is not built for Builder
+	pages yet, so a blank space of the same width keeps the title centered.
+	`title_key` and `back_key` bind the title and the back link to page data."""
+	back = block(
+		"a",
+		"Back",
+		["mna-mobile-back"],
+		attrs={"href": back_href, "aria-label": "Back"},
+		inner_html=svg("chevron-left", 18),
+		styles={
+			"display": "grid",
+			"placeItems": "center",
+			"flexShrink": "0",
+			"width": "32px",
+			"height": "32px",
+			"borderRadius": "8px",
+			"color": INK,
+		},
+	)
+	if back_key:
+		back = attribute(back, back_key, "href")
+	heading = block(
+		"h1",
+		"Title",
+		["mna-mobile-title"],
+		text=title,
+		styles={
+			"margin": "0",
+			"flexGrow": "1",
+			"minWidth": "0",
+			"overflow": "hidden",
+			"textOverflow": "ellipsis",
+			"whiteSpace": "nowrap",
+			"textAlign": "center",
+			**text_style(17, "600", INK_BLACK, "0.015em", "1.25"),
+		},
+	)
+	if title_key:
+		heading = show(heading, title_key)
+	spacer = block("div", "Spacer", styles={"flexShrink": "0", "width": "32px"})
+	return block(
+		"header",
+		"Mobile header",
+		["mna-mobile-header"],
+		styles={
+			"display": "none",
+			"position": "sticky",
+			"top": "0",
+			"zIndex": "10",
+			"alignItems": "center",
+			"justifyContent": "space-between",
+			"gap": "16px",
+			"height": "52px",
+			"padding": "0 12px",
+			"borderBottom": f"1px solid {OUTLINE}",
+			"backgroundColor": "#ffffff",
+		},
+		children=[back, heading, spacer],
+	)

@@ -21,7 +21,7 @@ from blocks import (
 	when,
 )
 from data_scripts import HELPERS, POST_ROWS, SAMPLE_POST, indent
-from layout import crumb_link, page_layout
+from layout import build_mobile_header, crumb_link, page_layout
 from post_row import build_post_row, draft_row_template
 
 TABS = [("published", "Published"), ("drafts", "Drafts"), ("archived", "Archived")]
@@ -92,63 +92,6 @@ def build_crumbs():
 	)
 	others_end = when(crumb_group(crumb_html_separator(), crumb_html_current("Posts")), "pp.is_other")
 	return [yours, others_start, name, others_end]
-
-
-def build_mobile_header():
-	"""The top bar on a phone: a back chevron and the title. The Vue page also
-	has a notification bell on the right; the bell is not built for Builder pages
-	yet, so a blank space of the same width keeps the title centered."""
-	back = attribute(
-		block(
-			"a",
-			"Back",
-			["mna-mobile-back"],
-			attrs={"href": "/profile", "aria-label": "Back to profile"},
-			inner_html=svg("chevron-left", 18),
-			styles={
-				"display": "grid",
-				"placeItems": "center",
-				"flexShrink": "0",
-				"width": "32px",
-				"height": "32px",
-				"borderRadius": "8px",
-				"color": INK,
-			},
-		),
-		"pp.profile_href",
-		"href",
-	)
-	title = block(
-		"h1",
-		"Title",
-		text="Posts",
-		styles={
-			"margin": "0",
-			"flexGrow": "1",
-			"minWidth": "0",
-			"textAlign": "center",
-			**text_style(17, "600", INK_BLACK, "0.015em", "1.25"),
-		},
-	)
-	spacer = block("div", "Spacer", styles={"flexShrink": "0", "width": "32px"})
-	return block(
-		"header",
-		"Mobile header",
-		["mna-mobile-header"],
-		styles={
-			"display": "none",
-			"position": "sticky",
-			"top": "0",
-			"zIndex": "10",
-			"alignItems": "center",
-			"justifyContent": "space-between",
-			"height": "52px",
-			"padding": "0 12px",
-			"borderBottom": f"1px solid {OUTLINE}",
-			"backgroundColor": "#ffffff",
-		},
-		children=[back, title, spacer],
-	)
 
 
 def build_title_row():
@@ -301,7 +244,7 @@ def build_posts_page(shell_id, shell_block):
 		build_crumbs(),
 		[content, build_not_found()],
 		"600px",
-		mobile_header=build_mobile_header(),
+		mobile_header=build_mobile_header("Posts", back_href="/profile", back_key="pp.profile_href"),
 	)
 
 

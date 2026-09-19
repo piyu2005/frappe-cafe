@@ -490,6 +490,502 @@ body {
   }
 }
 
+/* ---- Post detail page ---- */
+.mna-crumbs {
+  min-width: 0;
+}
+.mna-crumbs .current {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mna-author {
+  display: block;
+  line-height: 20px !important;
+}
+.mna-author:hover {
+  text-decoration: underline;
+}
+/* Inline styles set display, which would beat the hidden attribute. */
+.mna-more-comments[hidden] {
+  display: none !important;
+}
+.mna-icon-btn-subtle:hover {
+  background: var(--mna-hover) !important;
+}
+.mna-pop.open {
+  display: block !important;
+}
+.mna-like[data-on='1'] {
+  color: #e03636 !important;
+}
+.mna-save[data-on='1'] {
+  border-color: var(--mna-surface-dark) !important;
+  background: var(--mna-surface-dark) !important;
+  color: #fff !important;
+}
+.mna-save:not([data-on='1']):hover {
+  background: #f8f8f8 !important;
+}
+.mna-more-comments:hover {
+  text-decoration: underline;
+}
+.mna-textarea {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--mna-surface-2);
+  border-radius: 8px;
+  outline: none;
+  background: var(--mna-surface-2);
+  color: var(--mna-ink-8);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  resize: vertical;
+}
+.mna-textarea::placeholder {
+  color: var(--mna-outline-strong);
+}
+.mna-textarea:hover {
+  background: var(--mna-hover) !important;
+  border-color: var(--mna-hover) !important;
+}
+.mna-textarea:focus {
+  background: #fff !important;
+  border-color: var(--mna-outline-strong) !important;
+}
+
+/* The text of a post, the way frappe-ui's read-only editor draws it: no space
+   between paragraphs (an empty one is one line of space), headings in em steps
+   from a 14px base, and images as full-width 16:9 crops. */
+/* ProseMirror (Vue's editor) draws text with break-spaces and no ligatures, so
+   lines break in the same places only if this does the same. */
+.mna-prose {
+  overflow-wrap: break-word;
+  white-space: break-spaces;
+  word-break: break-word;
+  font-variant-ligatures: none;
+  font-feature-settings: 'liga' 0;
+}
+.mna-prose > :first-child {
+  margin-top: 0;
+}
+.mna-prose > :last-child {
+  margin-bottom: 0;
+}
+.mna-prose p {
+  margin: 0;
+}
+/* An empty paragraph is one 20px line in Vue's editor (its trailing <br>). */
+.mna-prose p:empty,
+.mna-prose p:has(> br:only-child) {
+  height: 1.3333em;
+  line-height: 1.3333;
+}
+.mna-prose strong,
+.mna-prose b {
+  font-weight: 600;
+  color: var(--mna-ink-8);
+}
+.mna-prose a {
+  border-bottom: 1px solid var(--mna-outline-strong);
+  color: inherit;
+  text-decoration: none;
+}
+.mna-prose a:hover {
+  border-bottom-color: #525252;
+}
+.mna-prose h1,
+.mna-prose h2,
+.mna-prose h3,
+.mna-prose h4,
+.mna-prose h5,
+.mna-prose h6 {
+  margin: 24px 0 8px;
+  font-weight: 600;
+  color: var(--mna-ink);
+}
+.mna-prose h1 {
+  margin-top: 32px;
+  font-size: calc(20em / 14);
+  line-height: 1.3;
+}
+.mna-prose h2 {
+  margin-top: 32px;
+  font-size: calc(18em / 14);
+  line-height: 1.35;
+}
+.mna-prose h3 {
+  font-size: calc(16em / 14);
+  line-height: 1.4;
+}
+.mna-prose h4 {
+  font-size: 1em;
+  line-height: 1.45;
+}
+.mna-prose h5,
+.mna-prose h6 {
+  font-size: calc(13em / 14);
+  line-height: 1.45;
+}
+.mna-prose h1 + *,
+.mna-prose h2 + *,
+.mna-prose h3 + *,
+.mna-prose h4 + *,
+.mna-prose h5 + *,
+.mna-prose h6 + * {
+  margin-top: 0;
+}
+.mna-prose ul,
+.mna-prose ol {
+  margin: 4px 0;
+  padding-left: 1.5em;
+}
+.mna-prose ul {
+  list-style: disc;
+}
+.mna-prose ol {
+  padding-left: 1.7em;
+  list-style: decimal;
+}
+.mna-prose li {
+  margin: 4px 0;
+  padding-left: 0.375em;
+}
+.mna-prose ul > li::marker {
+  color: #c8c8c8;
+}
+.mna-prose ol > li::marker {
+  color: var(--mna-ink-5);
+}
+.mna-prose li p {
+  margin: 4px 0;
+}
+.mna-prose code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--mna-surface-2);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.857em;
+}
+.mna-prose pre {
+  margin: 16px 0;
+  padding: 0.75em 1em;
+  overflow-x: auto;
+  border-radius: 6px;
+  background: var(--mna-surface-2);
+  font-size: 0.857em;
+  line-height: 1.6;
+}
+.mna-prose pre code {
+  padding: 0;
+  background: transparent;
+  font-size: inherit;
+}
+.mna-prose blockquote {
+  margin: 16px 0;
+  padding-left: 1em;
+  border-left: 2px solid #c8c8c8;
+  color: #525252;
+  font-style: normal;
+}
+.mna-prose blockquote p {
+  margin: 0;
+}
+.mna-prose table {
+  width: 100%;
+  margin: 16px 0;
+  border-collapse: collapse;
+  font-size: 0.857em;
+  line-height: 1.5;
+}
+.mna-prose th,
+.mna-prose td {
+  padding: 6px 10px;
+  border: 1px solid var(--mna-hover);
+  text-align: left;
+}
+.mna-prose hr {
+  width: 20%;
+  margin: 24px auto;
+  border: 0;
+  border-top: 1px solid var(--mna-hover);
+}
+.mna-prose img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 16px 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: zoom-in;
+}
+/* A caption is a 28px row that only exists when the image has alt text. The
+   image's own 16px margin below it moves to the row. */
+.mna-prose img:has(+ .mna-caption) {
+  margin-bottom: 0;
+}
+/* Vue's editor adds a "trailing break" line to a paragraph that ends with an
+   image or a line break. post.js marks those paragraphs. */
+.mna-prose p.mna-tail::after {
+  content: '';
+  display: block;
+  height: 1.7em;
+}
+.mna-caption {
+  height: 28.5px;
+  margin: 0 0 16px;
+  color: var(--mna-ink-5);
+  font-size: 12px;
+  line-height: 28.5px;
+  text-align: center;
+}
+
+/* Image post: a carousel with arrows, a count and dots (added by post.js). */
+.mna-carousel:not(.ready) .mna-slide:not(:first-child) {
+  display: none;
+}
+.mna-carousel.ready .mna-slide:not(.active) {
+  display: none;
+}
+.mna-carousel-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 12px;
+}
+.mna-carousel-btn {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0 0 2px;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+.mna-carousel-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+.mna-carousel-prev {
+  left: 8px;
+}
+.mna-carousel-next {
+  right: 8px;
+}
+.mna-carousel-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  display: flex;
+  gap: 6px;
+  transform: translateX(-50%);
+}
+.mna-carousel-dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+.mna-carousel-dot.on {
+  background: #fff;
+}
+
+/* Full-size image viewer (added by post.js). */
+.mna-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.9);
+}
+.mna-viewer-img {
+  max-width: 92vw;
+  max-height: 88vh;
+  border-radius: 6px;
+  object-fit: contain;
+}
+.mna-viewer-btn {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0 0 3px;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.mna-viewer-btn:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+.mna-viewer-close {
+  top: 16px;
+  right: 16px;
+}
+.mna-viewer-prev {
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+}
+.mna-viewer-next {
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+}
+
+/* Comments (added by post.js). */
+.mna-comment-loading .mna-skeleton {
+  background: linear-gradient(90deg, #f3f3f3, #fafafa, #f3f3f3) !important;
+  background-size: 200% 100%;
+  animation: mna-pulse 1.2s ease-in-out infinite;
+}
+.mna-comments-error {
+  margin: 0;
+  color: var(--mna-ink-5);
+  font-size: 14px;
+}
+.mna-comments > .mna-c {
+  padding: 16px 0;
+}
+.mna-comments > .mna-c + .mna-c {
+  border-top: 1px solid var(--mna-outline);
+}
+.mna-c-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mna-avatar-sm {
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  letter-spacing: 0.01em;
+}
+.mna-c-name {
+  color: var(--mna-ink-8);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 19.5px;
+  letter-spacing: 0.015em;
+}
+.mna-c-time {
+  color: var(--mna-ink-5);
+  font-size: 12px;
+  line-height: 1.15;
+}
+.mna-c-body {
+  margin: 4px 0 0;
+  padding-left: 56px;
+  color: #383838;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0.015em;
+  overflow-wrap: anywhere;
+}
+.mna-c-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  padding-left: 56px;
+  font-size: 12px;
+  line-height: 1.15;
+}
+.mna-c-like,
+.mna-c-action,
+.mna-c-view,
+.mna-c-hide {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mna-ink-5);
+  font: inherit;
+  cursor: pointer;
+}
+.mna-c-like {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.mna-c-like.on {
+  color: #e03636;
+}
+.mna-ico svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+.mna-c-action:hover,
+.mna-c-view:hover,
+.mna-c-hide:hover {
+  text-decoration: underline;
+}
+.mna-c-replybox {
+  margin: 8px 0 0 56px;
+}
+.mna-c-replybox-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.mna-btn-ghost {
+  background: transparent;
+  color: var(--mna-ink-8);
+}
+.mna-btn-ghost:hover {
+  background: var(--mna-surface-2);
+}
+.mna-c-view {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0 56px;
+  font-size: 12px;
+  line-height: 1.15;
+}
+/* Vue keeps the space of this short line but does not show it. */
+.mna-c-line {
+  width: 24px;
+  height: 1px;
+  background: transparent;
+}
+.mna-c-replies {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 8px 0 0 56px;
+}
+.mna-c-hide {
+  align-self: flex-start;
+  margin-left: 56px;
+  font-size: 12px;
+  line-height: 1.15;
+}
+
 /* ---- Mobile: rail becomes a bottom bar ---- */
 @media (max-width: 767px) {
   .mna-rail,
@@ -535,6 +1031,13 @@ body {
   .mna-tab .mna-badge {
     top: 8px !important;
     right: calc(50% - 20px) !important;
+  }
+  .mna-container-post {
+    padding: 24px 16px 24px !important;
+  }
+  .mna-carousel {
+    height: 50vh !important;
+    min-height: 240px;
   }
   .mna-profile-head {
     gap: 16px !important;

@@ -70,6 +70,7 @@
           "zIndex": "10",
           "alignItems": "center",
           "justifyContent": "space-between",
+          "gap": "16px",
           "height": "52px",
           "padding": "0 12px",
           "borderBottom": "1px solid #ededed",
@@ -81,7 +82,7 @@
           {
            "attributes": {
             "href": "/profile",
-            "aria-label": "Back to profile"
+            "aria-label": "Back"
            },
            "baseStyles": {
             "display": "grid",
@@ -130,6 +131,9 @@
             "margin": "0",
             "flexGrow": "1",
             "minWidth": "0",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
             "textAlign": "center",
             "fontSize": "17px",
             "fontWeight": "600",
@@ -140,7 +144,9 @@
            "blockId": "f910ogufc",
            "blockName": "Title",
            "children": [],
-           "classes": [],
+           "classes": [
+            "mna-mobile-title"
+           ],
            "clientScript": {},
            "customAttributes": {},
            "dataKey": null,
@@ -1345,7 +1351,7 @@
    "builder_script": "MNA Posts"
   }
  ],
- "creation": "2026-09-19 17:47:18.130092",
+ "creation": "2026-09-19 18:01:02.602875",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -1355,7 +1361,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-19 17:47:18.130092",
+ "modified": "2026-09-19 18:01:02.602875",
  "modified_by": "Administrator",
  "name": "mna-profile-posts",
  "owner": "Administrator",
@@ -1364,6 +1370,6 @@
  "page_title": "Profile posts",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-19 17:47:18.130092",
+ "published_at": "2026-09-19 18:01:02.602875",
  "route": "profile/:username/posts"
 }
