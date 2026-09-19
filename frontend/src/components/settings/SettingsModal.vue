@@ -1,5 +1,5 @@
 <template>
-  <SettingsDialog v-model="open" v-model:tab="tab">
+  <SettingsDialog v-model="open" v-model:tab="settingsTab">
     <SettingsSidebar>
       <SettingsNavGroup label="User settings">
         <SettingsNavItem value="account">
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import {
   Avatar,
   SettingsBody,
@@ -44,11 +44,11 @@ import {
   SettingsSidebar,
 } from 'frappe-ui'
 import { session } from '@/data/session'
+import { settingsTab } from '@/data/settings'
 import AccountSettings from './AccountSettings.vue'
 import SavedPostsSettings from './SavedPostsSettings.vue'
 
 const open = defineModel({ type: Boolean, default: false })
-const tab = ref('account')
 
 const username = computed(() => (session.user || '').split('@')[0])
 </script>

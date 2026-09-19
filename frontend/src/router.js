@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { session, verifySession } from '@/data/session'
-import { settingsOpen } from '@/data/settings'
+import { settingsOpen, settingsTab } from '@/data/settings'
 import { isMobileViewport } from '@/composables/useIsMobile'
 
 const routes = [
@@ -42,6 +42,7 @@ const routes = [
         // load.
         beforeEnter: (to, from) => {
           if (isMobileViewport()) return true
+          settingsTab.value = to.query.tab === 'saved' ? 'saved' : 'account'
           settingsOpen.value = true
           return from.name ? false : { name: 'Home' }
         },

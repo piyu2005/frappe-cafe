@@ -297,6 +297,18 @@ watch(
   },
 )
 
+// The Notifications panel would sit on top of the modal's sidebar, so close
+// it when Settings opens.
+watch(settingsOpen, (open) => {
+  if (open) notificationsOpen.value = false
+})
+
+// The modal is for desktop. On a phone-sized window the Settings page takes
+// its place, so close the modal when the window shrinks that far.
+watch(isMobile, (mobile) => {
+  if (mobile) settingsOpen.value = false
+})
+
 // RailItem's Tooltip (unlike SidebarItem's) has no way to disable itself, and
 // reka-ui opens tooltips on focus as well as hover for keyboard accessibility.
 // A mouse click still leaves the trigger focused afterwards, so without this
