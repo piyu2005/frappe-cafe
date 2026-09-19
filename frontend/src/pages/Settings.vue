@@ -20,7 +20,8 @@ import { ScrollArea, Tabs } from 'frappe-ui'
 import AccountSettings from '@/components/settings/AccountSettings.vue'
 import SavedPostsSettings from '@/components/settings/SavedPostsSettings.vue'
 
-// The mobile Settings page. Desktop uses SettingsModal instead (see router.js).
+// The mobile Settings page. Desktop uses SettingsModal instead. AppLayout
+// swaps between the two when the window is resized.
 const route = useRoute()
 const router = useRouter()
 

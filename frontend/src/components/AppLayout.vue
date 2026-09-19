@@ -271,7 +271,7 @@ import {
 import { getSocket } from '@/data/socket'
 import { logout } from '@/data/session'
 import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
-import { settingsOpen } from '@/data/settings'
+import { settingsOpen, settingsTab } from '@/data/settings'
 import { unreadMessageCount } from '@/data/messages'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { APP_NAME } from '@/utils/appName'
@@ -303,10 +303,17 @@ watch(settingsOpen, (open) => {
   if (open) notificationsOpen.value = false
 })
 
-// The modal is for desktop. On a phone-sized window the Settings page takes
-// its place, so close the modal when the window shrinks that far.
+// Settings is a modal on desktop and a page on mobile. Swap them when the
+// window crosses the breakpoint. This lives here, not in the page, because
+// the mobile-to-desktop switch removes the page before its own watcher runs.
 watch(isMobile, (mobile) => {
-  if (mobile) settingsOpen.value = false
+  if (mobile) {
+    settingsOpen.value = false
+  } else if (route.name === 'Settings') {
+    settingsTab.value = route.query.tab === 'saved' ? 'saved' : 'account'
+    settingsOpen.value = true
+    router.replace({ name: 'Home' })
+  }
 })
 
 // RailItem's Tooltip (unlike SidebarItem's) has no way to disable itself, and
