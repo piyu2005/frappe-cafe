@@ -6,6 +6,8 @@
 (function () {
   'use strict'
 
+  var MNA = (window.MNA = window.MNA || {})
+
   var NAV_PATHS = {
     home: function (p) { return p === '/' },
     search: function (p) { return p === '/search' || p.indexOf('/search/') === 0 },
@@ -46,6 +48,7 @@
       menu.classList.toggle('open', open)
       logo.setAttribute('aria-expanded', open ? 'true' : 'false')
     }
+    MNA.closeMenu = function () { setOpen(false) }
     logo.addEventListener('click', function (e) {
       e.stopPropagation()
       setOpen(!menu.classList.contains('open'))
@@ -81,6 +84,8 @@
       if (ok) logout()
     })
   }
+
+  MNA.confirmLogout = confirmLogout
 
   document.addEventListener('DOMContentLoaded', function () {
     markActiveNav()

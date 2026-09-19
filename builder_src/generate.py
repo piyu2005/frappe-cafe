@@ -45,7 +45,9 @@ from profile_page import (  # noqa: E402
 from home_page import HOME_DATA_SCRIPT, build_home  # noqa: E402
 from post_page import POST_DATA_SCRIPT, build_post_page  # noqa: E402
 from posts_page import POSTS_DATA_SCRIPT, build_posts_page  # noqa: E402
+from settings_page import SETTINGS_DATA_SCRIPT, build_settings  # noqa: E402
 from search_page import SEARCH_DATA_SCRIPT, build_search  # noqa: E402
+from blocks import svg  # noqa: E402
 from shell_component import build_shell  # noqa: E402
 
 
@@ -157,9 +159,13 @@ def main():
 		("MNA Posts", "JavaScript", "posts.js"),
 		("MNA Post", "JavaScript", "post.js"),
 		("MNA Home", "JavaScript", "home.js"),
+		("MNA Settings", "JavaScript", "settings.js"),
 	]
 	for index, (name, kind, filename) in enumerate(scripts, start=1):
-		write_json("client_scripts", name, client_script(name, kind, (SRC / filename).read_text(), index))
+		source = (SRC / filename).read_text()
+		# settings.js draws its icons from the same lucide files as the blocks.
+		source = source.replace("'@@ICONS@@'", json.dumps({name: svg(name, 16) for name in ("bookmark", "bookmark-minus")}))
+		write_json("client_scripts", name, client_script(name, kind, source, index))
 
 	shell_id = hashlib.sha1(b"my_new_app:MNA Shell").hexdigest()[:16]
 	shell_block = build_shell()
@@ -191,7 +197,7 @@ def main():
 		},
 	)
 
-	shared = ["MNA Styles", "MNA UI", "MNA Shell"]
+	shared = ["MNA Styles", "MNA UI", "MNA Shell", "MNA Settings"]
 	pages = [
 		("mna-search", "Search", "search", build_search, shared + ["MNA Search"], SEARCH_DATA_SCRIPT, False),
 		("mna-profile", "Profile", "profile/:username", build_profile, shared + ["MNA Profile"], PROFILE_DATA_SCRIPT, True),
@@ -199,6 +205,7 @@ def main():
 		("mna-profile-posts", "Profile posts", "profile/:username/posts", build_posts_page, shared + ["MNA Posts"], POSTS_DATA_SCRIPT, True),
 		("mna-post", "Post", "posts/:post_id", build_post_page, shared + ["MNA Post"], POST_DATA_SCRIPT, True),
 		("mna-home", "Home", "mna-home", build_home, shared + ["MNA Home"], HOME_DATA_SCRIPT, False),
+		("mna-settings", "Settings", "settings", build_settings, shared, SETTINGS_DATA_SCRIPT, False),
 	]
 	for name, title, route, builder, script_names, data_script, dynamic in pages:
 		blocks = builder(shell_id, shell_block)

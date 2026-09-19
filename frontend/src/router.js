@@ -109,7 +109,9 @@ export const GUEST_ROUTE_NAMES = ['Login', 'Signup']
 const BUILDER_ROUTE_NAMES = ['Home', 'SearchPeople', 'Profile', 'ProfilePosts', 'PostDetail']
 
 router.beforeEach((to, from) => {
-  if (from.name && BUILDER_ROUTE_NAMES.includes(to.name)) {
+  // Settings is a dialog on a desktop, so only a phone gets the Builder page.
+  const migrated = BUILDER_ROUTE_NAMES.includes(to.name) || (to.name === 'Settings' && isMobileViewport())
+  if (from.name && migrated) {
     window.location.assign(to.fullPath)
     return false
   }

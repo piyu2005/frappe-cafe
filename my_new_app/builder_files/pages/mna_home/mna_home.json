@@ -854,10 +854,13 @@
    "builder_script": "MNA Shell"
   },
   {
+   "builder_script": "MNA Settings"
+  },
+  {
    "builder_script": "MNA Home"
   }
  ],
- "creation": "2026-09-19 21:49:04.150768",
+ "creation": "2026-09-19 22:02:47.408030",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -867,7 +870,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-19 21:49:04.150768",
+ "modified": "2026-09-19 22:02:47.408030",
  "modified_by": "Administrator",
  "name": "mna-home",
  "owner": "Administrator",
@@ -876,6 +879,6 @@
  "page_title": "Home",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-19 21:49:04.150768",
+ "published_at": "2026-09-19 22:02:47.408030",
  "route": "mna-home"
 }
