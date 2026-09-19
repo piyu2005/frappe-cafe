@@ -47,7 +47,14 @@ def list_notifications():
 		order_by="creation desc",
 		limit_page_length=50,
 	)
+	actors = {r.actor for r in rows if r.actor}
+	usernames = (
+		dict(frappe.db.get_all("User", filters={"name": ["in", list(actors)]}, fields=["name", "username"], as_list=True))
+		if actors
+		else {}
+	)
 	for r in rows:
+		r.actor_username = usernames.get(r.actor)
 		if r.type == "Group Invite" and r.reference_doctype == "Group Invite":
 			r.request_status = frappe.db.get_value("Group Invite", r.reference_name, "status")
 		elif r.type == "Publication Invite" and r.reference_doctype == "Publication Invite":

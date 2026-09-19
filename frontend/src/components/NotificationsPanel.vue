@@ -301,7 +301,7 @@ function notificationRoute(n) {
     return { name: 'Messages', params: { conversationId: n.reference_name } }
   }
   if (n.actor) {
-    return { name: 'Profile', params: { userId: n.actor } }
+    return { name: 'Profile', params: { userId: n.actor_username || n.actor } }
   }
   return null
 }

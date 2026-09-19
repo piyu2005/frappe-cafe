@@ -11,6 +11,11 @@
     <div class="mx-auto max-w-[740px] px-4 py-6 sm:px-5 sm:py-8">
       <LoadingText v-if="profile.loading && !profile.data" :lines="6" />
 
+      <div v-else-if="profile.error && !profile.data" class="flex flex-col items-center gap-3 py-24 text-center">
+        <span class="lucide-user-x size-8 text-ink-gray-3" aria-hidden="true" />
+        <p class="text-p-base text-ink-gray-5">This profile does not exist.</p>
+      </div>
+
       <template v-else-if="profile.data">
         <div class="flex items-start gap-4 sm:gap-8">
           <div
@@ -146,7 +151,7 @@
                 theme="gray"
                 size="sm"
                 :label="isOwnProfile ? 'Manage all posts' : 'View all posts'"
-                :route="{ name: 'ProfilePosts', params: { userId: targetUser } }"
+                :route="{ name: 'ProfilePosts', params: { userId: profile.data.username || targetUser } }"
               />
             </div>
           </div>
@@ -415,7 +420,7 @@
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   Breadcrumbs,
   Button,
@@ -435,8 +440,10 @@ import { useIsMobile } from '@/composables/useIsMobile'
 const isMobile = useIsMobile()
 
 const route = useRoute()
+const router = useRouter()
+// The URL id is a username. An older link may carry an email instead.
 const targetUser = computed(() => route.params.userId || session.user)
-const isOwnProfile = computed(() => targetUser.value === session.user)
+const isOwnProfile = computed(() => !route.params.userId || profile.data?.name === session.user)
 const avatarImageError = ref(false)
 watch(targetUser, () => {
   avatarImageError.value = false
@@ -447,6 +454,18 @@ const profile = useCall({
   params: () => ({ user: targetUser.value }),
   refetch: true,
 })
+
+// An old link may carry an email. Swap it for the username so the email
+// leaves the address bar. The email must match the loaded profile, so stale
+// data from the previous profile cannot trigger a wrong redirect.
+watch(
+  () => profile.data,
+  (data) => {
+    if (data?.username && route.params.userId === data.name && data.name !== data.username) {
+      router.replace({ params: { userId: data.username }, query: route.query })
+    }
+  },
+)
 
 // Own profile keeps the generic "Profile" crumb; someone else's names them
 // directly, reached via Explore - matching how ProfilePosts.vue already
@@ -789,7 +808,9 @@ function deleteWorkFromDialog() {
 }
 
 function copyLink() {
-  navigator.clipboard.writeText(window.location.href)
+  const id = profile.data?.username
+  const url = id ? `${window.location.origin}/profile/${encodeURIComponent(id)}` : window.location.href
+  navigator.clipboard.writeText(url)
   toast.success('Link copied')
 }
 </script>

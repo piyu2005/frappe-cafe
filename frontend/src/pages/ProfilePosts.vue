@@ -5,7 +5,7 @@
   </PageHeader>
   <PageHeaderMobile v-else title="Posts">
     <template #left>
-      <PageHeaderBackButton :to="{ name: 'Profile', params: { userId: targetUser } }" />
+      <PageHeaderBackButton :to="{ name: 'Profile', params: { userId: profile.data?.username || targetUser } }" />
     </template>
     <template #right>
       <MobileNotificationBell />
@@ -24,7 +24,7 @@
             size="sm"
             icon="lucide-arrow-left"
             label="Back to profile"
-            :route="{ name: 'Profile', params: { userId: targetUser } }"
+            :route="{ name: 'Profile', params: { userId: profile.data?.username || targetUser } }"
           />
           <h1 class="text-3xl-medium text-ink-gray-8">
             {{ isOwnProfile ? 'My Posts' : `Posts from ${profile.data?.full_name}` }}
@@ -170,13 +170,25 @@ const isMobile = useIsMobile()
 
 const route = useRoute()
 const router = useRouter()
+// The URL id is a username. An older link may carry an email instead.
 const targetUser = computed(() => route.params.userId || session.user)
-const isOwnProfile = computed(() => targetUser.value === session.user)
+const isOwnProfile = computed(() => !route.params.userId || profile.data?.name === session.user)
 
 const profile = useCall({
   url: '/api/v2/method/my_new_app.api.get_profile',
   params: () => ({ user: targetUser.value }),
 })
+
+// An old link may carry an email. Swap it for the username, but only when
+// the email matches the loaded profile (see Profile.vue).
+watch(
+  () => profile.data,
+  (data) => {
+    if (data?.username && route.params.userId === data.name && data.name !== data.username) {
+      router.replace({ params: { userId: data.username }, query: route.query })
+    }
+  },
+)
 
 // limit: 0 means "no limit" server-side (see Profile.vue's own posts list for
 // the same convention) - this page's whole point is showing all of them.
@@ -207,7 +219,7 @@ watch(tab, (idx) => {
 })
 
 const draftArchiveFilters = computed(() => ({
-  author: targetUser.value,
+  author: session.user,
   status: ownTabs[tab.value]?.label === 'Drafts' ? 'Draft' : 'Archived',
 }))
 
@@ -256,7 +268,7 @@ const breadcrumbItems = computed(() => {
   return [
     { label: APP_NAME, route: '/' },
     { label: 'Explore', route: '/' },
-    { label: profile.data?.full_name || 'Profile', route: `/profile/${targetUser.value}` },
+    { label: profile.data?.full_name || 'Profile', route: `/profile/${profile.data?.username || targetUser.value}` },
     { label: 'Posts' },
   ]
 })

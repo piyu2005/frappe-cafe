@@ -176,7 +176,7 @@
             <div class="min-w-0">
               <router-link
                 v-if="conversation.data.other_user"
-                :to="{ name: 'Profile', params: { userId: conversation.data.other_user } }"
+                :to="{ name: 'Profile', params: { userId: conversation.data.other_user_username || conversation.data.other_user } }"
                 class="block truncate text-base-medium text-ink-gray-9 hover:underline"
               >
                 {{ conversation.data.display_name }}

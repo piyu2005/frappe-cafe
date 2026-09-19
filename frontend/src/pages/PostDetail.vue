@@ -34,7 +34,7 @@
           />
           <div class="min-w-0 flex-1">
             <router-link
-              :to="{ name: 'Profile', params: { userId: post.data.author } }"
+              :to="{ name: 'Profile', params: { userId: post.data.author_username || post.data.author } }"
               class="text-lg-semibold text-ink-gray-9 hover:underline"
             >
               {{ post.data.author_name }}
@@ -553,7 +553,7 @@ const breadcrumbItems = computed(() => {
     { label: 'Explore', route: '/' },
   ]
   if (post.data?.author_name) {
-    items.push({ label: post.data.author_name, route: `/profile/${post.data.author}` })
+    items.push({ label: post.data.author_name, route: `/profile/${post.data.author_username || post.data.author}` })
   }
   items.push({ label: post.data?.title || 'Post' })
   return items
