@@ -256,9 +256,24 @@ def toggle_subscribe(reference_doctype, reference_name):
 	return {"subscribed": subscribed, "count": _subscriber_count(reference_doctype, reference_name)}
 
 
+def _resolve_user(identifier=None):
+	"""Turn a profile id from a URL into a User name. The id is a username,
+	or an email from an older link. No id means the caller. Only an id with
+	an "@" is tried as an email, so a username like "administrator" cannot
+	match the Administrator user."""
+	if not identifier:
+		return frappe.session.user
+	if "@" in identifier and frappe.db.exists("User", identifier):
+		return identifier
+	name = frappe.db.get_value("User", {"username": identifier}, "name")
+	if not name:
+		frappe.throw("User not found")
+	return name
+
+
 @frappe.whitelist()
 def get_profile(user=None):
-	user = user or frappe.session.user
+	user = _resolve_user(user)
 	if user == "Guest":
 		frappe.throw("Not permitted", frappe.PermissionError)
 
@@ -302,7 +317,7 @@ def get_profile(user=None):
 
 @frappe.whitelist()
 def list_profile_posts(user=None, limit=3):
-	user = user or frappe.session.user
+	user = _resolve_user(user)
 	rows = frappe.db.get_all(
 		"Post",
 		filters={"author": user, "status": "Published"},
@@ -690,6 +705,7 @@ def get_post(post_id):
 	if post.post_type == "Image" and not post.images and post.attachment:
 		post.images = [{"image": post.attachment}]
 	post.author_bio = frappe.db.get_value("User", post.author, "bio")
+	post.author_username = frappe.db.get_value("User", post.author, "username")
 	post.saved_by_me = bool(
 		frappe.session.user != "Guest"
 		and frappe.db.exists("Saved Post", {"post": post_id, "user": frappe.session.user})

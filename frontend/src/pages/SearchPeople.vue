@@ -88,7 +88,7 @@
 
           <router-link
             v-else
-            :to="{ name: 'Profile', params: { userId: person.name } }"
+            :to="{ name: 'Profile', params: { userId: person.username || person.name } }"
             class="flex items-center gap-3 rounded px-2 py-1.5 hover:bg-surface-gray-1"
           >
             <Avatar :image="person.user_image" :label="person.full_name" size="xl" />

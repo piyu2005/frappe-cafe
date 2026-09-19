@@ -658,6 +658,7 @@ def get_conversation(conversation):
 	else:
 		other_user, display_name, display_image = _dm_display_info(others[0] if others else None)
 
+	other_user_username = frappe.db.get_value("User", other_user, "username") if other_user else None
 	other_last_read = None
 	if other_user:
 		other_last_read = frappe.db.get_value(
@@ -670,6 +671,7 @@ def get_conversation(conversation):
 		"display_name": display_name,
 		"display_image": display_image,
 		"other_user": other_user,
+		"other_user_username": other_user_username,
 		"is_blocked": _is_blocked(frappe.session.user, other_user) if other_user else False,
 		"i_blocked_them": bool(
 			other_user
