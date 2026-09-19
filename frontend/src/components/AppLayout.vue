@@ -72,7 +72,7 @@
                  expand the sidebar - use the dedicated "Expand" toggle below
                  for that - but does open the account/app menu, same as the
                  expanded header's logo. -->
-            <Dropdown :options="logoMenuItems" side="right" align="start">
+            <Dropdown :options="logoMenuItems" side="bottom" align="start">
               <template #default>
                 <button
                   type="button"
@@ -262,7 +262,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   Badge,
   DesktopShell,
@@ -275,9 +275,11 @@ import {
   RailItem,
   Sidebar,
   SidebarItem,
+  dialog,
   toast,
 } from 'frappe-ui'
 import { getSocket } from '@/data/socket'
+import { logout } from '@/data/session'
 import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
 import { unreadMessageCount } from '@/data/messages'
 import { useIsMobile } from '@/composables/useIsMobile'
@@ -286,6 +288,7 @@ import NotificationsPanel from './NotificationsPanel.vue'
 import SettingsPanel from './SettingsPanel.vue'
 
 const route = useRoute()
+const router = useRouter()
 const isMobile = useIsMobile()
 const sidebarOpen = ref(false)
 // Matches the rail's fixed w-[50px] and the sidebar's explicit width prop
@@ -326,10 +329,23 @@ function blurTrigger(event) {
   event.currentTarget?.blur()
 }
 
-// Experiment: clicking the logo mark opens a small account/app menu (like
-// Frappe Cloud's own sidebar) instead of doing nothing. Only "Settings" for
-// now since that's the only thing this menu needs to hold today.
+// Clicking the logo mark opens a small account/app menu, like Frappe Cloud's
+// own sidebar (Settings, then Logout last).
 const settingsModalOpen = ref(false)
+
+// Same confirm-then-logout flow as SettingsPanel's own "Log out" row.
+function handleLogout() {
+  dialog.confirm({
+    title: 'Log out?',
+    message: 'You can always log back in.',
+    confirmLabel: 'Log out',
+    onConfirm: async () => {
+      await logout()
+      router.replace('/login')
+    },
+  })
+}
+
 const logoMenuItems = [
   {
     icon: 'lucide-settings',
@@ -337,6 +353,11 @@ const logoMenuItems = [
     onClick: () => {
       settingsModalOpen.value = true
     },
+  },
+  {
+    icon: 'lucide-log-out',
+    label: 'Logout',
+    onClick: handleLogout,
   },
 ]
 
