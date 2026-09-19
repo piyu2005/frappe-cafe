@@ -28,6 +28,9 @@ def page_header(crumbs):
 		"Header",
 		["mna-header"],
 		styles={
+			"position": "sticky",
+			"top": "0",
+			"zIndex": "10",
 			"display": "flex",
 			"flexShrink": "0",
 			"alignItems": "center",
@@ -99,7 +102,7 @@ def page_layout(shell_id, shell_block, crumbs, content, max_width):
 				"div",
 				"Scroll area",
 				["mna-scroll"],
-				styles={"flexGrow": "1", "minHeight": "0", "overflowY": "auto"},
+				styles={"flexGrow": "1"},
 				children=[container],
 			),
 		],
@@ -113,8 +116,9 @@ def page_layout(shell_id, shell_block, crumbs, content, max_width):
 			# 100%, not 100vw: in the editor canvas vw is the whole browser window,
 			# which is wider than the canvas and clips the right edge.
 			"width": "100%",
-			"height": "100vh",
-			"overflow": "hidden",
+			# The page grows with its content and the document scrolls, so the
+			# editor canvas shows the whole page. The rail and header are sticky.
+			"minHeight": "100vh",
 			"backgroundColor": "#ffffff",
 			"color": INK_BLACK,
 			"fontSize": "14px",

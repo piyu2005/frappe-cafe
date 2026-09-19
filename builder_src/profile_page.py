@@ -253,14 +253,18 @@ def build_headline():
 		p = block("p", name, text=text, styles={"margin": "0", **text_style(16, "420", color, "0.02em", "1.5")})
 		return when(show(p, key) if key else p, condition)
 
-	return block(
-		"div",
-		"Headline",
-		styles={"marginTop": "4px"},
-		children=[
-			paragraph("Headline text", "Debugging my code by day", GRAY_6, "profile.headline", "profile.headline"),
-			paragraph("Headline hint", "Add a short bio.", GRAY_4, None, "profile.show_headline_hint"),
-		],
+	# The wrapper is left out when there is nothing to show, so its top margin adds no gap.
+	return when(
+		block(
+			"div",
+			"Headline",
+			styles={"marginTop": "4px"},
+			children=[
+				paragraph("Headline text", "Debugging my code by day", GRAY_6, "profile.headline", "profile.headline"),
+				paragraph("Headline hint", "Add a short bio.", GRAY_4, None, "profile.show_headline_hint"),
+			],
+		),
+		"profile.show_headline",
 	)
 
 
@@ -644,9 +648,15 @@ def build_profile(shell_id, shell_block):
 
 
 def build_profile_redirect(shell_id, shell_block):
-	"""/profile has no body: its data script sends you to /profile/<username>."""
-	root = page_layout(shell_id, shell_block, [], [], "740px")
-	return root
+	"""/profile has no real body: its data script sends you to /profile/<username>
+	before anything is shown. This note is only for people editing the page."""
+	note = block(
+		"p",
+		"Note",
+		text="This page only sends you to your own profile. Edit the page at /profile/:username instead.",
+		styles={"margin": "0", **text_style(14, "420", MUTED, "0.02em", "1.5")},
+	)
+	return page_layout(shell_id, shell_block, [crumb_link("Cafe", "/")], [note], "740px")
 
 
 # ---- Data scripts ----
@@ -781,6 +791,7 @@ else:
         "has_job": bool(person.job_title),
         "job_line": clean(person.job_title) + (" at " + clean(person.company) if person.company else ""),
         "headline": clean(person.headline),
+        "show_headline": is_own or bool(person.headline),
         "show_headline_hint": is_own and not person.headline,
         "bio": clean(person.bio),
         "bio_long": len(person.bio or "") > 220,

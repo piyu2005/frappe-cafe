@@ -112,23 +112,36 @@ def build_shell():
 			"cursor": "pointer",
 		},
 	)
+	# The rail itself stretches the full height of the page (background and
+	# border). Its content sticks to the top of the window while the page scrolls.
 	rail = block(
 		"nav",
 		"Rail",
 		["mna-rail"],
 		attrs={"aria-label": "Main"},
-		children=[logo] + [rail_item(*item) for item in NAV_ITEMS],
 		styles={
-			"display": "flex",
-			"flexDirection": "column",
-			"alignItems": "center",
-			"gap": "12px",
 			"flexShrink": "0",
 			"width": "50px",
-			"padding": "10px 11px 12px",
 			"backgroundColor": SURFACE_1,
 			"borderRight": f"1px solid {OUTLINE}",
 		},
+		children=[
+			block(
+				"div",
+				"Rail content",
+				styles={
+					"position": "sticky",
+					"top": "0",
+					"display": "flex",
+					"flexDirection": "column",
+					"alignItems": "center",
+					"gap": "12px",
+					"height": "100vh",
+					"padding": "10px 11px 12px",
+				},
+				children=[logo] + [rail_item(*item) for item in NAV_ITEMS],
+			)
+		],
 	)
 	bottom_nav = block(
 		"nav",

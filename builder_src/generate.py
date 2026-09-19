@@ -108,13 +108,35 @@ def page(name, title, route, blocks, script_names, data_script, dynamic=False):
 	}
 
 
+TIMESTAMPS = ("creation", "modified", "published_at")
+
+
+def without_timestamps(doc):
+	return {key: value for key, value in doc.items() if key not in TIMESTAMPS}
+
+
+def read_existing():
+	"""The files from the last run, so an unchanged file keeps its timestamps."""
+	if not OUT.exists():
+		return {}
+	return {path: json.loads(path.read_text()) for path in OUT.rglob("*.json")}
+
+
+EXISTING = {}
+
+
 def write_json(kind, name, doc):
 	folder = OUT / kind / slug(name)
 	folder.mkdir(parents=True, exist_ok=True)
-	(folder / f"{slug(name)}.json").write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
+	path = folder / f"{slug(name)}.json"
+	old = EXISTING.get(path)
+	if old is not None and without_timestamps(old) == without_timestamps(doc):
+		doc = old  # nothing changed: keep the timestamps, so git and Builder see no change
+	path.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
 
 
 def main():
+	EXISTING.update(read_existing())
 	if OUT.exists():
 		shutil.rmtree(OUT)
 

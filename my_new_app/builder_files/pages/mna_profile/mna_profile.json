@@ -13,8 +13,7 @@
      "baseStyles": {
       "display": "flex",
       "width": "100%",
-      "height": "100vh",
-      "overflow": "hidden",
+      "minHeight": "100vh",
       "backgroundColor": "#ffffff",
       "color": "#0f0f0f",
       "fontSize": "14px",
@@ -22,33 +21,60 @@
       "lineHeight": "1.15",
       "letterSpacing": "0.02em"
      },
-     "blockId": "w1ktk3qhb",
+     "blockId": "zeegvzb06",
      "blockName": "App",
      "children": [
       {
        "attributes": {},
        "baseStyles": {},
-       "blockId": "pjnde1vhk",
+       "blockId": "dwl3nsktj",
        "blockName": "Shell",
        "children": [
         {
          "attributes": {},
          "baseStyles": {},
-         "blockId": "onaqcujed",
+         "blockId": "sk70x5bd0",
          "blockName": null,
          "children": [
           {
            "attributes": {},
            "baseStyles": {},
-           "blockId": "21624d0ps",
+           "blockId": "5jv20cfhb",
            "blockName": null,
            "children": [
             {
              "attributes": {},
              "baseStyles": {},
-             "blockId": "jpnm87cbf",
+             "blockId": "k1wcfm98r",
              "blockName": null,
-             "children": [],
+             "children": [
+              {
+               "attributes": {},
+               "baseStyles": {},
+               "blockId": "z8wzdw8g5",
+               "blockName": null,
+               "children": [],
+               "classes": [],
+               "clientScript": {},
+               "customAttributes": {},
+               "dataKey": null,
+               "draggable": false,
+               "dynamicValues": [],
+               "element": null,
+               "elementBeforeConversion": null,
+               "extendedFromComponent": null,
+               "innerHTML": null,
+               "isChildOfComponent": "df8258a0532b0139",
+               "isRepeaterBlock": false,
+               "mobileStyles": {},
+               "originalElement": null,
+               "props": {},
+               "rawStyles": {},
+               "referenceBlockId": "8u0amm2ri",
+               "tabletStyles": {},
+               "visibilityCondition": null
+              }
+             ],
              "classes": [],
              "clientScript": {},
              "customAttributes": {},
@@ -65,43 +91,43 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "8u0amm2ri",
+             "referenceBlockId": "z884e2lrv",
              "tabletStyles": {},
              "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "z884e2lrv",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "k1wcfm98r",
-           "blockName": null,
-           "children": [
+            },
             {
              "attributes": {},
              "baseStyles": {},
-             "blockId": "z8wzdw8g5",
+             "blockId": "5fypjaavr",
              "blockName": null,
-             "children": [],
+             "children": [
+              {
+               "attributes": {},
+               "baseStyles": {},
+               "blockId": "69hlzyqs1",
+               "blockName": null,
+               "children": [],
+               "classes": [],
+               "clientScript": {},
+               "customAttributes": {},
+               "dataKey": null,
+               "draggable": false,
+               "dynamicValues": [],
+               "element": null,
+               "elementBeforeConversion": null,
+               "extendedFromComponent": null,
+               "innerHTML": null,
+               "isChildOfComponent": "df8258a0532b0139",
+               "isRepeaterBlock": false,
+               "mobileStyles": {},
+               "originalElement": null,
+               "props": {},
+               "rawStyles": {},
+               "referenceBlockId": "phvuns8ip",
+               "tabletStyles": {},
+               "visibilityCondition": null
+              }
+             ],
              "classes": [],
              "clientScript": {},
              "customAttributes": {},
@@ -118,113 +144,7 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "phvuns8ip",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "92yxywprp",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "5fypjaavr",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "69hlzyqs1",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "8j2mvp1f8",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "l2vizvn7c",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "ixzxmk8jm",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "0a98plrvo",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "2v4wichu0",
+             "referenceBlockId": "92yxywprp",
              "tabletStyles": {},
              "visibilityCondition": null
             },
@@ -233,7 +153,34 @@
              "baseStyles": {},
              "blockId": "hm2fswo22",
              "blockName": null,
-             "children": [],
+             "children": [
+              {
+               "attributes": {},
+               "baseStyles": {},
+               "blockId": "0a98plrvo",
+               "blockName": null,
+               "children": [],
+               "classes": [],
+               "clientScript": {},
+               "customAttributes": {},
+               "dataKey": null,
+               "draggable": false,
+               "dynamicValues": [],
+               "element": null,
+               "elementBeforeConversion": null,
+               "extendedFromComponent": null,
+               "innerHTML": null,
+               "isChildOfComponent": "df8258a0532b0139",
+               "isRepeaterBlock": false,
+               "mobileStyles": {},
+               "originalElement": null,
+               "props": {},
+               "rawStyles": {},
+               "referenceBlockId": "8j2mvp1f8",
+               "tabletStyles": {},
+               "visibilityCondition": null
+              }
+             ],
              "classes": [],
              "clientScript": {},
              "customAttributes": {},
@@ -250,43 +197,69 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "udqqi9qcx",
+             "referenceBlockId": "l2vizvn7c",
              "tabletStyles": {},
              "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "0er5gux5q",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "s10f9w6uk",
-           "blockName": null,
-           "children": [
+            },
             {
              "attributes": {},
              "baseStyles": {},
-             "blockId": "h3evst5bb",
+             "blockId": "s10f9w6uk",
              "blockName": null,
-             "children": [],
+             "children": [
+              {
+               "attributes": {},
+               "baseStyles": {},
+               "blockId": "ixzxmk8jm",
+               "blockName": null,
+               "children": [],
+               "classes": [],
+               "clientScript": {},
+               "customAttributes": {},
+               "dataKey": null,
+               "draggable": false,
+               "dynamicValues": [],
+               "element": null,
+               "elementBeforeConversion": null,
+               "extendedFromComponent": null,
+               "innerHTML": null,
+               "isChildOfComponent": "df8258a0532b0139",
+               "isRepeaterBlock": false,
+               "mobileStyles": {},
+               "originalElement": null,
+               "props": {},
+               "rawStyles": {},
+               "referenceBlockId": "2v4wichu0",
+               "tabletStyles": {},
+               "visibilityCondition": null
+              },
+              {
+               "attributes": {},
+               "baseStyles": {},
+               "blockId": "h3evst5bb",
+               "blockName": null,
+               "children": [],
+               "classes": [],
+               "clientScript": {},
+               "customAttributes": {},
+               "dataKey": null,
+               "draggable": false,
+               "dynamicValues": [],
+               "element": null,
+               "elementBeforeConversion": null,
+               "extendedFromComponent": null,
+               "innerHTML": null,
+               "isChildOfComponent": "df8258a0532b0139",
+               "isRepeaterBlock": false,
+               "mobileStyles": {},
+               "originalElement": null,
+               "props": {},
+               "rawStyles": {},
+               "referenceBlockId": "udqqi9qcx",
+               "tabletStyles": {},
+               "visibilityCondition": null
+              }
+             ],
              "classes": [],
              "clientScript": {},
              "customAttributes": {},
@@ -303,7 +276,60 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "hzarz9gz9",
+             "referenceBlockId": "0er5gux5q",
+             "tabletStyles": {},
+             "visibilityCondition": null
+            },
+            {
+             "attributes": {},
+             "baseStyles": {},
+             "blockId": "nttifgrpd",
+             "blockName": null,
+             "children": [
+              {
+               "attributes": {},
+               "baseStyles": {},
+               "blockId": "onaqcujed",
+               "blockName": null,
+               "children": [],
+               "classes": [],
+               "clientScript": {},
+               "customAttributes": {},
+               "dataKey": null,
+               "draggable": false,
+               "dynamicValues": [],
+               "element": null,
+               "elementBeforeConversion": null,
+               "extendedFromComponent": null,
+               "innerHTML": null,
+               "isChildOfComponent": "df8258a0532b0139",
+               "isRepeaterBlock": false,
+               "mobileStyles": {},
+               "originalElement": null,
+               "props": {},
+               "rawStyles": {},
+               "referenceBlockId": "hzarz9gz9",
+               "tabletStyles": {},
+               "visibilityCondition": null
+              }
+             ],
+             "classes": [],
+             "clientScript": {},
+             "customAttributes": {},
+             "dataKey": null,
+             "draggable": false,
+             "dynamicValues": [],
+             "element": null,
+             "elementBeforeConversion": null,
+             "extendedFromComponent": null,
+             "innerHTML": null,
+             "isChildOfComponent": "df8258a0532b0139",
+             "isRepeaterBlock": false,
+             "mobileStyles": {},
+             "originalElement": null,
+             "props": {},
+             "rawStyles": {},
+             "referenceBlockId": "i1swc0dut",
              "tabletStyles": {},
              "visibilityCondition": null
             }
@@ -324,7 +350,7 @@
            "originalElement": null,
            "props": {},
            "rawStyles": {},
-           "referenceBlockId": "i1swc0dut",
+           "referenceBlockId": "xpaah7htz",
            "tabletStyles": {},
            "visibilityCondition": null
           }
@@ -345,26 +371,26 @@
          "originalElement": null,
          "props": {},
          "rawStyles": {},
-         "referenceBlockId": "xpaah7htz",
+         "referenceBlockId": "s1jl46jyk",
          "tabletStyles": {},
          "visibilityCondition": null
         },
         {
          "attributes": {},
          "baseStyles": {},
-         "blockId": "vpc777p08",
+         "blockId": "3z38dg2w5",
          "blockName": null,
          "children": [
           {
            "attributes": {},
            "baseStyles": {},
-           "blockId": "5jv20cfhb",
+           "blockId": "uhug597q1",
            "blockName": null,
            "children": [
             {
              "attributes": {},
              "baseStyles": {},
-             "blockId": "nttifgrpd",
+             "blockId": "xok9o4hca",
              "blockName": null,
              "children": [],
              "classes": [],
@@ -383,7 +409,7 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "s1jl46jyk",
+             "referenceBlockId": "gofqgkr5n",
              "tabletStyles": {},
              "visibilityCondition": null
             }
@@ -404,60 +430,7 @@
            "originalElement": null,
            "props": {},
            "rawStyles": {},
-           "referenceBlockId": "gofqgkr5n",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "xok9o4hca",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "sk70x5bd0",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "felft1ogl",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "dugnk9fqd",
+           "referenceBlockId": "felft1ogl",
            "tabletStyles": {},
            "visibilityCondition": null
           },
@@ -467,32 +440,6 @@
            "blockId": "v3b5g2rfr",
            "blockName": null,
            "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "uhug597q1",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "2ot310qoq",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
             {
              "attributes": {},
              "baseStyles": {},
@@ -515,7 +462,7 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "jnihv4r6j",
+             "referenceBlockId": "dugnk9fqd",
              "tabletStyles": {},
              "visibilityCondition": null
             }
@@ -536,14 +483,14 @@
            "originalElement": null,
            "props": {},
            "rawStyles": {},
-           "referenceBlockId": "n2rgavn3z",
+           "referenceBlockId": "2ot310qoq",
            "tabletStyles": {},
            "visibilityCondition": null
           },
           {
            "attributes": {},
            "baseStyles": {},
-           "blockId": "6c7fy38ga",
+           "blockId": "nrrluftuh",
            "blockName": null,
            "children": [
             {
@@ -568,41 +515,14 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "jr8wztzsd",
+             "referenceBlockId": "jnihv4r6j",
              "tabletStyles": {},
              "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "ky26ql7ff",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "74laa5rxe",
-           "blockName": null,
-           "children": [
+            },
             {
              "attributes": {},
              "baseStyles": {},
-             "blockId": "nrrluftuh",
+             "blockId": "6c7fy38ga",
              "blockName": null,
              "children": [],
              "classes": [],
@@ -621,7 +541,7 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "55e4dij6f",
+             "referenceBlockId": "n2rgavn3z",
              "tabletStyles": {},
              "visibilityCondition": null
             }
@@ -642,41 +562,67 @@
            "originalElement": null,
            "props": {},
            "rawStyles": {},
-           "referenceBlockId": "i0gwnvh16",
+           "referenceBlockId": "jr8wztzsd",
            "tabletStyles": {},
            "visibilityCondition": null
-          }
-         ],
-         "classes": [],
-         "clientScript": {},
-         "customAttributes": {},
-         "dataKey": null,
-         "draggable": false,
-         "dynamicValues": [],
-         "element": null,
-         "elementBeforeConversion": null,
-         "extendedFromComponent": null,
-         "innerHTML": null,
-         "isChildOfComponent": "df8258a0532b0139",
-         "isRepeaterBlock": false,
-         "mobileStyles": {},
-         "originalElement": null,
-         "props": {},
-         "rawStyles": {},
-         "referenceBlockId": "qjggtq590",
-         "tabletStyles": {},
-         "visibilityCondition": null
-        },
-        {
-         "attributes": {},
-         "baseStyles": {},
-         "blockId": "m0zl7pldd",
-         "blockName": null,
-         "children": [
+          },
           {
            "attributes": {},
            "baseStyles": {},
-           "blockId": "3z38dg2w5",
+           "blockId": "vpc777p08",
+           "blockName": null,
+           "children": [
+            {
+             "attributes": {},
+             "baseStyles": {},
+             "blockId": "74laa5rxe",
+             "blockName": null,
+             "children": [],
+             "classes": [],
+             "clientScript": {},
+             "customAttributes": {},
+             "dataKey": null,
+             "draggable": false,
+             "dynamicValues": [],
+             "element": null,
+             "elementBeforeConversion": null,
+             "extendedFromComponent": null,
+             "innerHTML": null,
+             "isChildOfComponent": "df8258a0532b0139",
+             "isRepeaterBlock": false,
+             "mobileStyles": {},
+             "originalElement": null,
+             "props": {},
+             "rawStyles": {},
+             "referenceBlockId": "ky26ql7ff",
+             "tabletStyles": {},
+             "visibilityCondition": null
+            }
+           ],
+           "classes": [],
+           "clientScript": {},
+           "customAttributes": {},
+           "dataKey": null,
+           "draggable": false,
+           "dynamicValues": [],
+           "element": null,
+           "elementBeforeConversion": null,
+           "extendedFromComponent": null,
+           "innerHTML": null,
+           "isChildOfComponent": "df8258a0532b0139",
+           "isRepeaterBlock": false,
+           "mobileStyles": {},
+           "originalElement": null,
+           "props": {},
+           "rawStyles": {},
+           "referenceBlockId": "55e4dij6f",
+           "tabletStyles": {},
+           "visibilityCondition": null
+          },
+          {
+           "attributes": {},
+           "baseStyles": {},
+           "blockId": "oumnfzf3n",
            "blockName": null,
            "children": [
             {
@@ -701,33 +647,7 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "0w05k6sgl",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "oumnfzf3n",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "e7y5z8oww",
+             "referenceBlockId": "i0gwnvh16",
              "tabletStyles": {},
              "visibilityCondition": null
             }
@@ -748,10 +668,37 @@
            "originalElement": null,
            "props": {},
            "rawStyles": {},
-           "referenceBlockId": "s8vfp45j6",
+           "referenceBlockId": "qjggtq590",
            "tabletStyles": {},
            "visibilityCondition": null
-          },
+          }
+         ],
+         "classes": [],
+         "clientScript": {},
+         "customAttributes": {},
+         "dataKey": null,
+         "draggable": false,
+         "dynamicValues": [],
+         "element": null,
+         "elementBeforeConversion": null,
+         "extendedFromComponent": null,
+         "innerHTML": null,
+         "isChildOfComponent": "df8258a0532b0139",
+         "isRepeaterBlock": false,
+         "mobileStyles": {},
+         "originalElement": null,
+         "props": {},
+         "rawStyles": {},
+         "referenceBlockId": "0w05k6sgl",
+         "tabletStyles": {},
+         "visibilityCondition": null
+        },
+        {
+         "attributes": {},
+         "baseStyles": {},
+         "blockId": "n3hd3027x",
+         "blockName": null,
+         "children": [
           {
            "attributes": {},
            "baseStyles": {},
@@ -780,7 +727,7 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "pm882of1e",
+             "referenceBlockId": "e7y5z8oww",
              "tabletStyles": {},
              "visibilityCondition": null
             },
@@ -806,7 +753,7 @@
              "originalElement": null,
              "props": {},
              "rawStyles": {},
-             "referenceBlockId": "te972m926",
+             "referenceBlockId": "s8vfp45j6",
              "tabletStyles": {},
              "visibilityCondition": null
             }
@@ -827,7 +774,86 @@
            "originalElement": null,
            "props": {},
            "rawStyles": {},
-           "referenceBlockId": "npbgx16r5",
+           "referenceBlockId": "pm882of1e",
+           "tabletStyles": {},
+           "visibilityCondition": null
+          },
+          {
+           "attributes": {},
+           "baseStyles": {},
+           "blockId": "w1ktk3qhb",
+           "blockName": null,
+           "children": [
+            {
+             "attributes": {},
+             "baseStyles": {},
+             "blockId": "m0zl7pldd",
+             "blockName": null,
+             "children": [],
+             "classes": [],
+             "clientScript": {},
+             "customAttributes": {},
+             "dataKey": null,
+             "draggable": false,
+             "dynamicValues": [],
+             "element": null,
+             "elementBeforeConversion": null,
+             "extendedFromComponent": null,
+             "innerHTML": null,
+             "isChildOfComponent": "df8258a0532b0139",
+             "isRepeaterBlock": false,
+             "mobileStyles": {},
+             "originalElement": null,
+             "props": {},
+             "rawStyles": {},
+             "referenceBlockId": "te972m926",
+             "tabletStyles": {},
+             "visibilityCondition": null
+            },
+            {
+             "attributes": {},
+             "baseStyles": {},
+             "blockId": "pjnde1vhk",
+             "blockName": null,
+             "children": [],
+             "classes": [],
+             "clientScript": {},
+             "customAttributes": {},
+             "dataKey": null,
+             "draggable": false,
+             "dynamicValues": [],
+             "element": null,
+             "elementBeforeConversion": null,
+             "extendedFromComponent": null,
+             "innerHTML": null,
+             "isChildOfComponent": "df8258a0532b0139",
+             "isRepeaterBlock": false,
+             "mobileStyles": {},
+             "originalElement": null,
+             "props": {},
+             "rawStyles": {},
+             "referenceBlockId": "npbgx16r5",
+             "tabletStyles": {},
+             "visibilityCondition": null
+            }
+           ],
+           "classes": [],
+           "clientScript": {},
+           "customAttributes": {},
+           "dataKey": null,
+           "draggable": false,
+           "dynamicValues": [],
+           "element": null,
+           "elementBeforeConversion": null,
+           "extendedFromComponent": null,
+           "innerHTML": null,
+           "isChildOfComponent": "df8258a0532b0139",
+           "isRepeaterBlock": false,
+           "mobileStyles": {},
+           "originalElement": null,
+           "props": {},
+           "rawStyles": {},
+           "referenceBlockId": "qs4ale63p",
            "tabletStyles": {},
            "visibilityCondition": null
           }
@@ -848,7 +874,7 @@
          "originalElement": null,
          "props": {},
          "rawStyles": {},
-         "referenceBlockId": "qs4ale63p",
+         "referenceBlockId": "pw503096x",
          "tabletStyles": {},
          "visibilityCondition": null
         }
@@ -881,12 +907,15 @@
         "flexDirection": "column",
         "minWidth": "0"
        },
-       "blockId": "4vucr5vuc",
+       "blockId": "21624d0ps",
        "blockName": "Main",
        "children": [
         {
          "attributes": {},
          "baseStyles": {
+          "position": "sticky",
+          "top": "0",
+          "zIndex": "10",
           "display": "flex",
           "flexShrink": "0",
           "alignItems": "center",
@@ -896,7 +925,7 @@
           "borderBottom": "1px solid #ededed",
           "backgroundColor": "#ffffff"
          },
-         "blockId": "zgafug37c",
+         "blockId": "4vucr5vuc",
          "blockName": "Header",
          "children": [
           {
@@ -911,7 +940,7 @@
             "letterSpacing": "0.015em",
             "color": "#7c7c7c"
            },
-           "blockId": "orwnx57k0",
+           "blockId": "bxx7qj9a1",
            "blockName": "Breadcrumbs",
            "children": [
             {
@@ -919,7 +948,7 @@
               "href": "/"
              },
              "baseStyles": {},
-             "blockId": "vbowuv282",
+             "blockId": "jcxu8vg65",
              "blockName": null,
              "children": [],
              "classes": [],
@@ -950,7 +979,7 @@
               "fontWeight": "420",
               "letterSpacing": "0.02em"
              },
-             "blockId": "sbwtz31m8",
+             "blockId": "m20ode0lv",
              "blockName": "Separator",
              "children": [],
              "classes": [
@@ -980,7 +1009,7 @@
              "baseStyles": {
               "color": "#0f0f0f"
              },
-             "blockId": "jcxu8vg65",
+             "blockId": "i732j2gkh",
              "blockName": null,
              "children": [],
              "classes": [
@@ -1015,7 +1044,7 @@
              "baseStyles": {
               "color": "#7c7c7c"
              },
-             "blockId": "m20ode0lv",
+             "blockId": "o1si7kf2e",
              "blockName": "Explore",
              "children": [],
              "classes": [],
@@ -1049,7 +1078,7 @@
               "fontWeight": "420",
               "letterSpacing": "0.02em"
              },
-             "blockId": "i732j2gkh",
+             "blockId": "1l0l85cuj",
              "blockName": "Separator",
              "children": [],
              "classes": [
@@ -1082,7 +1111,7 @@
              "baseStyles": {
               "color": "#0f0f0f"
              },
-             "blockId": "o1si7kf2e",
+             "blockId": "sau0vy8bl",
              "blockName": null,
              "children": [],
              "classes": [
@@ -1157,7 +1186,7 @@
             "fontSize": "14px",
             "whiteSpace": "nowrap"
            },
-           "blockId": "yako6i7fc",
+           "blockId": "n63rulnus",
            "blockName": "New Post",
            "children": [
             {
@@ -1167,7 +1196,7 @@
               "height": "16px",
               "flexShrink": "0"
              },
-             "blockId": "3c05i8gb5",
+             "blockId": "yako6i7fc",
              "blockName": "icon/plus",
              "children": [],
              "classes": [],
@@ -1193,7 +1222,7 @@
             {
              "attributes": {},
              "baseStyles": {},
-             "blockId": "bxx7qj9a1",
+             "blockId": "zgafug37c",
              "blockName": null,
              "children": [],
              "classes": [],
@@ -1266,11 +1295,9 @@
         {
          "attributes": {},
          "baseStyles": {
-          "flexGrow": "1",
-          "minHeight": "0",
-          "overflowY": "auto"
+          "flexGrow": "1"
          },
-         "blockId": "n63rulnus",
+         "blockId": "jpnm87cbf",
          "blockName": "Scroll area",
          "children": [
           {
@@ -1281,7 +1308,7 @@
             "margin": "0 auto",
             "padding": "32px 20px"
            },
-           "blockId": "sg7d6uemc",
+           "blockId": "3c05i8gb5",
            "blockName": "Container",
            "children": [
             {
@@ -1289,7 +1316,7 @@
               "id": "mna-profile"
              },
              "baseStyles": {},
-             "blockId": "dc04mf0aq",
+             "blockId": "sbwtz31m8",
              "blockName": "Profile",
              "children": [
               {
@@ -1299,7 +1326,7 @@
                 "alignItems": "flex-start",
                 "gap": "32px"
                },
-               "blockId": "dz54jwgw0",
+               "blockId": "vbowuv282",
                "blockName": "Profile header",
                "children": [
                 {
@@ -1315,7 +1342,7 @@
                   "borderRadius": "9999px",
                   "backgroundColor": "#f3f3f3"
                  },
-                 "blockId": "b2mxxbyy3",
+                 "blockId": "5x8ycc4j9",
                  "blockName": "Avatar",
                  "children": [
                   {
@@ -1329,7 +1356,7 @@
                     "height": "100%",
                     "objectFit": "cover"
                    },
-                   "blockId": "oot2ptpp7",
+                   "blockId": "b2mxxbyy3",
                    "blockName": "Avatar image",
                    "children": [],
                    "classes": [],
@@ -1373,7 +1400,7 @@
                     "gridArea": "1 / 1",
                     "textTransform": "uppercase"
                    },
-                   "blockId": "aa3sqy87l",
+                   "blockId": "m2gnxqa9u",
                    "blockName": "Initial",
                    "children": [],
                    "classes": [
@@ -1437,7 +1464,7 @@
                   "flexGrow": "1",
                   "minWidth": "0"
                  },
-                 "blockId": "bgy4lslok",
+                 "blockId": "dc04mf0aq",
                  "blockName": "Details",
                  "children": [
                   {
@@ -1448,7 +1475,7 @@
                     "justifyContent": "space-between",
                     "gap": "16px"
                    },
-                   "blockId": "2muua9vv9",
+                   "blockId": "4r01wmqaf",
                    "blockName": "Name row",
                    "children": [
                     {
@@ -1464,7 +1491,7 @@
                       "letterSpacing": "0.015em",
                       "lineHeight": "1.6"
                      },
-                     "blockId": "m2gnxqa9u",
+                     "blockId": "o6dp096pk",
                      "blockName": "Name",
                      "children": [],
                      "classes": [
@@ -1504,7 +1531,7 @@
                       "gap": "8px",
                       "flexShrink": "0"
                      },
-                     "blockId": "1im6z3iai",
+                     "blockId": "i4mr9umj0",
                      "blockName": "Buttons",
                      "children": [
                       {
@@ -1527,13 +1554,13 @@
                         "fontSize": "14px",
                         "cursor": "pointer"
                        },
-                       "blockId": "o6dp096pk",
+                       "blockId": "noygpxwi0",
                        "blockName": "Edit",
                        "children": [
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "5x8ycc4j9",
+                         "blockId": "cl3nsta2w",
                          "blockName": null,
                          "children": [],
                          "classes": [],
@@ -1604,7 +1631,7 @@
                         "fontSize": "14px",
                         "cursor": "pointer"
                        },
-                       "blockId": "noygpxwi0",
+                       "blockId": "2muua9vv9",
                        "blockName": "Share",
                        "children": [
                         {
@@ -1614,7 +1641,7 @@
                           "height": "16px",
                           "flexShrink": "0"
                          },
-                         "blockId": "cl3nsta2w",
+                         "blockId": "1im6z3iai",
                          "blockName": "icon/share-2",
                          "children": [],
                          "classes": [],
@@ -1722,7 +1749,7 @@
                     "letterSpacing": "0.02em",
                     "lineHeight": "1.15"
                    },
-                   "blockId": "4vnafffdq",
+                   "blockId": "tdcp2qnyh",
                    "blockName": "Job line",
                    "children": [
                     {
@@ -1732,7 +1759,7 @@
                       "alignItems": "center",
                       "gap": "4px"
                      },
-                     "blockId": "aud1qcgj7",
+                     "blockId": "j1zmhq889",
                      "blockName": "Job",
                      "children": [
                       {
@@ -1742,7 +1769,7 @@
                         "height": "16px",
                         "flexShrink": "0"
                        },
-                       "blockId": "i4mr9umj0",
+                       "blockId": "aud1qcgj7",
                        "blockName": "icon/briefcase",
                        "children": [],
                        "classes": [],
@@ -1768,7 +1795,7 @@
                       {
                        "attributes": {},
                        "baseStyles": {},
-                       "blockId": "4r01wmqaf",
+                       "blockId": "bn805tbql",
                        "blockName": null,
                        "children": [],
                        "classes": [],
@@ -1825,7 +1852,7 @@
                     {
                      "attributes": {},
                      "baseStyles": {},
-                     "blockId": "bn805tbql",
+                     "blockId": "4vnafffdq",
                      "blockName": "Dot",
                      "children": [],
                      "classes": [],
@@ -1854,7 +1881,7 @@
                     {
                      "attributes": {},
                      "baseStyles": {},
-                     "blockId": "j1zmhq889",
+                     "blockId": "i6ti8zh5s",
                      "blockName": "Username",
                      "children": [],
                      "classes": [],
@@ -1910,7 +1937,7 @@
                    "baseStyles": {
                     "marginTop": "4px"
                    },
-                   "blockId": "2b9pfns3m",
+                   "blockId": "dz54jwgw0",
                    "blockName": "Headline",
                    "children": [
                     {
@@ -1923,7 +1950,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.5"
                      },
-                     "blockId": "i6ti8zh5s",
+                     "blockId": "2b9pfns3m",
                      "blockName": "Headline text",
                      "children": [],
                      "classes": [],
@@ -1966,7 +1993,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.5"
                      },
-                     "blockId": "tdcp2qnyh",
+                     "blockId": "bgy4lslok",
                      "blockName": "Headline hint",
                      "children": [],
                      "classes": [],
@@ -2011,7 +2038,10 @@
                    "rawStyles": {},
                    "referenceBlockId": null,
                    "tabletStyles": {},
-                   "visibilityCondition": null
+                   "visibilityCondition": {
+                    "key": "profile.show_headline",
+                    "comesFrom": "dataScript"
+                   }
                   }
                  ],
                  "classes": [],
@@ -2065,7 +2095,7 @@
                 "flexDirection": "column",
                 "gap": "32px"
                },
-               "blockId": "yo83aofk0",
+               "blockId": "aa3sqy87l",
                "blockName": "Sections",
                "children": [
                 {
@@ -2075,7 +2105,7 @@
                   "borderRadius": "10px",
                   "padding": "20px"
                  },
-                 "blockId": "c9xbmk8am",
+                 "blockId": "uu4fq6wtn",
                  "blockName": "Introduction",
                  "children": [
                   {
@@ -2086,7 +2116,7 @@
                     "justifyContent": "space-between",
                     "paddingBottom": "16px"
                    },
-                   "blockId": "7qsqmod7x",
+                   "blockId": "jdhhrswxg",
                    "blockName": "Card header",
                    "children": [
                     {
@@ -2101,7 +2131,7 @@
                       "letterSpacing": "0.015em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "g7gernw5f",
+                     "blockId": "c9xbmk8am",
                      "blockName": "Card title",
                      "children": [
                       {
@@ -2111,7 +2141,7 @@
                         "height": "16px",
                         "flexShrink": "0"
                        },
-                       "blockId": "bwofmdtr3",
+                       "blockId": "g7gernw5f",
                        "blockName": "icon/user",
                        "children": [],
                        "classes": [],
@@ -2137,7 +2167,7 @@
                       {
                        "attributes": {},
                        "baseStyles": {},
-                       "blockId": "7u7kkzk2f",
+                       "blockId": "7qsqmod7x",
                        "blockName": null,
                        "children": [],
                        "classes": [],
@@ -2200,7 +2230,7 @@
                       "color": "#171717",
                       "cursor": "pointer"
                      },
-                     "blockId": "60izg50u5",
+                     "blockId": "7u7kkzk2f",
                      "blockName": "Edit introduction",
                      "children": [
                       {
@@ -2210,7 +2240,7 @@
                         "height": "14px",
                         "flexShrink": "0"
                        },
-                       "blockId": "qjj00o11k",
+                       "blockId": "bwofmdtr3",
                        "blockName": "icon/pencil",
                        "children": [],
                        "classes": [],
@@ -2294,7 +2324,7 @@
                     "letterSpacing": "0.02em",
                     "lineHeight": "1.5"
                    },
-                   "blockId": "5lr9650ms",
+                   "blockId": "0pvwk4z5x",
                    "blockName": "Bio",
                    "children": [],
                    "classes": [
@@ -2348,7 +2378,7 @@
                     "width": "100%",
                     "justifyContent": "flex-end"
                    },
-                   "blockId": "ywke9f0sd",
+                   "blockId": "qjj00o11k",
                    "blockName": "See more",
                    "children": [],
                    "classes": [
@@ -2388,7 +2418,7 @@
                     "letterSpacing": "0.02em",
                     "lineHeight": "1.5"
                    },
-                   "blockId": "0pvwk4z5x",
+                   "blockId": "60izg50u5",
                    "blockName": "Bio hint",
                    "children": [],
                    "classes": [],
@@ -2440,7 +2470,7 @@
                 {
                  "attributes": {},
                  "baseStyles": {},
-                 "blockId": "not9qezgc",
+                 "blockId": "lk2n45otn",
                  "blockName": "Posts section",
                  "children": [
                   {
@@ -2450,7 +2480,7 @@
                     "borderRadius": "10px",
                     "padding": "20px"
                    },
-                   "blockId": "e8hq76ve1",
+                   "blockId": "mutf7eyop",
                    "blockName": "Posts",
                    "children": [
                     {
@@ -2461,7 +2491,7 @@
                       "justifyContent": "space-between",
                       "paddingBottom": "16px"
                      },
-                     "blockId": "zkbry8edx",
+                     "blockId": "hzeh33fde",
                      "blockName": "Card header",
                      "children": [
                       {
@@ -2476,7 +2506,7 @@
                         "letterSpacing": "0.015em",
                         "lineHeight": "1.15"
                        },
-                       "blockId": "6y0m7rvcq",
+                       "blockId": "e8hq76ve1",
                        "blockName": "Card title",
                        "children": [
                         {
@@ -2486,7 +2516,7 @@
                           "height": "16px",
                           "flexShrink": "0"
                          },
-                         "blockId": "nbpprjqi3",
+                         "blockId": "6y0m7rvcq",
                          "blockName": "icon/notebook-pen",
                          "children": [],
                          "classes": [],
@@ -2512,7 +2542,7 @@
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "fb1ow36v4",
+                         "blockId": "zkbry8edx",
                          "blockName": null,
                          "children": [],
                          "classes": [],
@@ -2583,7 +2613,7 @@
                       "display": "flex",
                       "flexDirection": "column"
                      },
-                     "blockId": "7l53ck7ag",
+                     "blockId": "loymiuavf",
                      "blockName": "Posts list",
                      "children": [
                       {
@@ -2597,7 +2627,7 @@
                         "gap": "16px",
                         "padding": "20px 0"
                        },
-                       "blockId": "82x455xje",
+                       "blockId": "ex4e8jq19",
                        "blockName": "Post",
                        "children": [
                         {
@@ -2609,13 +2639,13 @@
                           "flexGrow": "1",
                           "minWidth": "0"
                          },
-                         "blockId": "bkwp45vxg",
+                         "blockId": "7l53ck7ag",
                          "blockName": "Text",
                          "children": [
                           {
                            "attributes": {},
                            "baseStyles": {},
-                           "blockId": "olva71huy",
+                           "blockId": "82x455xje",
                            "blockName": "Title and excerpt",
                            "children": [
                             {
@@ -2627,7 +2657,7 @@
                               "letterSpacing": "0.015em",
                               "lineHeight": "1.15"
                              },
-                             "blockId": "jdhhrswxg",
+                             "blockId": "gdu35lejm",
                              "blockName": "Title",
                              "children": [],
                              "classes": [],
@@ -2667,7 +2697,7 @@
                               "letterSpacing": "0.02em",
                               "lineHeight": "1.5"
                              },
-                             "blockId": "uu4fq6wtn",
+                             "blockId": "jyo4owijc",
                              "blockName": "Excerpt",
                              "children": [],
                              "classes": [
@@ -2730,7 +2760,7 @@
                             "letterSpacing": "0.02em",
                             "lineHeight": "1.15"
                            },
-                           "blockId": "gdu35lejm",
+                           "blockId": "olva71huy",
                            "blockName": "Meta",
                            "children": [],
                            "classes": [],
@@ -2793,7 +2823,7 @@
                           "borderRadius": "10px",
                           "objectFit": "cover"
                          },
-                         "blockId": "jyo4owijc",
+                         "blockId": "bkwp45vxg",
                          "blockName": "Thumbnail",
                          "children": [],
                          "classes": [],
@@ -2894,13 +2924,13 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "kh0a175nf",
+                     "blockId": "nbpprjqi3",
                      "blockName": "Nothing yet",
                      "children": [
                       {
                        "attributes": {},
                        "baseStyles": {},
-                       "blockId": "ex4e8jq19",
+                       "blockId": "kh0a175nf",
                        "blockName": null,
                        "children": [],
                        "classes": [],
@@ -2931,7 +2961,7 @@
                         "fontWeight": "500",
                         "color": "#171717"
                        },
-                       "blockId": "loymiuavf",
+                       "blockId": "qjq6st40f",
                        "blockName": "Write link",
                        "children": [],
                        "classes": [],
@@ -2988,7 +3018,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "qjq6st40f",
+                     "blockId": "fb1ow36v4",
                      "blockName": "No posts",
                      "children": [],
                      "classes": [],
@@ -3044,7 +3074,7 @@
                     "display": "flex",
                     "justifyContent": "center"
                    },
-                   "blockId": "g0dan7cxw",
+                   "blockId": "iwbjlzwtt",
                    "blockName": "More",
                    "children": [
                     {
@@ -3063,7 +3093,7 @@
                       "fontSize": "14px",
                       "cursor": "pointer"
                      },
-                     "blockId": "hzeh33fde",
+                     "blockId": "g0dan7cxw",
                      "blockName": "Manage all posts",
                      "children": [],
                      "classes": [
@@ -3114,7 +3144,7 @@
                       "fontSize": "14px",
                       "cursor": "pointer"
                      },
-                     "blockId": "mutf7eyop",
+                     "blockId": "not9qezgc",
                      "blockName": "View all posts",
                      "children": [],
                      "classes": [
@@ -3197,7 +3227,7 @@
                 {
                  "attributes": {},
                  "baseStyles": {},
-                 "blockId": "lojiceuml",
+                 "blockId": "s0xvvislg",
                  "blockName": "Work section",
                  "children": [
                   {
@@ -3207,7 +3237,7 @@
                     "borderRadius": "10px",
                     "padding": "20px"
                    },
-                   "blockId": "opa2sowp3",
+                   "blockId": "lojiceuml",
                    "blockName": "Work History",
                    "children": [
                     {
@@ -3218,7 +3248,7 @@
                       "justifyContent": "space-between",
                       "paddingBottom": "16px"
                      },
-                     "blockId": "cktt48cr1",
+                     "blockId": "i0bgj5r1p",
                      "blockName": "Card header",
                      "children": [
                       {
@@ -3233,7 +3263,7 @@
                         "letterSpacing": "0.015em",
                         "lineHeight": "1.15"
                        },
-                       "blockId": "utfcasms3",
+                       "blockId": "opa2sowp3",
                        "blockName": "Card title",
                        "children": [
                         {
@@ -3243,7 +3273,7 @@
                           "height": "16px",
                           "flexShrink": "0"
                          },
-                         "blockId": "l4umdet7z",
+                         "blockId": "utfcasms3",
                          "blockName": "icon/briefcase",
                          "children": [],
                          "classes": [],
@@ -3269,7 +3299,7 @@
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "gpzfh4td2",
+                         "blockId": "cktt48cr1",
                          "blockName": null,
                          "children": [],
                          "classes": [],
@@ -3332,7 +3362,7 @@
                         "color": "#171717",
                         "cursor": "pointer"
                        },
-                       "blockId": "e4jsej94g",
+                       "blockId": "l4umdet7z",
                        "blockName": "Add work experience",
                        "children": [
                         {
@@ -3342,7 +3372,7 @@
                           "height": "14px",
                           "flexShrink": "0"
                          },
-                         "blockId": "9ijk5j0ul",
+                         "blockId": "psds96wv4",
                          "blockName": "icon/plus",
                          "children": [],
                          "classes": [],
@@ -3422,7 +3452,7 @@
                       "display": "flex",
                       "flexDirection": "column"
                      },
-                     "blockId": "gci2ldzmj",
+                     "blockId": "8avfwrjha",
                      "blockName": "Work list",
                      "children": [
                       {
@@ -3434,13 +3464,13 @@
                         "gap": "12px",
                         "padding": "20px 0"
                        },
-                       "blockId": "t0crfrx84",
+                       "blockId": "xi3ju47gp",
                        "blockName": "Entry",
                        "children": [
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "ms67wkeka",
+                         "blockId": "gci2ldzmj",
                          "blockName": "Text",
                          "children": [
                           {
@@ -3452,7 +3482,7 @@
                             "letterSpacing": "0.015em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "lk2n45otn",
+                           "blockId": "1u42jv215",
                            "blockName": "Primary",
                            "children": [],
                            "classes": [],
@@ -3492,13 +3522,13 @@
                             "letterSpacing": "0.02em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "o9m7ql0ox",
+                           "blockId": "2o40o4yoq",
                            "blockName": "Line",
                            "children": [
                             {
                              "attributes": {},
                              "baseStyles": {},
-                             "blockId": "g8tacvhc6",
+                             "blockId": "kewee6pau",
                              "blockName": "Secondary",
                              "children": [],
                              "classes": [],
@@ -3536,7 +3566,7 @@
                              "baseStyles": {
                               "color": "#999999"
                              },
-                             "blockId": "1u42jv215",
+                             "blockId": "o9m7ql0ox",
                              "blockName": "Dot",
                              "children": [],
                              "classes": [],
@@ -3571,7 +3601,7 @@
                               "letterSpacing": "0.02em",
                               "lineHeight": "1.15"
                              },
-                             "blockId": "kewee6pau",
+                             "blockId": "nbrdpitk3",
                              "blockName": "Dates",
                              "children": [],
                              "classes": [],
@@ -3635,7 +3665,7 @@
                             "letterSpacing": "0.015em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "iwbjlzwtt",
+                           "blockId": "g8tacvhc6",
                            "blockName": "Description",
                            "children": [],
                            "classes": [],
@@ -3708,7 +3738,7 @@
                           "color": "#171717",
                           "cursor": "pointer"
                          },
-                         "blockId": "2o40o4yoq",
+                         "blockId": "t0crfrx84",
                          "blockName": "Edit work experience",
                          "children": [
                           {
@@ -3718,7 +3748,7 @@
                             "height": "14px",
                             "flexShrink": "0"
                            },
-                           "blockId": "nbrdpitk3",
+                           "blockId": "ms67wkeka",
                            "blockName": "icon/pencil",
                            "children": [],
                            "classes": [],
@@ -3838,7 +3868,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "xi3ju47gp",
+                     "blockId": "9ijk5j0ul",
                      "blockName": "No work (yours)",
                      "children": [],
                      "classes": [],
@@ -3874,7 +3904,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "8avfwrjha",
+                     "blockId": "e4jsej94g",
                      "blockName": "No work",
                      "children": [],
                      "classes": [],
@@ -3930,7 +3960,7 @@
                     "display": "flex",
                     "justifyContent": "center"
                    },
-                   "blockId": "i0bgj5r1p",
+                   "blockId": "b7khd1t2v",
                    "blockName": "More",
                    "children": [
                     {
@@ -3949,7 +3979,7 @@
                       "fontSize": "14px",
                       "cursor": "pointer"
                      },
-                     "blockId": "psds96wv4",
+                     "blockId": "gpzfh4td2",
                      "blockName": "Show all",
                      "children": [],
                      "classes": [
@@ -4027,7 +4057,7 @@
                 {
                  "attributes": {},
                  "baseStyles": {},
-                 "blockId": "m4h8wlhyh",
+                 "blockId": "oot2ptpp7",
                  "blockName": "Education section",
                  "children": [
                   {
@@ -4037,7 +4067,7 @@
                     "borderRadius": "10px",
                     "padding": "20px"
                    },
-                   "blockId": "9vb34dz4b",
+                   "blockId": "m4h8wlhyh",
                    "blockName": "Education",
                    "children": [
                     {
@@ -4048,7 +4078,7 @@
                       "justifyContent": "space-between",
                       "paddingBottom": "16px"
                      },
-                     "blockId": "1ay90qg0p",
+                     "blockId": "mge663cqq",
                      "blockName": "Card header",
                      "children": [
                       {
@@ -4063,7 +4093,7 @@
                         "letterSpacing": "0.015em",
                         "lineHeight": "1.15"
                        },
-                       "blockId": "kr7q155f5",
+                       "blockId": "9vb34dz4b",
                        "blockName": "Card title",
                        "children": [
                         {
@@ -4073,7 +4103,7 @@
                           "height": "16px",
                           "flexShrink": "0"
                          },
-                         "blockId": "eloob4q66",
+                         "blockId": "kr7q155f5",
                          "blockName": "icon/graduation-cap",
                          "children": [],
                          "classes": [],
@@ -4099,7 +4129,7 @@
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "f910ogufc",
+                         "blockId": "1ay90qg0p",
                          "blockName": null,
                          "children": [],
                          "classes": [],
@@ -4162,7 +4192,7 @@
                         "color": "#171717",
                         "cursor": "pointer"
                        },
-                       "blockId": "d67hbq1xn",
+                       "blockId": "eloob4q66",
                        "blockName": "Add education",
                        "children": [
                         {
@@ -4172,7 +4202,7 @@
                           "height": "14px",
                           "flexShrink": "0"
                          },
-                         "blockId": "ycjcbipjs",
+                         "blockId": "twin7lebj",
                          "blockName": "icon/plus",
                          "children": [],
                          "classes": [],
@@ -4252,7 +4282,7 @@
                       "display": "flex",
                       "flexDirection": "column"
                      },
-                     "blockId": "x5ri18ubx",
+                     "blockId": "whm710i08",
                      "blockName": "Education list",
                      "children": [
                       {
@@ -4264,13 +4294,13 @@
                         "gap": "12px",
                         "padding": "20px 0"
                        },
-                       "blockId": "cqsk6slp4",
+                       "blockId": "n7k1o3m4n",
                        "blockName": "Entry",
                        "children": [
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "57yoi6r1m",
+                         "blockId": "x5ri18ubx",
                          "blockName": "Text",
                          "children": [
                           {
@@ -4282,7 +4312,7 @@
                             "letterSpacing": "0.015em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "b7khd1t2v",
+                           "blockId": "kh7ofhrjz",
                            "blockName": "Primary",
                            "children": [],
                            "classes": [],
@@ -4322,13 +4352,13 @@
                             "letterSpacing": "0.02em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "g0g3ms0wu",
+                           "blockId": "rpax78lyw",
                            "blockName": "Line",
                            "children": [
                             {
                              "attributes": {},
                              "baseStyles": {},
-                             "blockId": "s0xvvislg",
+                             "blockId": "tsy8fslxl",
                              "blockName": "Secondary",
                              "children": [],
                              "classes": [],
@@ -4366,7 +4396,7 @@
                              "baseStyles": {
                               "color": "#999999"
                              },
-                             "blockId": "kh7ofhrjz",
+                             "blockId": "g0g3ms0wu",
                              "blockName": "Dot",
                              "children": [],
                              "classes": [],
@@ -4401,7 +4431,7 @@
                               "letterSpacing": "0.02em",
                               "lineHeight": "1.15"
                              },
-                             "blockId": "tsy8fslxl",
+                             "blockId": "k3h0gvqyh",
                              "blockName": "Dates",
                              "children": [],
                              "classes": [],
@@ -4495,7 +4525,7 @@
                           "color": "#171717",
                           "cursor": "pointer"
                          },
-                         "blockId": "rpax78lyw",
+                         "blockId": "cqsk6slp4",
                          "blockName": "Edit education",
                          "children": [
                           {
@@ -4505,7 +4535,7 @@
                             "height": "14px",
                             "flexShrink": "0"
                            },
-                           "blockId": "k3h0gvqyh",
+                           "blockId": "57yoi6r1m",
                            "blockName": "icon/pencil",
                            "children": [],
                            "classes": [],
@@ -4625,7 +4655,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "n7k1o3m4n",
+                     "blockId": "ycjcbipjs",
                      "blockName": "No education (yours)",
                      "children": [],
                      "classes": [],
@@ -4661,7 +4691,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "whm710i08",
+                     "blockId": "d67hbq1xn",
                      "blockName": "No education",
                      "children": [],
                      "classes": [],
@@ -4717,7 +4747,7 @@
                     "display": "flex",
                     "justifyContent": "center"
                    },
-                   "blockId": "mge663cqq",
+                   "blockId": "yo83aofk0",
                    "blockName": "More",
                    "children": [
                     {
@@ -4736,7 +4766,7 @@
                       "fontSize": "14px",
                       "cursor": "pointer"
                      },
-                     "blockId": "twin7lebj",
+                     "blockId": "f910ogufc",
                      "blockName": "Show all",
                      "children": [],
                      "classes": [
@@ -4875,7 +4905,7 @@
               "padding": "96px 0",
               "textAlign": "center"
              },
-             "blockId": "mom3kutbz",
+             "blockId": "orwnx57k0",
              "blockName": "Not found",
              "children": [
               {
@@ -4886,7 +4916,7 @@
                 "flexShrink": "0",
                 "color": "#c8c8c8"
                },
-               "blockId": "1l0l85cuj",
+               "blockId": "mom3kutbz",
                "blockName": "icon/user-x",
                "children": [],
                "classes": [],
@@ -4919,7 +4949,7 @@
                 "letterSpacing": "0.02em",
                 "lineHeight": "1.5"
                },
-               "blockId": "sau0vy8bl",
+               "blockId": "sg7d6uemc",
                "blockName": "Message",
                "children": [],
                "classes": [],
@@ -5094,7 +5124,7 @@
    "builder_script": "MNA Profile"
   }
  ],
- "creation": "2026-09-19 16:45:20.817980",
+ "creation": "2026-09-19 16:54:47.019258",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -5104,15 +5134,15 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-19 16:45:20.817980",
+ "modified": "2026-09-19 16:54:47.019258",
  "modified_by": "Administrator",
  "name": "mna-profile",
  "owner": "Administrator",
- "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef date_range(start, end):\n    if not (start or end):\n        return \"\"\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    first = months[int(str(start)[5:7]) - 1] + \" \" + str(start)[:4] if start else \"\"\n    last = months[int(str(end)[5:7]) - 1] + \" \" + str(end)[:4] if end else \"Present\"\n    return first + \" \\u2014 \" + last\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\nidentifier = frappe.form_dict.username or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/profile/\" + path_segment(identifier))\n\nif not identifier:\n    # Builder's editor canvas has no username in the address: show your own profile there.\n    user_id = frappe.session.user\nelse:\n    user_id = frappe.db.get_value(\"User\", {\"username\": identifier}, \"name\")\n    if not user_id and \"@\" in identifier and frappe.db.exists(\"User\", identifier):\n        user_id = identifier\nif user_id == \"Guest\":\n    user_id = None\n\nif not user_id:\n    data.profile = {\"found\": False, \"not_found\": True, \"is_other\": True, \"crumb_name\": \"Profile\"}\n    data.posts = []\n    data.work = []\n    data.education = []\nelse:\n    person = frappe.call(\"my_new_app.api.get_profile\", user=user_id)\n    if identifier and person.username != identifier:\n        redirect(\"/profile/\" + path_segment(person.username))\n\n    is_own = person.name == frappe.session.user\n    name = person.full_name or person.username\n    image = safe_url(person.user_image)\n    posts = []\n    for row in frappe.call(\"my_new_app.api.list_profile_posts\", user=user_id, limit=3):\n        text = plain_text(row.get(\"content\"))\n        minutes = int(len(text.split()) / 200 + 0.5)\n        if minutes < 1:\n            minutes = 1\n        comments = row.get(\"comment_count\") or 0\n        preview = row.get(\"excerpt\") or (text[:140] + \"\\u2026\" if len(text) > 140 else text)\n        thumbnail = row.get(\"cover_image\") or (row.get(\"attachment\") if row.get(\"post_type\") == \"Image\" else \"\")\n        posts.append({\n            \"href\": \"/posts/\" + path_segment(row.name),\n            \"title\": clean(row.get(\"display_title\") or row.get(\"title\") or \"Untitled\"),\n            \"excerpt\": clean(preview),\n            \"meta\": day_month_year(row.creation) + \" \\u00b7 \" + str(minutes) + \" min read \\u00b7 \" + str(comments) + (\" comment\" if comments == 1 else \" comments\"),\n            \"thumbnail\": safe_url(thumbnail),\n        })\n\n    work = []\n    for job in person.work:\n        dates = date_range(job.start_date, job.end_date)\n        work.append({\n            \"id\": clean(job.name),\n            \"is_own\": is_own,\n            \"company\": clean(job.company),\n            \"title\": clean(job.title),\n            \"dates\": dates,\n            \"show_dot\": bool(job.title and dates),\n            \"description\": clean(job.description),\n        })\n\n    education = []\n    for entry in person.education:\n        dates = date_range(entry.start_year, entry.end_year)\n        degree_line = \", \".join([part for part in [entry.degree, entry.field_of_study] if part])\n        education.append({\n            \"id\": clean(entry.name),\n            \"is_own\": is_own,\n            \"school\": clean(entry.school),\n            \"degree_line\": clean(degree_line),\n            \"dates\": dates,\n            \"show_dot\": bool(degree_line and dates),\n        })\n\n    posts_href = \"/profile/\" + path_segment(person.username) + \"/posts\"\n    data.profile = {\n        \"found\": True,\n        \"not_found\": False,\n        \"is_own\": is_own,\n        \"is_other\": not is_own,\n        \"crumb_name\": clean(name),\n        \"full_name\": clean(name),\n        \"username\": clean(person.username),\n        \"at_username\": \"@\" + clean(person.username),\n        \"initial\": clean(name[:1]),\n        \"user_image\": image,\n        \"no_image\": not image,\n        \"has_job\": bool(person.job_title),\n        \"job_line\": clean(person.job_title) + (\" at \" + clean(person.company) if person.company else \"\"),\n        \"headline\": clean(person.headline),\n        \"show_headline_hint\": is_own and not person.headline,\n        \"bio\": clean(person.bio),\n        \"bio_long\": len(person.bio or \"\") > 220,\n        \"show_bio_hint\": is_own and not person.bio,\n        \"posts_empty_own\": is_own and not posts,\n        \"posts_empty_other\": (not is_own) and not posts,\n        \"posts_more\": is_own or len(posts) == 3,\n        \"posts_more_own\": is_own,\n        \"posts_more_other\": (not is_own) and len(posts) == 3,\n        \"posts_href\": clean(posts_href),\n        \"work_empty_own\": is_own and not work,\n        \"work_empty_other\": (not is_own) and not work,\n        \"work_more\": len(work) > 3,\n        \"education_empty_own\": is_own and not education,\n        \"education_empty_other\": (not is_own) and not education,\n        \"education_more\": len(education) > 3,\n    }\n    data.posts = posts\n    data.work = work\n    data.education = education\n",
+ "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef date_range(start, end):\n    if not (start or end):\n        return \"\"\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    first = months[int(str(start)[5:7]) - 1] + \" \" + str(start)[:4] if start else \"\"\n    last = months[int(str(end)[5:7]) - 1] + \" \" + str(end)[:4] if end else \"Present\"\n    return first + \" \\u2014 \" + last\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\nidentifier = frappe.form_dict.username or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/profile/\" + path_segment(identifier))\n\nif not identifier:\n    # Builder's editor canvas has no username in the address: show your own profile there.\n    user_id = frappe.session.user\nelse:\n    user_id = frappe.db.get_value(\"User\", {\"username\": identifier}, \"name\")\n    if not user_id and \"@\" in identifier and frappe.db.exists(\"User\", identifier):\n        user_id = identifier\nif user_id == \"Guest\":\n    user_id = None\n\nif not user_id:\n    data.profile = {\"found\": False, \"not_found\": True, \"is_other\": True, \"crumb_name\": \"Profile\"}\n    data.posts = []\n    data.work = []\n    data.education = []\nelse:\n    person = frappe.call(\"my_new_app.api.get_profile\", user=user_id)\n    if identifier and person.username != identifier:\n        redirect(\"/profile/\" + path_segment(person.username))\n\n    is_own = person.name == frappe.session.user\n    name = person.full_name or person.username\n    image = safe_url(person.user_image)\n    posts = []\n    for row in frappe.call(\"my_new_app.api.list_profile_posts\", user=user_id, limit=3):\n        text = plain_text(row.get(\"content\"))\n        minutes = int(len(text.split()) / 200 + 0.5)\n        if minutes < 1:\n            minutes = 1\n        comments = row.get(\"comment_count\") or 0\n        preview = row.get(\"excerpt\") or (text[:140] + \"\\u2026\" if len(text) > 140 else text)\n        thumbnail = row.get(\"cover_image\") or (row.get(\"attachment\") if row.get(\"post_type\") == \"Image\" else \"\")\n        posts.append({\n            \"href\": \"/posts/\" + path_segment(row.name),\n            \"title\": clean(row.get(\"display_title\") or row.get(\"title\") or \"Untitled\"),\n            \"excerpt\": clean(preview),\n            \"meta\": day_month_year(row.creation) + \" \\u00b7 \" + str(minutes) + \" min read \\u00b7 \" + str(comments) + (\" comment\" if comments == 1 else \" comments\"),\n            \"thumbnail\": safe_url(thumbnail),\n        })\n\n    work = []\n    for job in person.work:\n        dates = date_range(job.start_date, job.end_date)\n        work.append({\n            \"id\": clean(job.name),\n            \"is_own\": is_own,\n            \"company\": clean(job.company),\n            \"title\": clean(job.title),\n            \"dates\": dates,\n            \"show_dot\": bool(job.title and dates),\n            \"description\": clean(job.description),\n        })\n\n    education = []\n    for entry in person.education:\n        dates = date_range(entry.start_year, entry.end_year)\n        degree_line = \", \".join([part for part in [entry.degree, entry.field_of_study] if part])\n        education.append({\n            \"id\": clean(entry.name),\n            \"is_own\": is_own,\n            \"school\": clean(entry.school),\n            \"degree_line\": clean(degree_line),\n            \"dates\": dates,\n            \"show_dot\": bool(degree_line and dates),\n        })\n\n    posts_href = \"/profile/\" + path_segment(person.username) + \"/posts\"\n    data.profile = {\n        \"found\": True,\n        \"not_found\": False,\n        \"is_own\": is_own,\n        \"is_other\": not is_own,\n        \"crumb_name\": clean(name),\n        \"full_name\": clean(name),\n        \"username\": clean(person.username),\n        \"at_username\": \"@\" + clean(person.username),\n        \"initial\": clean(name[:1]),\n        \"user_image\": image,\n        \"no_image\": not image,\n        \"has_job\": bool(person.job_title),\n        \"job_line\": clean(person.job_title) + (\" at \" + clean(person.company) if person.company else \"\"),\n        \"headline\": clean(person.headline),\n        \"show_headline\": is_own or bool(person.headline),\n        \"show_headline_hint\": is_own and not person.headline,\n        \"bio\": clean(person.bio),\n        \"bio_long\": len(person.bio or \"\") > 220,\n        \"show_bio_hint\": is_own and not person.bio,\n        \"posts_empty_own\": is_own and not posts,\n        \"posts_empty_other\": (not is_own) and not posts,\n        \"posts_more\": is_own or len(posts) == 3,\n        \"posts_more_own\": is_own,\n        \"posts_more_other\": (not is_own) and len(posts) == 3,\n        \"posts_href\": clean(posts_href),\n        \"work_empty_own\": is_own and not work,\n        \"work_empty_other\": (not is_own) and not work,\n        \"work_more\": len(work) > 3,\n        \"education_empty_own\": is_own and not education,\n        \"education_empty_other\": (not is_own) and not education,\n        \"education_more\": len(education) > 3,\n    }\n    data.posts = posts\n    data.work = work\n    data.education = education\n",
  "page_name": "mna-profile",
  "page_title": "Profile",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-19 16:45:20.817980",
+ "published_at": "2026-09-19 16:54:47.019258",
  "route": "profile/:username"
 }
