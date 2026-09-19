@@ -1,7 +1,7 @@
 """The frame every page shares: shell, header with breadcrumbs, scroll area and
 a centered container."""
 
-from blocks import INK, INK_BLACK, MUTED, OUTLINE, block, icon, instance_of
+from blocks import INK, INK_BLACK, MUTED, OUTLINE, block, html_el, instance_of, raw_block, svg
 
 
 def crumb_link(label, href, styles=None, name=None):
@@ -57,25 +57,28 @@ def page_header(crumbs):
 				},
 				children=crumbs,
 			),
-			block(
-				"a",
+			raw_block(
 				"New Post",
-				["mna-btn", "mna-btn-solid"],
-				attrs={"href": "/write"},
-				styles={
-					"display": "inline-flex",
-					"alignItems": "center",
-					"justifyContent": "center",
-					"gap": "8px",
-					"height": "28px",
-					"padding": "0 8px",
-					"borderRadius": "8px",
-					"backgroundColor": INK,
-					"color": "#ffffff",
-					"fontSize": "14px",
-					"whiteSpace": "nowrap",
-				},
-				children=[icon("plus", 16), block("span", text="New Post")],
+				html_el(
+					"a",
+					["mna-btn", "mna-btn-solid"],
+					{"href": "/write"},
+					{
+						"display": "inline-flex",
+						"alignItems": "center",
+						"justifyContent": "center",
+						"gap": "8px",
+						"height": "28px",
+						"padding": "0 8px",
+						"borderRadius": "8px",
+						"backgroundColor": INK,
+						"color": "#ffffff",
+						"fontSize": "14px",
+						"whiteSpace": "nowrap",
+					},
+					[svg("plus", 16), html_el("span", text="New Post")],
+				),
+				styles={"display": "flex"},
 			),
 		],
 	)

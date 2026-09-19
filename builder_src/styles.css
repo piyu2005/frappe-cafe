@@ -68,16 +68,19 @@ body {
     rgba(0, 0, 0, 0.2) 0 0 1px 0,
     rgba(0, 0, 0, 0.14) 0 1px 3px 0;
 }
+/* The shell's HTML carries inline styles (so the editor canvas shows it), and
+   inline styles beat class rules. The states that JavaScript toggles, and the
+   ones that change what the inline styles set, therefore use !important. */
 .mna-badge.show {
-  display: block;
+  display: block !important;
 }
 
 /* ---- Logo menu ---- */
 .mna-menu.open {
-  display: block;
+  display: block !important;
 }
 .mna-menu-item:hover {
-  background: var(--mna-surface-2);
+  background: var(--mna-surface-2) !important;
 }
 
 /* ---- Confirm dialog (Logout). Created by shell.js. ---- */
@@ -189,7 +192,7 @@ body {
   color: #fff;
 }
 .mna-btn-solid:hover {
-  background: #383838;
+  background: #383838 !important;
 }
 .mna-btn-subtle {
   background: var(--mna-surface-2);
@@ -330,12 +333,12 @@ body {
   color: var(--mna-outline-strong);
 }
 .mna-search input:hover {
-  background: var(--mna-hover);
-  border-color: var(--mna-hover);
+  background: var(--mna-hover) !important;
+  border-color: var(--mna-hover) !important;
 }
 .mna-search input:focus {
-  background: #fff;
-  border-color: var(--mna-outline-strong);
+  background: #fff !important;
+  border-color: var(--mna-outline-strong) !important;
   box-shadow:
     rgba(255, 255, 255, 0.16) 0 0.25px 1.5px 0 inset,
     rgba(0, 0, 0, 0.2) 0 0 1px 0,
@@ -392,16 +395,16 @@ body {
 
 /* ---- Profile page ---- */
 .mna-outline-btn:hover {
-  background: #f8f8f8;
+  background: #f8f8f8 !important;
 }
 .mna-icon-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.06) !important;
 }
 .mna-text-btn:hover {
-  background: var(--mna-surface-2);
+  background: var(--mna-surface-2) !important;
 }
 .mna-text-btn[data-action='toggle-bio']:hover {
-  background: transparent;
+  background: transparent !important;
   color: var(--mna-ink-8);
   text-decoration: underline;
 }
@@ -488,8 +491,8 @@ body {
     color: var(--mna-ink);
   }
   .mna-tab .mna-badge {
-    top: 8px;
-    right: calc(50% - 20px);
+    top: 8px !important;
+    right: calc(50% - 20px) !important;
   }
   .mna-profile-head {
     gap: 16px !important;

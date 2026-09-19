@@ -21,864 +21,15 @@
       "lineHeight": "1.15",
       "letterSpacing": "0.02em"
      },
-     "blockId": "zeegvzb06",
+     "blockId": "lk2n45otn",
      "blockName": "App",
      "children": [
       {
        "attributes": {},
        "baseStyles": {},
-       "blockId": "dwl3nsktj",
+       "blockId": "iwbjlzwtt",
        "blockName": "Shell",
-       "children": [
-        {
-         "attributes": {},
-         "baseStyles": {},
-         "blockId": "sk70x5bd0",
-         "blockName": null,
-         "children": [
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "5jv20cfhb",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "k1wcfm98r",
-             "blockName": null,
-             "children": [
-              {
-               "attributes": {},
-               "baseStyles": {},
-               "blockId": "z8wzdw8g5",
-               "blockName": null,
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": null,
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": null,
-               "isChildOfComponent": "df8258a0532b0139",
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": null,
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": "8u0amm2ri",
-               "tabletStyles": {},
-               "visibilityCondition": null
-              }
-             ],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "z884e2lrv",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "5fypjaavr",
-             "blockName": null,
-             "children": [
-              {
-               "attributes": {},
-               "baseStyles": {},
-               "blockId": "69hlzyqs1",
-               "blockName": null,
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": null,
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": null,
-               "isChildOfComponent": "df8258a0532b0139",
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": null,
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": "phvuns8ip",
-               "tabletStyles": {},
-               "visibilityCondition": null
-              }
-             ],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "92yxywprp",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "hm2fswo22",
-             "blockName": null,
-             "children": [
-              {
-               "attributes": {},
-               "baseStyles": {},
-               "blockId": "0a98plrvo",
-               "blockName": null,
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": null,
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": null,
-               "isChildOfComponent": "df8258a0532b0139",
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": null,
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": "8j2mvp1f8",
-               "tabletStyles": {},
-               "visibilityCondition": null
-              }
-             ],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "l2vizvn7c",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "s10f9w6uk",
-             "blockName": null,
-             "children": [
-              {
-               "attributes": {},
-               "baseStyles": {},
-               "blockId": "ixzxmk8jm",
-               "blockName": null,
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": null,
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": null,
-               "isChildOfComponent": "df8258a0532b0139",
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": null,
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": "2v4wichu0",
-               "tabletStyles": {},
-               "visibilityCondition": null
-              },
-              {
-               "attributes": {},
-               "baseStyles": {},
-               "blockId": "h3evst5bb",
-               "blockName": null,
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": null,
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": null,
-               "isChildOfComponent": "df8258a0532b0139",
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": null,
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": "udqqi9qcx",
-               "tabletStyles": {},
-               "visibilityCondition": null
-              }
-             ],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "0er5gux5q",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "nttifgrpd",
-             "blockName": null,
-             "children": [
-              {
-               "attributes": {},
-               "baseStyles": {},
-               "blockId": "onaqcujed",
-               "blockName": null,
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": null,
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": null,
-               "isChildOfComponent": "df8258a0532b0139",
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": null,
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": "hzarz9gz9",
-               "tabletStyles": {},
-               "visibilityCondition": null
-              }
-             ],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "i1swc0dut",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "xpaah7htz",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          }
-         ],
-         "classes": [],
-         "clientScript": {},
-         "customAttributes": {},
-         "dataKey": null,
-         "draggable": false,
-         "dynamicValues": [],
-         "element": null,
-         "elementBeforeConversion": null,
-         "extendedFromComponent": null,
-         "innerHTML": null,
-         "isChildOfComponent": "df8258a0532b0139",
-         "isRepeaterBlock": false,
-         "mobileStyles": {},
-         "originalElement": null,
-         "props": {},
-         "rawStyles": {},
-         "referenceBlockId": "s1jl46jyk",
-         "tabletStyles": {},
-         "visibilityCondition": null
-        },
-        {
-         "attributes": {},
-         "baseStyles": {},
-         "blockId": "3z38dg2w5",
-         "blockName": null,
-         "children": [
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "uhug597q1",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "xok9o4hca",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "gofqgkr5n",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "felft1ogl",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "v3b5g2rfr",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "8jxgq7o5z",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "dugnk9fqd",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "2ot310qoq",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "nrrluftuh",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "w569beq6v",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "jnihv4r6j",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "6c7fy38ga",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "n2rgavn3z",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "jr8wztzsd",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "vpc777p08",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "74laa5rxe",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "ky26ql7ff",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "55e4dij6f",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "oumnfzf3n",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "72rtgupkz",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "i0gwnvh16",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "qjggtq590",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          }
-         ],
-         "classes": [],
-         "clientScript": {},
-         "customAttributes": {},
-         "dataKey": null,
-         "draggable": false,
-         "dynamicValues": [],
-         "element": null,
-         "elementBeforeConversion": null,
-         "extendedFromComponent": null,
-         "innerHTML": null,
-         "isChildOfComponent": "df8258a0532b0139",
-         "isRepeaterBlock": false,
-         "mobileStyles": {},
-         "originalElement": null,
-         "props": {},
-         "rawStyles": {},
-         "referenceBlockId": "0w05k6sgl",
-         "tabletStyles": {},
-         "visibilityCondition": null
-        },
-        {
-         "attributes": {},
-         "baseStyles": {},
-         "blockId": "n3hd3027x",
-         "blockName": null,
-         "children": [
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "zjll1rnjd",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "xpvmv09i3",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "e7y5z8oww",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "cale29xoq",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "s8vfp45j6",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "pm882of1e",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
-           "attributes": {},
-           "baseStyles": {},
-           "blockId": "w1ktk3qhb",
-           "blockName": null,
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "m0zl7pldd",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "te972m926",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "pjnde1vhk",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": null,
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": null,
-             "isChildOfComponent": "df8258a0532b0139",
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": "npbgx16r5",
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": null,
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": null,
-           "isChildOfComponent": "df8258a0532b0139",
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": "qs4ale63p",
-           "tabletStyles": {},
-           "visibilityCondition": null
-          }
-         ],
-         "classes": [],
-         "clientScript": {},
-         "customAttributes": {},
-         "dataKey": null,
-         "draggable": false,
-         "dynamicValues": [],
-         "element": null,
-         "elementBeforeConversion": null,
-         "extendedFromComponent": null,
-         "innerHTML": null,
-         "isChildOfComponent": "df8258a0532b0139",
-         "isRepeaterBlock": false,
-         "mobileStyles": {},
-         "originalElement": null,
-         "props": {},
-         "rawStyles": {},
-         "referenceBlockId": "pw503096x",
-         "tabletStyles": {},
-         "visibilityCondition": null
-        }
-       ],
+       "children": [],
        "classes": [],
        "clientScript": {},
        "customAttributes": {},
@@ -907,7 +58,7 @@
         "flexDirection": "column",
         "minWidth": "0"
        },
-       "blockId": "21624d0ps",
+       "blockId": "not9qezgc",
        "blockName": "Main",
        "children": [
         {
@@ -925,7 +76,7 @@
           "borderBottom": "1px solid #ededed",
           "backgroundColor": "#ffffff"
          },
-         "blockId": "4vucr5vuc",
+         "blockId": "mutf7eyop",
          "blockName": "Header",
          "children": [
           {
@@ -940,7 +91,7 @@
             "letterSpacing": "0.015em",
             "color": "#7c7c7c"
            },
-           "blockId": "bxx7qj9a1",
+           "blockId": "e8hq76ve1",
            "blockName": "Breadcrumbs",
            "children": [
             {
@@ -948,7 +99,7 @@
               "href": "/"
              },
              "baseStyles": {},
-             "blockId": "jcxu8vg65",
+             "blockId": "ex4e8jq19",
              "blockName": null,
              "children": [],
              "classes": [],
@@ -979,7 +130,7 @@
               "fontWeight": "420",
               "letterSpacing": "0.02em"
              },
-             "blockId": "m20ode0lv",
+             "blockId": "loymiuavf",
              "blockName": "Separator",
              "children": [],
              "classes": [
@@ -1009,7 +160,7 @@
              "baseStyles": {
               "color": "#0f0f0f"
              },
-             "blockId": "i732j2gkh",
+             "blockId": "kh0a175nf",
              "blockName": null,
              "children": [],
              "classes": [
@@ -1044,7 +195,7 @@
              "baseStyles": {
               "color": "#7c7c7c"
              },
-             "blockId": "o1si7kf2e",
+             "blockId": "qjq6st40f",
              "blockName": "Explore",
              "children": [],
              "classes": [],
@@ -1078,7 +229,7 @@
               "fontWeight": "420",
               "letterSpacing": "0.02em"
              },
-             "blockId": "1l0l85cuj",
+             "blockId": "nbpprjqi3",
              "blockName": "Separator",
              "children": [],
              "classes": [
@@ -1111,7 +262,7 @@
              "baseStyles": {
               "color": "#0f0f0f"
              },
-             "blockId": "sau0vy8bl",
+             "blockId": "fb1ow36v4",
              "blockName": null,
              "children": [],
              "classes": [
@@ -1170,99 +321,27 @@
            "visibilityCondition": null
           },
           {
-           "attributes": {
-            "href": "/write"
-           },
+           "attributes": {},
            "baseStyles": {
-            "display": "inline-flex",
-            "alignItems": "center",
-            "justifyContent": "center",
-            "gap": "8px",
-            "height": "28px",
-            "padding": "0 8px",
-            "borderRadius": "8px",
-            "backgroundColor": "#171717",
-            "color": "#ffffff",
-            "fontSize": "14px",
-            "whiteSpace": "nowrap"
+            "display": "flex"
            },
-           "blockId": "n63rulnus",
+           "blockId": "hzeh33fde",
            "blockName": "New Post",
-           "children": [
-            {
-             "attributes": {},
-             "baseStyles": {
-              "width": "16px",
-              "height": "16px",
-              "flexShrink": "0"
-             },
-             "blockId": "yako6i7fc",
-             "blockName": "icon/plus",
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": "svg",
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg>",
-             "isChildOfComponent": null,
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": "__raw_html__",
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": null,
-             "tabletStyles": {},
-             "visibilityCondition": null
-            },
-            {
-             "attributes": {},
-             "baseStyles": {},
-             "blockId": "zgafug37c",
-             "blockName": null,
-             "children": [],
-             "classes": [],
-             "clientScript": {},
-             "customAttributes": {},
-             "dataKey": null,
-             "draggable": false,
-             "dynamicValues": [],
-             "element": "span",
-             "elementBeforeConversion": null,
-             "extendedFromComponent": null,
-             "innerHTML": "New Post",
-             "isChildOfComponent": null,
-             "isRepeaterBlock": false,
-             "mobileStyles": {},
-             "originalElement": null,
-             "props": {},
-             "rawStyles": {},
-             "referenceBlockId": null,
-             "tabletStyles": {},
-             "visibilityCondition": null
-            }
-           ],
-           "classes": [
-            "mna-btn",
-            "mna-btn-solid"
-           ],
+           "children": [],
+           "classes": [],
            "clientScript": {},
            "customAttributes": {},
            "dataKey": null,
            "draggable": false,
            "dynamicValues": [],
-           "element": "a",
+           "element": "div",
            "elementBeforeConversion": null,
            "extendedFromComponent": null,
-           "innerHTML": null,
+           "innerHTML": "<a class=\"mna-btn mna-btn-solid\" href=\"/write\" style=\"display:inline-flex;align-items:center;justify-content:center;gap:8px;height:28px;padding:0 8px;border-radius:8px;background-color:#171717;color:#ffffff;font-size:14px;white-space:nowrap\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg><span >New Post</span></a>",
            "isChildOfComponent": null,
            "isRepeaterBlock": false,
            "mobileStyles": {},
-           "originalElement": null,
+           "originalElement": "__raw_html__",
            "props": {},
            "rawStyles": {},
            "referenceBlockId": null,
@@ -1297,7 +376,7 @@
          "baseStyles": {
           "flexGrow": "1"
          },
-         "blockId": "jpnm87cbf",
+         "blockId": "g0dan7cxw",
          "blockName": "Scroll area",
          "children": [
           {
@@ -1308,7 +387,7 @@
             "margin": "0 auto",
             "padding": "32px 20px"
            },
-           "blockId": "3c05i8gb5",
+           "blockId": "zkbry8edx",
            "blockName": "Container",
            "children": [
             {
@@ -1316,7 +395,7 @@
               "id": "mna-profile"
              },
              "baseStyles": {},
-             "blockId": "sbwtz31m8",
+             "blockId": "7l53ck7ag",
              "blockName": "Profile",
              "children": [
               {
@@ -1326,7 +405,7 @@
                 "alignItems": "flex-start",
                 "gap": "32px"
                },
-               "blockId": "vbowuv282",
+               "blockId": "82x455xje",
                "blockName": "Profile header",
                "children": [
                 {
@@ -1342,7 +421,7 @@
                   "borderRadius": "9999px",
                   "backgroundColor": "#f3f3f3"
                  },
-                 "blockId": "5x8ycc4j9",
+                 "blockId": "5lr9650ms",
                  "blockName": "Avatar",
                  "children": [
                   {
@@ -1356,7 +435,7 @@
                     "height": "100%",
                     "objectFit": "cover"
                    },
-                   "blockId": "b2mxxbyy3",
+                   "blockId": "sfsquy3ck",
                    "blockName": "Avatar image",
                    "children": [],
                    "classes": [],
@@ -1400,7 +479,7 @@
                     "gridArea": "1 / 1",
                     "textTransform": "uppercase"
                    },
-                   "blockId": "m2gnxqa9u",
+                   "blockId": "g7wzu41gu",
                    "blockName": "Initial",
                    "children": [],
                    "classes": [
@@ -1464,7 +543,7 @@
                   "flexGrow": "1",
                   "minWidth": "0"
                  },
-                 "blockId": "dc04mf0aq",
+                 "blockId": "bkwp45vxg",
                  "blockName": "Details",
                  "children": [
                   {
@@ -1475,7 +554,7 @@
                     "justifyContent": "space-between",
                     "gap": "16px"
                    },
-                   "blockId": "4r01wmqaf",
+                   "blockId": "bwofmdtr3",
                    "blockName": "Name row",
                    "children": [
                     {
@@ -1491,7 +570,7 @@
                       "letterSpacing": "0.015em",
                       "lineHeight": "1.6"
                      },
-                     "blockId": "o6dp096pk",
+                     "blockId": "ywke9f0sd",
                      "blockName": "Name",
                      "children": [],
                      "classes": [
@@ -1531,77 +610,31 @@
                       "gap": "8px",
                       "flexShrink": "0"
                      },
-                     "blockId": "i4mr9umj0",
+                     "blockId": "60izg50u5",
                      "blockName": "Buttons",
                      "children": [
                       {
-                       "attributes": {
-                        "type": "button",
-                        "aria-label": "Edit"
-                       },
+                       "attributes": {},
                        "baseStyles": {
-                        "display": "inline-flex",
-                        "alignItems": "center",
-                        "justifyContent": "center",
-                        "gap": "8px",
-                        "height": "28px",
-                        "minWidth": "28px",
-                        "padding": "0 8px",
-                        "border": "1px solid #e2e2e2",
-                        "borderRadius": "8px",
-                        "backgroundColor": "#ffffff",
-                        "color": "#171717",
-                        "fontSize": "14px",
-                        "cursor": "pointer"
+                        "display": "flex"
                        },
-                       "blockId": "noygpxwi0",
+                       "blockId": "0pvwk4z5x",
                        "blockName": "Edit",
-                       "children": [
-                        {
-                         "attributes": {},
-                         "baseStyles": {},
-                         "blockId": "cl3nsta2w",
-                         "blockName": null,
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "span",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "Edit",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": null,
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        }
-                       ],
-                       "classes": [
-                        "mna-outline-btn"
-                       ],
+                       "children": [],
+                       "classes": [],
                        "clientScript": {},
-                       "customAttributes": {
-                        "data-action": "edit-header"
-                       },
+                       "customAttributes": {},
                        "dataKey": null,
                        "draggable": false,
                        "dynamicValues": [],
-                       "element": "button",
+                       "element": "div",
                        "elementBeforeConversion": null,
                        "extendedFromComponent": null,
-                       "innerHTML": null,
+                       "innerHTML": "<button class=\"mna-outline-btn\" type=\"button\" aria-label=\"Edit\" data-action=\"edit-header\" style=\"display:inline-flex;align-items:center;justify-content:center;gap:8px;height:28px;min-width:28px;padding:0 8px;border:1px solid #e2e2e2;border-radius:8px;background-color:#ffffff;color:#171717;font-size:14px;cursor:pointer\"><span >Edit</span></button>",
                        "isChildOfComponent": null,
                        "isRepeaterBlock": false,
                        "mobileStyles": {},
-                       "originalElement": null,
+                       "originalElement": "__raw_html__",
                        "props": {},
                        "rawStyles": {},
                        "referenceBlockId": null,
@@ -1612,77 +645,27 @@
                        }
                       },
                       {
-                       "attributes": {
-                        "type": "button",
-                        "aria-label": "Copy profile link"
-                       },
+                       "attributes": {},
                        "baseStyles": {
-                        "display": "inline-flex",
-                        "alignItems": "center",
-                        "justifyContent": "center",
-                        "gap": "8px",
-                        "height": "28px",
-                        "minWidth": "28px",
-                        "padding": "0",
-                        "border": "1px solid #e2e2e2",
-                        "borderRadius": "8px",
-                        "backgroundColor": "#ffffff",
-                        "color": "#171717",
-                        "fontSize": "14px",
-                        "cursor": "pointer"
+                        "display": "flex"
                        },
-                       "blockId": "2muua9vv9",
+                       "blockId": "qjj00o11k",
                        "blockName": "Share",
-                       "children": [
-                        {
-                         "attributes": {},
-                         "baseStyles": {
-                          "width": "16px",
-                          "height": "16px",
-                          "flexShrink": "0"
-                         },
-                         "blockId": "1im6z3iai",
-                         "blockName": "icon/share-2",
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "svg",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><circle cx=\"18\" cy=\"5\" r=\"3\" />\n  <circle cx=\"6\" cy=\"12\" r=\"3\" />\n  <circle cx=\"18\" cy=\"19\" r=\"3\" />\n  <line x1=\"8.59\" x2=\"15.42\" y1=\"13.51\" y2=\"17.49\" />\n  <line x1=\"15.41\" x2=\"8.59\" y1=\"6.51\" y2=\"10.49\" /></svg>",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": "__raw_html__",
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        }
-                       ],
-                       "classes": [
-                        "mna-outline-btn"
-                       ],
+                       "children": [],
+                       "classes": [],
                        "clientScript": {},
-                       "customAttributes": {
-                        "data-action": "share"
-                       },
+                       "customAttributes": {},
                        "dataKey": null,
                        "draggable": false,
                        "dynamicValues": [],
-                       "element": "button",
+                       "element": "div",
                        "elementBeforeConversion": null,
                        "extendedFromComponent": null,
-                       "innerHTML": null,
+                       "innerHTML": "<button class=\"mna-outline-btn\" type=\"button\" aria-label=\"Copy profile link\" data-action=\"share\" style=\"display:inline-flex;align-items:center;justify-content:center;gap:8px;height:28px;min-width:28px;padding:0;border:1px solid #e2e2e2;border-radius:8px;background-color:#ffffff;color:#171717;font-size:14px;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><circle cx=\"18\" cy=\"5\" r=\"3\" />\n  <circle cx=\"6\" cy=\"12\" r=\"3\" />\n  <circle cx=\"18\" cy=\"19\" r=\"3\" />\n  <line x1=\"8.59\" x2=\"15.42\" y1=\"13.51\" y2=\"17.49\" />\n  <line x1=\"15.41\" x2=\"8.59\" y1=\"6.51\" y2=\"10.49\" /></svg></button>",
                        "isChildOfComponent": null,
                        "isRepeaterBlock": false,
                        "mobileStyles": {},
-                       "originalElement": null,
+                       "originalElement": "__raw_html__",
                        "props": {},
                        "rawStyles": {},
                        "referenceBlockId": null,
@@ -1749,7 +732,7 @@
                     "letterSpacing": "0.02em",
                     "lineHeight": "1.15"
                    },
-                   "blockId": "tdcp2qnyh",
+                   "blockId": "uu4fq6wtn",
                    "blockName": "Job line",
                    "children": [
                     {
@@ -1759,7 +742,7 @@
                       "alignItems": "center",
                       "gap": "4px"
                      },
-                     "blockId": "j1zmhq889",
+                     "blockId": "7qsqmod7x",
                      "blockName": "Job",
                      "children": [
                       {
@@ -1769,7 +752,7 @@
                         "height": "16px",
                         "flexShrink": "0"
                        },
-                       "blockId": "aud1qcgj7",
+                       "blockId": "7u7kkzk2f",
                        "blockName": "icon/briefcase",
                        "children": [],
                        "classes": [],
@@ -1795,7 +778,7 @@
                       {
                        "attributes": {},
                        "baseStyles": {},
-                       "blockId": "bn805tbql",
+                       "blockId": "g7gernw5f",
                        "blockName": null,
                        "children": [],
                        "classes": [],
@@ -1852,7 +835,7 @@
                     {
                      "attributes": {},
                      "baseStyles": {},
-                     "blockId": "4vnafffdq",
+                     "blockId": "c9xbmk8am",
                      "blockName": "Dot",
                      "children": [],
                      "classes": [],
@@ -1881,7 +864,7 @@
                     {
                      "attributes": {},
                      "baseStyles": {},
-                     "blockId": "i6ti8zh5s",
+                     "blockId": "jdhhrswxg",
                      "blockName": "Username",
                      "children": [],
                      "classes": [],
@@ -1937,7 +920,7 @@
                    "baseStyles": {
                     "marginTop": "4px"
                    },
-                   "blockId": "dz54jwgw0",
+                   "blockId": "olva71huy",
                    "blockName": "Headline",
                    "children": [
                     {
@@ -1950,7 +933,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.5"
                      },
-                     "blockId": "2b9pfns3m",
+                     "blockId": "gdu35lejm",
                      "blockName": "Headline text",
                      "children": [],
                      "classes": [],
@@ -1993,7 +976,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.5"
                      },
-                     "blockId": "bgy4lslok",
+                     "blockId": "jyo4owijc",
                      "blockName": "Headline hint",
                      "children": [],
                      "classes": [],
@@ -2095,7 +1078,7 @@
                 "flexDirection": "column",
                 "gap": "32px"
                },
-               "blockId": "aa3sqy87l",
+               "blockId": "f35ys8d3r",
                "blockName": "Sections",
                "children": [
                 {
@@ -2105,7 +1088,7 @@
                   "borderRadius": "10px",
                   "padding": "20px"
                  },
-                 "blockId": "uu4fq6wtn",
+                 "blockId": "pm882of1e",
                  "blockName": "Introduction",
                  "children": [
                   {
@@ -2116,7 +1099,7 @@
                     "justifyContent": "space-between",
                     "paddingBottom": "16px"
                    },
-                   "blockId": "jdhhrswxg",
+                   "blockId": "s8vfp45j6",
                    "blockName": "Card header",
                    "children": [
                     {
@@ -2131,66 +1114,9 @@
                       "letterSpacing": "0.015em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "c9xbmk8am",
+                     "blockId": "e7y5z8oww",
                      "blockName": "Card title",
-                     "children": [
-                      {
-                       "attributes": {},
-                       "baseStyles": {
-                        "width": "16px",
-                        "height": "16px",
-                        "flexShrink": "0"
-                       },
-                       "blockId": "g7gernw5f",
-                       "blockName": "icon/user",
-                       "children": [],
-                       "classes": [],
-                       "clientScript": {},
-                       "customAttributes": {},
-                       "dataKey": null,
-                       "draggable": false,
-                       "dynamicValues": [],
-                       "element": "svg",
-                       "elementBeforeConversion": null,
-                       "extendedFromComponent": null,
-                       "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" />\n  <circle cx=\"12\" cy=\"7\" r=\"4\" /></svg>",
-                       "isChildOfComponent": null,
-                       "isRepeaterBlock": false,
-                       "mobileStyles": {},
-                       "originalElement": "__raw_html__",
-                       "props": {},
-                       "rawStyles": {},
-                       "referenceBlockId": null,
-                       "tabletStyles": {},
-                       "visibilityCondition": null
-                      },
-                      {
-                       "attributes": {},
-                       "baseStyles": {},
-                       "blockId": "7qsqmod7x",
-                       "blockName": null,
-                       "children": [],
-                       "classes": [],
-                       "clientScript": {},
-                       "customAttributes": {},
-                       "dataKey": null,
-                       "draggable": false,
-                       "dynamicValues": [],
-                       "element": "span",
-                       "elementBeforeConversion": null,
-                       "extendedFromComponent": null,
-                       "innerHTML": "Introduction",
-                       "isChildOfComponent": null,
-                       "isRepeaterBlock": false,
-                       "mobileStyles": {},
-                       "originalElement": null,
-                       "props": {},
-                       "rawStyles": {},
-                       "referenceBlockId": null,
-                       "tabletStyles": {},
-                       "visibilityCondition": null
-                      }
-                     ],
+                     "children": [],
                      "classes": [],
                      "clientScript": {},
                      "customAttributes": {},
@@ -2200,11 +1126,11 @@
                      "element": "div",
                      "elementBeforeConversion": null,
                      "extendedFromComponent": null,
-                     "innerHTML": null,
+                     "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" />\n  <circle cx=\"12\" cy=\"7\" r=\"4\" /></svg><span >Introduction</span>",
                      "isChildOfComponent": null,
                      "isRepeaterBlock": false,
                      "mobileStyles": {},
-                     "originalElement": null,
+                     "originalElement": "__raw_html__",
                      "props": {},
                      "rawStyles": {},
                      "referenceBlockId": null,
@@ -2212,76 +1138,27 @@
                      "visibilityCondition": null
                     },
                     {
-                     "attributes": {
-                      "type": "button",
-                      "aria-label": "Edit introduction",
-                      "title": "Edit introduction"
-                     },
+                     "attributes": {},
                      "baseStyles": {
-                      "display": "grid",
-                      "placeItems": "center",
-                      "flexShrink": "0",
-                      "width": "24px",
-                      "height": "24px",
-                      "padding": "0",
-                      "border": "0",
-                      "borderRadius": "6px",
-                      "backgroundColor": "transparent",
-                      "color": "#171717",
-                      "cursor": "pointer"
+                      "display": "flex"
                      },
-                     "blockId": "7u7kkzk2f",
+                     "blockId": "0w05k6sgl",
                      "blockName": "Edit introduction",
-                     "children": [
-                      {
-                       "attributes": {},
-                       "baseStyles": {
-                        "width": "14px",
-                        "height": "14px",
-                        "flexShrink": "0"
-                       },
-                       "blockId": "bwofmdtr3",
-                       "blockName": "icon/pencil",
-                       "children": [],
-                       "classes": [],
-                       "clientScript": {},
-                       "customAttributes": {},
-                       "dataKey": null,
-                       "draggable": false,
-                       "dynamicValues": [],
-                       "element": "svg",
-                       "elementBeforeConversion": null,
-                       "extendedFromComponent": null,
-                       "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\" />\n  <path d=\"m15 5 4 4\" /></svg>",
-                       "isChildOfComponent": null,
-                       "isRepeaterBlock": false,
-                       "mobileStyles": {},
-                       "originalElement": "__raw_html__",
-                       "props": {},
-                       "rawStyles": {},
-                       "referenceBlockId": null,
-                       "tabletStyles": {},
-                       "visibilityCondition": null
-                      }
-                     ],
-                     "classes": [
-                      "mna-icon-btn"
-                     ],
+                     "children": [],
+                     "classes": [],
                      "clientScript": {},
-                     "customAttributes": {
-                      "data-action": "edit-bio"
-                     },
+                     "customAttributes": {},
                      "dataKey": null,
                      "draggable": false,
                      "dynamicValues": [],
-                     "element": "button",
+                     "element": "div",
                      "elementBeforeConversion": null,
                      "extendedFromComponent": null,
-                     "innerHTML": null,
+                     "innerHTML": "<button class=\"mna-icon-btn\" type=\"button\" aria-label=\"Edit introduction\" title=\"Edit introduction\" data-action=\"edit-bio\" style=\"display:grid;place-items:center;flex-shrink:0;width:24px;height:24px;padding:0;border:0;border-radius:6px;background-color:transparent;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:14px;height:14px\"><path d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\" />\n  <path d=\"m15 5 4 4\" /></svg></button>",
                      "isChildOfComponent": null,
                      "isRepeaterBlock": false,
                      "mobileStyles": {},
-                     "originalElement": null,
+                     "originalElement": "__raw_html__",
                      "props": {},
                      "rawStyles": {},
                      "referenceBlockId": null,
@@ -2324,7 +1201,7 @@
                     "letterSpacing": "0.02em",
                     "lineHeight": "1.5"
                    },
-                   "blockId": "0pvwk4z5x",
+                   "blockId": "55e4dij6f",
                    "blockName": "Bio",
                    "children": [],
                    "classes": [
@@ -2378,7 +1255,7 @@
                     "width": "100%",
                     "justifyContent": "flex-end"
                    },
-                   "blockId": "qjj00o11k",
+                   "blockId": "i0gwnvh16",
                    "blockName": "See more",
                    "children": [],
                    "classes": [
@@ -2418,7 +1295,7 @@
                     "letterSpacing": "0.02em",
                     "lineHeight": "1.5"
                    },
-                   "blockId": "60izg50u5",
+                   "blockId": "qjggtq590",
                    "blockName": "Bio hint",
                    "children": [],
                    "classes": [],
@@ -2470,7 +1347,7 @@
                 {
                  "attributes": {},
                  "baseStyles": {},
-                 "blockId": "lk2n45otn",
+                 "blockId": "lsyukjip0",
                  "blockName": "Posts section",
                  "children": [
                   {
@@ -2480,7 +1357,7 @@
                     "borderRadius": "10px",
                     "padding": "20px"
                    },
-                   "blockId": "mutf7eyop",
+                   "blockId": "30b5g0tyo",
                    "blockName": "Posts",
                    "children": [
                     {
@@ -2491,7 +1368,7 @@
                       "justifyContent": "space-between",
                       "paddingBottom": "16px"
                      },
-                     "blockId": "hzeh33fde",
+                     "blockId": "90bsj4bzh",
                      "blockName": "Card header",
                      "children": [
                       {
@@ -2506,66 +1383,9 @@
                         "letterSpacing": "0.015em",
                         "lineHeight": "1.15"
                        },
-                       "blockId": "e8hq76ve1",
+                       "blockId": "oougmh84t",
                        "blockName": "Card title",
-                       "children": [
-                        {
-                         "attributes": {},
-                         "baseStyles": {
-                          "width": "16px",
-                          "height": "16px",
-                          "flexShrink": "0"
-                         },
-                         "blockId": "6y0m7rvcq",
-                         "blockName": "icon/notebook-pen",
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "svg",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\" />\n  <path d=\"M2 6h4\" />\n  <path d=\"M2 10h4\" />\n  <path d=\"M2 14h4\" />\n  <path d=\"M2 18h4\" />\n  <path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\" /></svg>",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": "__raw_html__",
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        },
-                        {
-                         "attributes": {},
-                         "baseStyles": {},
-                         "blockId": "zkbry8edx",
-                         "blockName": null,
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "span",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "Posts",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": null,
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        }
-                       ],
+                       "children": [],
                        "classes": [],
                        "clientScript": {},
                        "customAttributes": {},
@@ -2575,11 +1395,11 @@
                        "element": "div",
                        "elementBeforeConversion": null,
                        "extendedFromComponent": null,
-                       "innerHTML": null,
+                       "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4\" />\n  <path d=\"M2 6h4\" />\n  <path d=\"M2 10h4\" />\n  <path d=\"M2 14h4\" />\n  <path d=\"M2 18h4\" />\n  <path d=\"M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z\" /></svg><span >Posts</span>",
                        "isChildOfComponent": null,
                        "isRepeaterBlock": false,
                        "mobileStyles": {},
-                       "originalElement": null,
+                       "originalElement": "__raw_html__",
                        "props": {},
                        "rawStyles": {},
                        "referenceBlockId": null,
@@ -2613,7 +1433,7 @@
                       "display": "flex",
                       "flexDirection": "column"
                      },
-                     "blockId": "loymiuavf",
+                     "blockId": "0bcapmwop",
                      "blockName": "Posts list",
                      "children": [
                       {
@@ -2627,7 +1447,7 @@
                         "gap": "16px",
                         "padding": "20px 0"
                        },
-                       "blockId": "ex4e8jq19",
+                       "blockId": "70e36fi6m",
                        "blockName": "Post",
                        "children": [
                         {
@@ -2639,13 +1459,13 @@
                           "flexGrow": "1",
                           "minWidth": "0"
                          },
-                         "blockId": "7l53ck7ag",
+                         "blockId": "eeddqu7kh",
                          "blockName": "Text",
                          "children": [
                           {
                            "attributes": {},
                            "baseStyles": {},
-                           "blockId": "82x455xje",
+                           "blockId": "wzmfe2t22",
                            "blockName": "Title and excerpt",
                            "children": [
                             {
@@ -2657,7 +1477,7 @@
                               "letterSpacing": "0.015em",
                               "lineHeight": "1.15"
                              },
-                             "blockId": "gdu35lejm",
+                             "blockId": "te972m926",
                              "blockName": "Title",
                              "children": [],
                              "classes": [],
@@ -2697,7 +1517,7 @@
                               "letterSpacing": "0.02em",
                               "lineHeight": "1.5"
                              },
-                             "blockId": "jyo4owijc",
+                             "blockId": "npbgx16r5",
                              "blockName": "Excerpt",
                              "children": [],
                              "classes": [
@@ -2760,7 +1580,7 @@
                             "letterSpacing": "0.02em",
                             "lineHeight": "1.15"
                            },
-                           "blockId": "olva71huy",
+                           "blockId": "qs4ale63p",
                            "blockName": "Meta",
                            "children": [],
                            "classes": [],
@@ -2823,7 +1643,7 @@
                           "borderRadius": "10px",
                           "objectFit": "cover"
                          },
-                         "blockId": "bkwp45vxg",
+                         "blockId": "pw503096x",
                          "blockName": "Thumbnail",
                          "children": [],
                          "classes": [],
@@ -2924,13 +1744,13 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "nbpprjqi3",
+                     "blockId": "jq8u0xcrz",
                      "blockName": "Nothing yet",
                      "children": [
                       {
                        "attributes": {},
                        "baseStyles": {},
-                       "blockId": "kh0a175nf",
+                       "blockId": "fhgn83brm",
                        "blockName": null,
                        "children": [],
                        "classes": [],
@@ -2961,7 +1781,7 @@
                         "fontWeight": "500",
                         "color": "#171717"
                        },
-                       "blockId": "qjq6st40f",
+                       "blockId": "vr73ftpxx",
                        "blockName": "Write link",
                        "children": [],
                        "classes": [],
@@ -3018,7 +1838,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "fb1ow36v4",
+                     "blockId": "af5io4sm5",
                      "blockName": "No posts",
                      "children": [],
                      "classes": [],
@@ -3074,7 +1894,7 @@
                     "display": "flex",
                     "justifyContent": "center"
                    },
-                   "blockId": "iwbjlzwtt",
+                   "blockId": "qxdoka1v4",
                    "blockName": "More",
                    "children": [
                     {
@@ -3093,7 +1913,7 @@
                       "fontSize": "14px",
                       "cursor": "pointer"
                      },
-                     "blockId": "g0dan7cxw",
+                     "blockId": "shcbwowch",
                      "blockName": "Manage all posts",
                      "children": [],
                      "classes": [
@@ -3144,7 +1964,7 @@
                       "fontSize": "14px",
                       "cursor": "pointer"
                      },
-                     "blockId": "not9qezgc",
+                     "blockId": "c8wh2hs81",
                      "blockName": "View all posts",
                      "children": [],
                      "classes": [
@@ -3227,7 +2047,7 @@
                 {
                  "attributes": {},
                  "baseStyles": {},
-                 "blockId": "s0xvvislg",
+                 "blockId": "mg5m7q4fm",
                  "blockName": "Work section",
                  "children": [
                   {
@@ -3237,7 +2057,7 @@
                     "borderRadius": "10px",
                     "padding": "20px"
                    },
-                   "blockId": "lojiceuml",
+                   "blockId": "eyw9npsyi",
                    "blockName": "Work History",
                    "children": [
                     {
@@ -3248,7 +2068,7 @@
                       "justifyContent": "space-between",
                       "paddingBottom": "16px"
                      },
-                     "blockId": "i0bgj5r1p",
+                     "blockId": "ab1o3j3d1",
                      "blockName": "Card header",
                      "children": [
                       {
@@ -3263,66 +2083,9 @@
                         "letterSpacing": "0.015em",
                         "lineHeight": "1.15"
                        },
-                       "blockId": "opa2sowp3",
+                       "blockId": "gpfgo4zpx",
                        "blockName": "Card title",
-                       "children": [
-                        {
-                         "attributes": {},
-                         "baseStyles": {
-                          "width": "16px",
-                          "height": "16px",
-                          "flexShrink": "0"
-                         },
-                         "blockId": "utfcasms3",
-                         "blockName": "icon/briefcase",
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "svg",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\" />\n  <rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\" /></svg>",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": "__raw_html__",
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        },
-                        {
-                         "attributes": {},
-                         "baseStyles": {},
-                         "blockId": "cktt48cr1",
-                         "blockName": null,
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "span",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "Work History",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": null,
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        }
-                       ],
+                       "children": [],
                        "classes": [],
                        "clientScript": {},
                        "customAttributes": {},
@@ -3332,11 +2095,11 @@
                        "element": "div",
                        "elementBeforeConversion": null,
                        "extendedFromComponent": null,
-                       "innerHTML": null,
+                       "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16\" />\n  <rect width=\"20\" height=\"14\" x=\"2\" y=\"6\" rx=\"2\" /></svg><span >Work History</span>",
                        "isChildOfComponent": null,
                        "isRepeaterBlock": false,
                        "mobileStyles": {},
-                       "originalElement": null,
+                       "originalElement": "__raw_html__",
                        "props": {},
                        "rawStyles": {},
                        "referenceBlockId": null,
@@ -3344,76 +2107,27 @@
                        "visibilityCondition": null
                       },
                       {
-                       "attributes": {
-                        "type": "button",
-                        "aria-label": "Add work experience",
-                        "title": "Add work experience"
-                       },
+                       "attributes": {},
                        "baseStyles": {
-                        "display": "grid",
-                        "placeItems": "center",
-                        "flexShrink": "0",
-                        "width": "24px",
-                        "height": "24px",
-                        "padding": "0",
-                        "border": "0",
-                        "borderRadius": "6px",
-                        "backgroundColor": "transparent",
-                        "color": "#171717",
-                        "cursor": "pointer"
+                        "display": "flex"
                        },
-                       "blockId": "l4umdet7z",
+                       "blockId": "vyf76t9zq",
                        "blockName": "Add work experience",
-                       "children": [
-                        {
-                         "attributes": {},
-                         "baseStyles": {
-                          "width": "14px",
-                          "height": "14px",
-                          "flexShrink": "0"
-                         },
-                         "blockId": "psds96wv4",
-                         "blockName": "icon/plus",
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "svg",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg>",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": "__raw_html__",
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        }
-                       ],
-                       "classes": [
-                        "mna-icon-btn"
-                       ],
+                       "children": [],
+                       "classes": [],
                        "clientScript": {},
-                       "customAttributes": {
-                        "data-action": "add-work"
-                       },
+                       "customAttributes": {},
                        "dataKey": null,
                        "draggable": false,
                        "dynamicValues": [],
-                       "element": "button",
+                       "element": "div",
                        "elementBeforeConversion": null,
                        "extendedFromComponent": null,
-                       "innerHTML": null,
+                       "innerHTML": "<button class=\"mna-icon-btn\" type=\"button\" aria-label=\"Add work experience\" title=\"Add work experience\" data-action=\"add-work\" style=\"display:grid;place-items:center;flex-shrink:0;width:24px;height:24px;padding:0;border:0;border-radius:6px;background-color:transparent;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:14px;height:14px\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg></button>",
                        "isChildOfComponent": null,
                        "isRepeaterBlock": false,
                        "mobileStyles": {},
-                       "originalElement": null,
+                       "originalElement": "__raw_html__",
                        "props": {},
                        "rawStyles": {},
                        "referenceBlockId": null,
@@ -3452,7 +2166,7 @@
                       "display": "flex",
                       "flexDirection": "column"
                      },
-                     "blockId": "8avfwrjha",
+                     "blockId": "cbdvkaup4",
                      "blockName": "Work list",
                      "children": [
                       {
@@ -3464,13 +2178,13 @@
                         "gap": "12px",
                         "padding": "20px 0"
                        },
-                       "blockId": "xi3ju47gp",
+                       "blockId": "j3sa8a5w7",
                        "blockName": "Entry",
                        "children": [
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "gci2ldzmj",
+                         "blockId": "mpe9drkcc",
                          "blockName": "Text",
                          "children": [
                           {
@@ -3482,7 +2196,7 @@
                             "letterSpacing": "0.015em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "1u42jv215",
+                           "blockId": "pycyrsk21",
                            "blockName": "Primary",
                            "children": [],
                            "classes": [],
@@ -3522,13 +2236,13 @@
                             "letterSpacing": "0.02em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "2o40o4yoq",
+                           "blockId": "kcq8zsg16",
                            "blockName": "Line",
                            "children": [
                             {
                              "attributes": {},
                              "baseStyles": {},
-                             "blockId": "kewee6pau",
+                             "blockId": "64snk820m",
                              "blockName": "Secondary",
                              "children": [],
                              "classes": [],
@@ -3566,7 +2280,7 @@
                              "baseStyles": {
                               "color": "#999999"
                              },
-                             "blockId": "o9m7ql0ox",
+                             "blockId": "k56z2xqn7",
                              "blockName": "Dot",
                              "children": [],
                              "classes": [],
@@ -3601,7 +2315,7 @@
                               "letterSpacing": "0.02em",
                               "lineHeight": "1.15"
                              },
-                             "blockId": "nbrdpitk3",
+                             "blockId": "x9wji2rnv",
                              "blockName": "Dates",
                              "children": [],
                              "classes": [],
@@ -3665,7 +2379,7 @@
                             "letterSpacing": "0.015em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "g8tacvhc6",
+                           "blockId": "4afgz63tj",
                            "blockName": "Description",
                            "children": [],
                            "classes": [],
@@ -3738,7 +2452,7 @@
                           "color": "#171717",
                           "cursor": "pointer"
                          },
-                         "blockId": "t0crfrx84",
+                         "blockId": "o40mh9x3s",
                          "blockName": "Edit work experience",
                          "children": [
                           {
@@ -3748,7 +2462,7 @@
                             "height": "14px",
                             "flexShrink": "0"
                            },
-                           "blockId": "ms67wkeka",
+                           "blockId": "uambwz5m3",
                            "blockName": "icon/pencil",
                            "children": [],
                            "classes": [],
@@ -3868,7 +2582,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "9ijk5j0ul",
+                     "blockId": "8b7nkde5j",
                      "blockName": "No work (yours)",
                      "children": [],
                      "classes": [],
@@ -3904,7 +2618,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "e4jsej94g",
+                     "blockId": "5qf9nwcyv",
                      "blockName": "No work",
                      "children": [],
                      "classes": [],
@@ -3960,56 +2674,9 @@
                     "display": "flex",
                     "justifyContent": "center"
                    },
-                   "blockId": "b7khd1t2v",
+                   "blockId": "fpu6ho0uq",
                    "blockName": "More",
-                   "children": [
-                    {
-                     "attributes": {
-                      "type": "button"
-                     },
-                     "baseStyles": {
-                      "display": "inline-flex",
-                      "alignItems": "center",
-                      "height": "28px",
-                      "padding": "0 8px",
-                      "border": "0",
-                      "borderRadius": "8px",
-                      "backgroundColor": "transparent",
-                      "color": "#171717",
-                      "fontSize": "14px",
-                      "cursor": "pointer"
-                     },
-                     "blockId": "gpzfh4td2",
-                     "blockName": "Show all",
-                     "children": [],
-                     "classes": [
-                      "mna-text-btn"
-                     ],
-                     "clientScript": {},
-                     "customAttributes": {
-                      "data-expand": "mna-work-list"
-                     },
-                     "dataKey": null,
-                     "draggable": false,
-                     "dynamicValues": [],
-                     "element": "button",
-                     "elementBeforeConversion": null,
-                     "extendedFromComponent": null,
-                     "innerHTML": "Show all History",
-                     "isChildOfComponent": null,
-                     "isRepeaterBlock": false,
-                     "mobileStyles": {},
-                     "originalElement": null,
-                     "props": {},
-                     "rawStyles": {},
-                     "referenceBlockId": null,
-                     "tabletStyles": {},
-                     "visibilityCondition": {
-                      "key": "profile.work_more",
-                      "comesFrom": "dataScript"
-                     }
-                    }
-                   ],
+                   "children": [],
                    "classes": [],
                    "clientScript": {},
                    "customAttributes": {},
@@ -4019,11 +2686,11 @@
                    "element": "div",
                    "elementBeforeConversion": null,
                    "extendedFromComponent": null,
-                   "innerHTML": null,
+                   "innerHTML": "<button class=\"mna-text-btn\" type=\"button\" data-expand=\"mna-work-list\" style=\"display:inline-flex;align-items:center;height:28px;padding:0 8px;border:0;border-radius:8px;background-color:transparent;color:#171717;font-size:14px;cursor:pointer\">Show all History</button>",
                    "isChildOfComponent": null,
                    "isRepeaterBlock": false,
                    "mobileStyles": {},
-                   "originalElement": null,
+                   "originalElement": "__raw_html__",
                    "props": {},
                    "rawStyles": {},
                    "referenceBlockId": null,
@@ -4057,7 +2724,7 @@
                 {
                  "attributes": {},
                  "baseStyles": {},
-                 "blockId": "oot2ptpp7",
+                 "blockId": "qy4fxy6ye",
                  "blockName": "Education section",
                  "children": [
                   {
@@ -4067,7 +2734,7 @@
                     "borderRadius": "10px",
                     "padding": "20px"
                    },
-                   "blockId": "m4h8wlhyh",
+                   "blockId": "rr6k3hhgv",
                    "blockName": "Education",
                    "children": [
                     {
@@ -4078,7 +2745,7 @@
                       "justifyContent": "space-between",
                       "paddingBottom": "16px"
                      },
-                     "blockId": "mge663cqq",
+                     "blockId": "vdq8mthwn",
                      "blockName": "Card header",
                      "children": [
                       {
@@ -4093,66 +2760,9 @@
                         "letterSpacing": "0.015em",
                         "lineHeight": "1.15"
                        },
-                       "blockId": "9vb34dz4b",
+                       "blockId": "jpp2olyiv",
                        "blockName": "Card title",
-                       "children": [
-                        {
-                         "attributes": {},
-                         "baseStyles": {
-                          "width": "16px",
-                          "height": "16px",
-                          "flexShrink": "0"
-                         },
-                         "blockId": "kr7q155f5",
-                         "blockName": "icon/graduation-cap",
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "svg",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\" />\n  <path d=\"M22 10v6\" />\n  <path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\" /></svg>",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": "__raw_html__",
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        },
-                        {
-                         "attributes": {},
-                         "baseStyles": {},
-                         "blockId": "1ay90qg0p",
-                         "blockName": null,
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "span",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "Education",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": null,
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        }
-                       ],
+                       "children": [],
                        "classes": [],
                        "clientScript": {},
                        "customAttributes": {},
@@ -4162,11 +2772,11 @@
                        "element": "div",
                        "elementBeforeConversion": null,
                        "extendedFromComponent": null,
-                       "innerHTML": null,
+                       "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z\" />\n  <path d=\"M22 10v6\" />\n  <path d=\"M6 12.5V16a6 3 0 0 0 12 0v-3.5\" /></svg><span >Education</span>",
                        "isChildOfComponent": null,
                        "isRepeaterBlock": false,
                        "mobileStyles": {},
-                       "originalElement": null,
+                       "originalElement": "__raw_html__",
                        "props": {},
                        "rawStyles": {},
                        "referenceBlockId": null,
@@ -4174,76 +2784,27 @@
                        "visibilityCondition": null
                       },
                       {
-                       "attributes": {
-                        "type": "button",
-                        "aria-label": "Add education",
-                        "title": "Add education"
-                       },
+                       "attributes": {},
                        "baseStyles": {
-                        "display": "grid",
-                        "placeItems": "center",
-                        "flexShrink": "0",
-                        "width": "24px",
-                        "height": "24px",
-                        "padding": "0",
-                        "border": "0",
-                        "borderRadius": "6px",
-                        "backgroundColor": "transparent",
-                        "color": "#171717",
-                        "cursor": "pointer"
+                        "display": "flex"
                        },
-                       "blockId": "eloob4q66",
+                       "blockId": "x8ba827fy",
                        "blockName": "Add education",
-                       "children": [
-                        {
-                         "attributes": {},
-                         "baseStyles": {
-                          "width": "14px",
-                          "height": "14px",
-                          "flexShrink": "0"
-                         },
-                         "blockId": "twin7lebj",
-                         "blockName": "icon/plus",
-                         "children": [],
-                         "classes": [],
-                         "clientScript": {},
-                         "customAttributes": {},
-                         "dataKey": null,
-                         "draggable": false,
-                         "dynamicValues": [],
-                         "element": "svg",
-                         "elementBeforeConversion": null,
-                         "extendedFromComponent": null,
-                         "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg>",
-                         "isChildOfComponent": null,
-                         "isRepeaterBlock": false,
-                         "mobileStyles": {},
-                         "originalElement": "__raw_html__",
-                         "props": {},
-                         "rawStyles": {},
-                         "referenceBlockId": null,
-                         "tabletStyles": {},
-                         "visibilityCondition": null
-                        }
-                       ],
-                       "classes": [
-                        "mna-icon-btn"
-                       ],
+                       "children": [],
+                       "classes": [],
                        "clientScript": {},
-                       "customAttributes": {
-                        "data-action": "add-education"
-                       },
+                       "customAttributes": {},
                        "dataKey": null,
                        "draggable": false,
                        "dynamicValues": [],
-                       "element": "button",
+                       "element": "div",
                        "elementBeforeConversion": null,
                        "extendedFromComponent": null,
-                       "innerHTML": null,
+                       "innerHTML": "<button class=\"mna-icon-btn\" type=\"button\" aria-label=\"Add education\" title=\"Add education\" data-action=\"add-education\" style=\"display:grid;place-items:center;flex-shrink:0;width:24px;height:24px;padding:0;border:0;border-radius:6px;background-color:transparent;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:14px;height:14px\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg></button>",
                        "isChildOfComponent": null,
                        "isRepeaterBlock": false,
                        "mobileStyles": {},
-                       "originalElement": null,
+                       "originalElement": "__raw_html__",
                        "props": {},
                        "rawStyles": {},
                        "referenceBlockId": null,
@@ -4282,7 +2843,7 @@
                       "display": "flex",
                       "flexDirection": "column"
                      },
-                     "blockId": "whm710i08",
+                     "blockId": "rjj5c5lgn",
                      "blockName": "Education list",
                      "children": [
                       {
@@ -4294,13 +2855,13 @@
                         "gap": "12px",
                         "padding": "20px 0"
                        },
-                       "blockId": "n7k1o3m4n",
+                       "blockId": "1qwt1h908",
                        "blockName": "Entry",
                        "children": [
                         {
                          "attributes": {},
                          "baseStyles": {},
-                         "blockId": "x5ri18ubx",
+                         "blockId": "29ex3q34c",
                          "blockName": "Text",
                          "children": [
                           {
@@ -4312,7 +2873,7 @@
                             "letterSpacing": "0.015em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "kh7ofhrjz",
+                           "blockId": "w5t072y0o",
                            "blockName": "Primary",
                            "children": [],
                            "classes": [],
@@ -4352,13 +2913,13 @@
                             "letterSpacing": "0.02em",
                             "lineHeight": "1.5"
                            },
-                           "blockId": "rpax78lyw",
+                           "blockId": "3mfvcrj7j",
                            "blockName": "Line",
                            "children": [
                             {
                              "attributes": {},
                              "baseStyles": {},
-                             "blockId": "tsy8fslxl",
+                             "blockId": "h76094dar",
                              "blockName": "Secondary",
                              "children": [],
                              "classes": [],
@@ -4396,7 +2957,7 @@
                              "baseStyles": {
                               "color": "#999999"
                              },
-                             "blockId": "g0g3ms0wu",
+                             "blockId": "bagpzw4gd",
                              "blockName": "Dot",
                              "children": [],
                              "classes": [],
@@ -4431,7 +2992,7 @@
                               "letterSpacing": "0.02em",
                               "lineHeight": "1.15"
                              },
-                             "blockId": "k3h0gvqyh",
+                             "blockId": "lfok3nakv",
                              "blockName": "Dates",
                              "children": [],
                              "classes": [],
@@ -4525,7 +3086,7 @@
                           "color": "#171717",
                           "cursor": "pointer"
                          },
-                         "blockId": "cqsk6slp4",
+                         "blockId": "1mxigp3zd",
                          "blockName": "Edit education",
                          "children": [
                           {
@@ -4535,7 +3096,7 @@
                             "height": "14px",
                             "flexShrink": "0"
                            },
-                           "blockId": "57yoi6r1m",
+                           "blockId": "jhsdh6kwz",
                            "blockName": "icon/pencil",
                            "children": [],
                            "classes": [],
@@ -4655,7 +3216,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "ycjcbipjs",
+                     "blockId": "yb6874fhl",
                      "blockName": "No education (yours)",
                      "children": [],
                      "classes": [],
@@ -4691,7 +3252,7 @@
                       "letterSpacing": "0.02em",
                       "lineHeight": "1.15"
                      },
-                     "blockId": "d67hbq1xn",
+                     "blockId": "dxn1vtj4y",
                      "blockName": "No education",
                      "children": [],
                      "classes": [],
@@ -4747,56 +3308,9 @@
                     "display": "flex",
                     "justifyContent": "center"
                    },
-                   "blockId": "yo83aofk0",
+                   "blockId": "5pcjdjd1m",
                    "blockName": "More",
-                   "children": [
-                    {
-                     "attributes": {
-                      "type": "button"
-                     },
-                     "baseStyles": {
-                      "display": "inline-flex",
-                      "alignItems": "center",
-                      "height": "28px",
-                      "padding": "0 8px",
-                      "border": "0",
-                      "borderRadius": "8px",
-                      "backgroundColor": "transparent",
-                      "color": "#171717",
-                      "fontSize": "14px",
-                      "cursor": "pointer"
-                     },
-                     "blockId": "f910ogufc",
-                     "blockName": "Show all",
-                     "children": [],
-                     "classes": [
-                      "mna-text-btn"
-                     ],
-                     "clientScript": {},
-                     "customAttributes": {
-                      "data-expand": "mna-education-list"
-                     },
-                     "dataKey": null,
-                     "draggable": false,
-                     "dynamicValues": [],
-                     "element": "button",
-                     "elementBeforeConversion": null,
-                     "extendedFromComponent": null,
-                     "innerHTML": "Show all Education",
-                     "isChildOfComponent": null,
-                     "isRepeaterBlock": false,
-                     "mobileStyles": {},
-                     "originalElement": null,
-                     "props": {},
-                     "rawStyles": {},
-                     "referenceBlockId": null,
-                     "tabletStyles": {},
-                     "visibilityCondition": {
-                      "key": "profile.education_more",
-                      "comesFrom": "dataScript"
-                     }
-                    }
-                   ],
+                   "children": [],
                    "classes": [],
                    "clientScript": {},
                    "customAttributes": {},
@@ -4806,11 +3320,11 @@
                    "element": "div",
                    "elementBeforeConversion": null,
                    "extendedFromComponent": null,
-                   "innerHTML": null,
+                   "innerHTML": "<button class=\"mna-text-btn\" type=\"button\" data-expand=\"mna-education-list\" style=\"display:inline-flex;align-items:center;height:28px;padding:0 8px;border:0;border-radius:8px;background-color:transparent;color:#171717;font-size:14px;cursor:pointer\">Show all Education</button>",
                    "isChildOfComponent": null,
                    "isRepeaterBlock": false,
                    "mobileStyles": {},
-                   "originalElement": null,
+                   "originalElement": "__raw_html__",
                    "props": {},
                    "rawStyles": {},
                    "referenceBlockId": null,
@@ -4905,74 +3419,9 @@
               "padding": "96px 0",
               "textAlign": "center"
              },
-             "blockId": "orwnx57k0",
+             "blockId": "6y0m7rvcq",
              "blockName": "Not found",
-             "children": [
-              {
-               "attributes": {},
-               "baseStyles": {
-                "width": "32px",
-                "height": "32px",
-                "flexShrink": "0",
-                "color": "#c8c8c8"
-               },
-               "blockId": "mom3kutbz",
-               "blockName": "icon/user-x",
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": "svg",
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" />\n  <circle cx=\"9\" cy=\"7\" r=\"4\" />\n  <line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\" />\n  <line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\" /></svg>",
-               "isChildOfComponent": null,
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": "__raw_html__",
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": null,
-               "tabletStyles": {},
-               "visibilityCondition": null
-              },
-              {
-               "attributes": {},
-               "baseStyles": {
-                "margin": "0",
-                "fontSize": "14px",
-                "fontWeight": "420",
-                "color": "#7c7c7c",
-                "letterSpacing": "0.02em",
-                "lineHeight": "1.5"
-               },
-               "blockId": "sg7d6uemc",
-               "blockName": "Message",
-               "children": [],
-               "classes": [],
-               "clientScript": {},
-               "customAttributes": {},
-               "dataKey": null,
-               "draggable": false,
-               "dynamicValues": [],
-               "element": "p",
-               "elementBeforeConversion": null,
-               "extendedFromComponent": null,
-               "innerHTML": "This profile does not exist.",
-               "isChildOfComponent": null,
-               "isRepeaterBlock": false,
-               "mobileStyles": {},
-               "originalElement": null,
-               "props": {},
-               "rawStyles": {},
-               "referenceBlockId": null,
-               "tabletStyles": {},
-               "visibilityCondition": null
-              }
-             ],
+             "children": [],
              "classes": [],
              "clientScript": {},
              "customAttributes": {},
@@ -4982,11 +3431,11 @@
              "element": "div",
              "elementBeforeConversion": null,
              "extendedFromComponent": null,
-             "innerHTML": null,
+             "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:32px;height:32px;color:#c8c8c8\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" />\n  <circle cx=\"9\" cy=\"7\" r=\"4\" />\n  <line x1=\"17\" x2=\"22\" y1=\"8\" y2=\"13\" />\n  <line x1=\"22\" x2=\"17\" y1=\"8\" y2=\"13\" /></svg><p style=\"margin:0;font-size:14px;font-weight:420;color:#7c7c7c;letter-spacing:0.02em;line-height:1.5\">This profile does not exist.</p>",
              "isChildOfComponent": null,
              "isRepeaterBlock": false,
              "mobileStyles": {},
-             "originalElement": null,
+             "originalElement": "__raw_html__",
              "props": {},
              "rawStyles": {},
              "referenceBlockId": null,
@@ -5124,7 +3573,7 @@
    "builder_script": "MNA Profile"
   }
  ],
- "creation": "2026-09-19 16:54:47.019258",
+ "creation": "2026-09-19 17:13:29.876254",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -5134,7 +3583,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-19 16:54:47.019258",
+ "modified": "2026-09-19 17:13:29.876254",
  "modified_by": "Administrator",
  "name": "mna-profile",
  "owner": "Administrator",
@@ -5143,6 +3592,6 @@
  "page_title": "Profile",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-19 16:54:47.019258",
+ "published_at": "2026-09-19 17:13:29.876254",
  "route": "profile/:username"
 }

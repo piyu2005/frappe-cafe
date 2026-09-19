@@ -1,7 +1,13 @@
-"""The app shell (rail, mobile bottom bar, logo menu) as a Builder component."""
+"""The app shell (rail, mobile bottom bar, logo menu) as a Builder component.
 
-from blocks import DIALOG_SHADOW, INK, MUTED, OUTLINE, SURFACE_1, block, icon
+The whole shell is ONE block that holds ready-made HTML. As separate blocks it
+was 32 blocks, and Builder's per-block render cost (about 1-2 ms each, on every
+request, for every page) made it a big part of each page's server time. To
+change the shell, edit this file and run generate.py, or edit the block's HTML
+in Builder's editor.
+"""
 
+from blocks import DIALOG_SHADOW, INK, MUTED, OUTLINE, SURFACE_1, block, html_el, svg
 
 NAV_ITEMS = [
 	("home", "Home", "/", "house"),
@@ -53,140 +59,144 @@ MENU_ITEM_STYLES = {
 	"textAlign": "left",
 	"cursor": "pointer",
 }
+LOGO_STYLES = {
+	"display": "grid",
+	"placeItems": "center",
+	"flexShrink": "0",
+	"width": "32px",
+	"height": "32px",
+	"margin": "0 -2px",
+	"padding": "0",
+	"border": "0",
+	"borderRadius": "8px",
+	"backgroundColor": INK,
+	"color": "#ffffff",
+	"cursor": "pointer",
+}
+# The rail itself stretches the full height of the page (background and border).
+# Its content sticks to the top of the window while the page scrolls.
+RAIL_STYLES = {
+	"flexShrink": "0",
+	"width": "50px",
+	"backgroundColor": SURFACE_1,
+	"borderRight": f"1px solid {OUTLINE}",
+}
+RAIL_CONTENT_STYLES = {
+	"position": "sticky",
+	"top": "0",
+	"display": "flex",
+	"flexDirection": "column",
+	"alignItems": "center",
+	"gap": "12px",
+	"height": "100vh",
+	"padding": "10px 11px 12px",
+}
+MENU_STYLES = {
+	"display": "none",
+	"position": "fixed",
+	"top": "46px",
+	"left": "8px",
+	"zIndex": "50",
+	"minWidth": "176px",
+	"padding": "4px",
+	"borderRadius": "8px",
+	"backgroundColor": "#ffffff",
+	"boxShadow": DIALOG_SHADOW,
+}
 
 
 def badge():
-	return block("span", "Unread badge", ["mna-badge"], custom={"data-badge": "messages"}, styles=BADGE_STYLES)
+	return html_el("span", ["mna-badge"], {"data-badge": "messages"}, BADGE_STYLES)
 
 
 def rail_item(key, label, href, icon_name):
-	children = [icon(icon_name, 16)]
+	children = [svg(icon_name, 16)]
 	if key == "messages":
 		children.append(badge())
-	return block(
+	return html_el(
 		"a",
-		label,
 		["mna-rail-item"],
-		attrs={"href": href, "title": label, "aria-label": label},
-		custom={"data-nav": key},
-		children=children,
-		styles=RAIL_ITEM_STYLES,
+		{"href": href, "title": label, "aria-label": label, "data-nav": key},
+		RAIL_ITEM_STYLES,
+		children,
 	)
 
 
 def tab_item(key, label, href, icon_name):
 	"""Mobile bottom-bar tab. Its look is in styles.css, under the 768px media
 	query, because Builder has no breakpoint at that width."""
-	children = [icon(icon_name, 24, styles={"color": "inherit"})]
+	children = [svg(icon_name, 24, "inherit")]
 	if key == "messages":
 		children.append(badge())
-	return block(
+	return html_el(
 		"a",
-		label,
 		["mna-tab"],
-		attrs={"href": href, "aria-label": label},
-		custom={"data-nav": key},
-		children=children,
+		{"href": href, "aria-label": label, "data-nav": key},
+		None,
+		children,
 	)
 
 
-def build_shell():
-	logo = block(
+def menu_item(tag, attrs, icon_name, label):
+	return html_el(
+		tag,
+		["mna-menu-item"],
+		{**attrs, "role": "menuitem"},
+		MENU_ITEM_STYLES,
+		[svg(icon_name, 16, MUTED), html_el("span", text=label)],
+	)
+
+
+def build_shell_html():
+	logo = html_el(
 		"button",
-		"Logo",
 		["mna-logo"],
-		attrs={"id": "mna-logo", "type": "button", "aria-label": "Cafe menu", "aria-haspopup": "menu"},
-		children=[icon("feather", 16)],
-		styles={
-			"display": "grid",
-			"placeItems": "center",
-			"flexShrink": "0",
-			"width": "32px",
-			"height": "32px",
-			"margin": "0 -2px",
-			"padding": "0",
-			"border": "0",
-			"borderRadius": "8px",
-			"backgroundColor": INK,
-			"color": "#ffffff",
-			"cursor": "pointer",
-		},
+		{"id": "mna-logo", "type": "button", "aria-label": "Cafe menu", "aria-haspopup": "menu"},
+		LOGO_STYLES,
+		[svg("feather", 16)],
 	)
-	# The rail itself stretches the full height of the page (background and
-	# border). Its content sticks to the top of the window while the page scrolls.
-	rail = block(
+	rail = html_el(
 		"nav",
-		"Rail",
 		["mna-rail"],
-		attrs={"aria-label": "Main"},
-		styles={
-			"flexShrink": "0",
-			"width": "50px",
-			"backgroundColor": SURFACE_1,
-			"borderRight": f"1px solid {OUTLINE}",
-		},
-		children=[
-			block(
+		{"aria-label": "Main"},
+		RAIL_STYLES,
+		[
+			html_el(
 				"div",
-				"Rail content",
-				styles={
-					"position": "sticky",
-					"top": "0",
-					"display": "flex",
-					"flexDirection": "column",
-					"alignItems": "center",
-					"gap": "12px",
-					"height": "100vh",
-					"padding": "10px 11px 12px",
-				},
-				children=[logo] + [rail_item(*item) for item in NAV_ITEMS],
+				["mna-rail-content"],
+				None,
+				RAIL_CONTENT_STYLES,
+				[logo] + [rail_item(*item) for item in NAV_ITEMS],
 			)
 		],
 	)
-	bottom_nav = block(
+	bottom_nav = html_el(
 		"nav",
-		"Bottom bar",
 		["mna-bottom-nav"],
-		attrs={"aria-label": "Main"},
-		children=[tab_item(*item) for item in TAB_ITEMS],
-		styles={"display": "none"},
+		{"aria-label": "Main"},
+		{"display": "none"},
+		[tab_item(*item) for item in TAB_ITEMS],
 	)
-	menu = block(
+	menu = html_el(
 		"div",
-		"Logo menu",
 		["mna-menu"],
-		attrs={"id": "mna-menu", "role": "menu"},
-		children=[
-			block(
-				"a",
-				"Settings",
-				["mna-menu-item"],
-				attrs={"href": "/settings", "role": "menuitem"},
-				children=[icon("settings", 16, MUTED), block("span", text="Settings")],
-				styles=MENU_ITEM_STYLES,
-			),
-			block(
-				"button",
-				"Logout",
-				["mna-menu-item"],
-				attrs={"id": "mna-logout", "type": "button", "role": "menuitem"},
-				children=[icon("log-out", 16, MUTED), block("span", text="Logout")],
-				styles=MENU_ITEM_STYLES,
-			),
+		{"id": "mna-menu", "role": "menu"},
+		MENU_STYLES,
+		[
+			menu_item("a", {"href": "/settings"}, "settings", "Settings"),
+			menu_item("button", {"id": "mna-logout", "type": "button"}, "log-out", "Logout"),
 		],
-		styles={
-			"display": "none",
-			"position": "fixed",
-			"top": "46px",
-			"left": "8px",
-			"zIndex": "50",
-			"minWidth": "176px",
-			"padding": "4px",
-			"borderRadius": "8px",
-			"backgroundColor": "#ffffff",
-			"boxShadow": DIALOG_SHADOW,
-		},
 	)
+	return rail + bottom_nav + menu
+
+
+def build_shell():
 	# display: contents keeps this wrapper out of the page layout: the rail and
 	# main column stay direct flex children of the app container.
-	return block("div", "Shell", ["mna-shell"], children=[rail, bottom_nav, menu], styles={"display": "contents"})
+	return block(
+		"div",
+		"Shell",
+		["mna-shell"],
+		html=build_shell_html(),
+		styles={"display": "contents"},
+	)

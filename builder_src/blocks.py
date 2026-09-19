@@ -77,6 +77,59 @@ def icon(name, size, color=None, styles=None):
 	return block("svg", f"icon/{name}", html=markup, styles={**box, **(styles or {})})
 
 
+# ---- Plain HTML, for parts made of many small elements ----
+#
+# Builder renders every block through a template that it compiles again on each
+# request, at about 1-2 ms per block. A part with dozens of tiny elements (the
+# app shell) is far cheaper as one block that holds ready-made HTML. The styles
+# go inline, because the editor canvas shows only what is on the element itself.
+
+
+def kebab(name):
+	return re.sub(r"([A-Z])", lambda m: "-" + m.group(1).lower(), name)
+
+
+def css(styles):
+	return ";".join(f"{kebab(key)}:{value}" for key, value in (styles or {}).items())
+
+
+VOID_TAGS = {"input", "img", "br", "hr"}
+
+
+def html_el(tag, classes=(), attrs=None, styles=None, children=(), text=None):
+	"""One HTML element as a string. `children` are strings from html_el or svg."""
+	parts = []
+	if classes:
+		parts.append(f'class="{htmllib.escape(" ".join(classes), quote=True)}"')
+	for key, value in (attrs or {}).items():
+		parts.append(f'{key}="{htmllib.escape(str(value), quote=True)}"')
+	if styles:
+		parts.append(f'style="{htmllib.escape(css(styles), quote=True)}"')
+	if tag in VOID_TAGS:
+		return f"<{tag} {' '.join(parts)}>"
+	inner = htmllib.escape(text) if text is not None else "".join(children)
+	return f"<{tag} {' '.join(parts)}>{inner}</{tag}>"
+
+
+def raw_block(name, inner_html, classes=(), styles=None):
+	"""A block that holds ready-made HTML. Use it for a static cluster of small
+	elements; anything with a data binding must stay a normal block. Builder
+	puts the HTML inside a div, which carries `styles`."""
+	return block("div", name, classes, html=inner_html, styles=styles)
+
+
+def svg(name, size, color=None):
+	"""A lucide icon as an inline svg of a fixed size (stroke 1.5, like frappe-ui)."""
+	source = (LUCIDE / f"{name}.svg").read_text()
+	inner = re.search(r"<svg[^>]*>(.*)</svg>", source, re.S).group(1).strip()
+	style = f"display:block;flex-shrink:0;width:{size}px;height:{size}px" + (f";color:{color}" if color else "")
+	return (
+		f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" '
+		'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" '
+		f'aria-hidden="true" style="{style}">{inner}</svg>'
+	)
+
+
 def instance_of(component_id, component_block, name):
 	"""A page's reference to a component. Builder rebuilds the children of a
 	component from the instance's children, matched by `referenceBlockId`, so

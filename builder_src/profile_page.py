@@ -4,7 +4,7 @@ server. On your own profile, profile.js adds the editing dialogs.
 /profile (no username) is a second, empty page that redirects to your own
 /profile/<username>, so the address bar always shows the username."""
 
-from blocks import INK, MUTED, OUTLINE, SURFACE_2, bind, block, icon
+from blocks import INK, MUTED, OUTLINE, SURFACE_2, bind, block, html_el, icon, raw_block, svg
 from layout import crumb_current, crumb_link, crumb_separator, page_layout
 
 GRAY_6 = "#525252"
@@ -53,19 +53,17 @@ def label(text, name=None, **style):
 
 
 def outline_button(action, text=None, icon_name=None, name=None, aria=None):
+	"""One block holding the whole button. Its hover look is in styles.css."""
 	children = []
 	if icon_name:
-		children.append(icon(icon_name, 16))
+		children.append(svg(icon_name, 16))
 	if text:
-		children.append(label(text))
-	return block(
+		children.append(html_el("span", text=text))
+	button = html_el(
 		"button",
-		name or text or aria,
 		["mna-outline-btn"],
-		attrs={"type": "button", "aria-label": aria or text},
-		custom={"data-action": action},
-		children=children,
-		styles={
+		{"type": "button", "aria-label": aria or text, "data-action": action},
+		{
 			"display": "inline-flex",
 			"alignItems": "center",
 			"justifyContent": "center",
@@ -80,10 +78,52 @@ def outline_button(action, text=None, icon_name=None, name=None, aria=None):
 			"fontSize": "14px",
 			"cursor": "pointer",
 		},
+		children,
 	)
+	return raw_block(name or text or aria, button, styles={"display": "flex"})
+
+
+ICON_BUTTON_STYLES = {
+	"display": "grid",
+	"placeItems": "center",
+	"flexShrink": "0",
+	"width": "24px",
+	"height": "24px",
+	"padding": "0",
+	"border": "0",
+	"borderRadius": "6px",
+	"backgroundColor": "transparent",
+	"color": INK,
+	"cursor": "pointer",
+}
+TEXT_BUTTON_STYLES = {
+	"display": "inline-flex",
+	"alignItems": "center",
+	"height": "28px",
+	"padding": "0 8px",
+	"border": "0",
+	"borderRadius": "8px",
+	"backgroundColor": "transparent",
+	"color": INK,
+	"fontSize": "14px",
+	"cursor": "pointer",
+}
+
+
+def static_icon_button(action, aria, icon_name="pencil"):
+	"""A small icon button with no data binding, as one block."""
+	button = html_el(
+		"button",
+		["mna-icon-btn"],
+		{"type": "button", "aria-label": aria, "title": aria, "data-action": action},
+		ICON_BUTTON_STYLES,
+		[svg(icon_name, 14)],
+	)
+	return raw_block(aria, button, styles={"display": "flex"})
 
 
 def icon_button(action, aria, icon_name="pencil", custom=None):
+	"""An icon button as blocks, for places that need a data binding on it."""
 	return block(
 		"button",
 		aria,
@@ -91,24 +131,12 @@ def icon_button(action, aria, icon_name="pencil", custom=None):
 		attrs={"type": "button", "aria-label": aria, "title": aria},
 		custom={"data-action": action, **(custom or {})},
 		children=[icon(icon_name, 14)],
-		styles={
-			"display": "grid",
-			"placeItems": "center",
-			"flexShrink": "0",
-			"width": "24px",
-			"height": "24px",
-			"padding": "0",
-			"border": "0",
-			"borderRadius": "6px",
-			"backgroundColor": "transparent",
-			"color": INK,
-			"cursor": "pointer",
-		},
+		styles=ICON_BUTTON_STYLES,
 	)
 
 
 def text_button(text, tag="button", attrs=None, custom=None, color=INK, name=None, **style):
-	"""A ghost button that is only text (Show all, ...see more, View all posts)."""
+	"""A ghost button that is only text, as a block (for one with a binding)."""
 	return block(
 		tag,
 		name or text,
@@ -116,19 +144,7 @@ def text_button(text, tag="button", attrs=None, custom=None, color=INK, name=Non
 		attrs={**({"type": "button"} if tag == "button" else {}), **(attrs or {})},
 		custom=custom,
 		text=text,
-		styles={
-			"display": "inline-flex",
-			"alignItems": "center",
-			"height": "28px",
-			"padding": "0 8px",
-			"border": "0",
-			"borderRadius": "8px",
-			"backgroundColor": "transparent",
-			"color": color,
-			"fontSize": "14px",
-			"cursor": "pointer",
-			**style,
-		},
+		styles={**TEXT_BUTTON_STYLES, "color": color, **style},
 	)
 
 
@@ -290,6 +306,11 @@ def build_header():
 
 
 def card(icon_name, title, body, action=None, name=None):
+	title_block = raw_block(
+		"Card title",
+		svg(icon_name, 16) + html_el("span", text=title),
+		styles={"display": "flex", "alignItems": "center", "gap": "6px", **text_style(14, "500", INK, "0.015em")},
+	)
 	head = block(
 		"div",
 		"Card header",
@@ -299,15 +320,7 @@ def card(icon_name, title, body, action=None, name=None):
 			"justifyContent": "space-between",
 			"paddingBottom": "16px",
 		},
-		children=[
-			block(
-				"div",
-				"Card title",
-				styles={"display": "flex", "alignItems": "center", "gap": "6px", **text_style(14, "500", INK, "0.015em")},
-				children=[icon(icon_name, 16), label(title)],
-			),
-			*([action] if action else []),
-		],
+		children=[title_block, *([action] if action else [])],
 	)
 	return block(
 		"div",
@@ -335,6 +348,19 @@ def repeater(name, classes, key, row, attrs=None):
 
 def muted_paragraph(text, condition, name, line="1.15"):
 	return when(block("p", name, text=text, styles={"margin": "0", **text_style(14, "420", MUTED, "0.02em", line)}), condition)
+
+
+def show_all_row(text, target, condition):
+	"""The centered "Show all ..." button under a card, as one block."""
+	button = html_el("button", ["mna-text-btn"], {"type": "button", "data-expand": target}, TEXT_BUTTON_STYLES, text=text)
+	return when(
+		raw_block(
+			"More",
+			button,
+			styles={"marginTop": "12px", "display": "flex", "justifyContent": "center"},
+		),
+		condition,
+	)
 
 
 def more_row(children, condition):
@@ -379,7 +405,7 @@ def build_intro():
 		"profile.bio_long",
 	)
 	hint = muted_paragraph("Write about yourself.", "profile.show_bio_hint", "Bio hint", line="1.5")
-	edit = when(icon_button("edit-bio", "Edit introduction"), "profile.is_own")
+	edit = when(static_icon_button("edit-bio", "Edit introduction"), "profile.is_own")
 	return card("user", "Introduction", [bio, see_more, hint], action=edit, name="Introduction")
 
 
@@ -564,15 +590,11 @@ def build_work():
 		muted_paragraph("Add your work experience.", "profile.work_empty_own", "No work (yours)"),
 		muted_paragraph("No work history added yet.", "profile.work_empty_other", "No work"),
 	]
-	add = when(icon_button("add-work", "Add work experience", "plus"), "profile.is_own")
-	show_all = when(
-		text_button("Show all History", custom={"data-expand": "mna-work-list"}, name="Show all"),
-		"profile.work_more",
-	)
+	add = when(static_icon_button("add-work", "Add work experience", "plus"), "profile.is_own")
 	return block(
 		"div",
 		"Work section",
-		children=[card("briefcase", "Work History", body, action=add, name="Work History"), more_row([show_all], "profile.work_more")],
+		children=[card("briefcase", "Work History", body, action=add, name="Work History"), show_all_row("Show all History", "mna-work-list", "profile.work_more")],
 	)
 
 
@@ -584,23 +606,20 @@ def build_education():
 		muted_paragraph("Add your education.", "profile.education_empty_own", "No education (yours)"),
 		muted_paragraph("No education added yet.", "profile.education_empty_other", "No education"),
 	]
-	add = when(icon_button("add-education", "Add education", "plus"), "profile.is_own")
-	show_all = when(
-		text_button("Show all Education", custom={"data-expand": "mna-education-list"}, name="Show all"),
-		"profile.education_more",
-	)
+	add = when(static_icon_button("add-education", "Add education", "plus"), "profile.is_own")
 	return block(
 		"div",
 		"Education section",
-		children=[card("graduation-cap", "Education", body, action=add, name="Education"), more_row([show_all], "profile.education_more")],
+		children=[card("graduation-cap", "Education", body, action=add, name="Education"), show_all_row("Show all Education", "mna-education-list", "profile.education_more")],
 	)
 
 
 def build_not_found():
 	return when(
-		block(
-			"div",
+		raw_block(
 			"Not found",
+			svg("user-x", 32, "#c8c8c8")
+			+ html_el("p", None, None, {"margin": "0", **text_style(14, "420", MUTED, "0.02em", "1.5")}, text="This profile does not exist."),
 			styles={
 				"display": "flex",
 				"flexDirection": "column",
@@ -609,10 +628,6 @@ def build_not_found():
 				"padding": "96px 0",
 				"textAlign": "center",
 			},
-			children=[
-				icon("user-x", 32, "#c8c8c8"),
-				block("p", "Message", text="This profile does not exist.", styles={"margin": "0", **text_style(14, "420", MUTED, "0.02em", "1.5")}),
-			],
 		),
 		"profile.not_found",
 	)

@@ -1,6 +1,6 @@
 """The Search page: people list, filtered as you type."""
 
-from blocks import INK, MUTED, SURFACE_2, bind, block, icon
+from blocks import INK, MUTED, SURFACE_2, bind, block, html_el, raw_block, svg
 from layout import crumb_current, crumb_link, crumb_separator, page_layout
 
 
@@ -78,38 +78,37 @@ def build_person_row():
 
 
 def build_search(shell_id, shell_block):
-	search_box = block(
-		"div",
+	search_box = raw_block(
 		"Search box",
+		svg("search", 16, MUTED).replace(
+			'style="', 'style="position:absolute;top:6px;left:8px;pointer-events:none;', 1
+		)
+		+ html_el(
+			"input",
+			None,
+			{
+				"id": "mna-search-input",
+				"type": "text",
+				"placeholder": "Search",
+				"aria-label": "Search writers",
+				"autocomplete": "off",
+			},
+			{
+				"display": "block",
+				"width": "100%",
+				"height": "28px",
+				"padding": "6px 8px 6px 32px",
+				"border": f"1px solid {SURFACE_2}",
+				"borderRadius": "8px",
+				"outline": "none",
+				"backgroundColor": SURFACE_2,
+				"color": INK,
+				"fontSize": "14px",
+				"letterSpacing": "0.02em",
+			},
+		),
 		["mna-search"],
 		styles={"position": "relative", "display": "block", "marginTop": "8px"},
-		children=[
-			icon("search", 16, MUTED, styles={"position": "absolute", "top": "6px", "left": "8px", "pointerEvents": "none"}),
-			block(
-				"input",
-				"Search input",
-				attrs={
-					"id": "mna-search-input",
-					"type": "text",
-					"placeholder": "Search",
-					"aria-label": "Search writers",
-					"autocomplete": "off",
-				},
-				styles={
-					"display": "block",
-					"width": "100%",
-					"height": "28px",
-					"padding": "6px 8px 6px 32px",
-					"border": f"1px solid {SURFACE_2}",
-					"borderRadius": "8px",
-					"outline": "none",
-					"backgroundColor": SURFACE_2,
-					"color": INK,
-					"fontSize": "14px",
-					"letterSpacing": "0.02em",
-				},
-			),
-		],
 	)
 	people = block(
 		"div",
