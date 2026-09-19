@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AccountSettings: typeof import('./src/components/settings/AccountSettings.vue')['default']
     AppLayout: typeof import('./src/components/AppLayout.vue')['default']
     AuthCard: typeof import('./src/components/AuthCard.vue')['default']
     CreateGroupDialog: typeof import('./src/components/CreateGroupDialog.vue')['default']
@@ -26,7 +27,8 @@ declare module 'vue' {
     PostImageCarousel: typeof import('./src/components/PostImageCarousel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SettingsPanel: typeof import('./src/components/SettingsPanel.vue')['default']
+    SavedPostsSettings: typeof import('./src/components/settings/SavedPostsSettings.vue')['default']
+    SettingsModal: typeof import('./src/components/settings/SettingsModal.vue')['default']
     StoryPreviewDialog: typeof import('./src/components/StoryPreviewDialog.vue')['default']
   }
 }

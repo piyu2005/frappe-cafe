@@ -1,0 +1,2 @@
+import{Q as s}from"./index-C6cRoa3b.js";import{u as a}from"./useCall-C-r03Bfh.js";let o=null;function u(){if(!o){const e=window.site_name,t=window.location.port?":9000":"",n=`${t?"http":"https"}://${window.location.hostname}${t}/${e}`;o=s(n,{withCredentials:!0})}return o}const l=a({url:"/api/v2/method/my_new_app.chat.unread_message_count"});export{u as g,l as u};
+//# sourceMappingURL=messages-DIDvKOd1.js.map
