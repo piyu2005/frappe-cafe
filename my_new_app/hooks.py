@@ -55,6 +55,9 @@ website_route_rules = [
 	{"from_route": "/<path:app_path>", "to_route": "index"},
 ]
 
+# Serves the Builder Home page at "/" while it is published (see routing.py).
+page_renderer = "my_new_app.routing.HomeRenderer"
+
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 

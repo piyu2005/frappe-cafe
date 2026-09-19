@@ -1061,3 +1061,16 @@ body {
     letter-spacing: 0.01em !important;
   }
 }
+
+/* ---- Home feed ---- */
+.mna-feed > * + * {
+  border-top: 1px solid var(--mna-outline);
+}
+@media (max-width: 767px) {
+  .mna-container-home {
+    padding: 16px !important;
+  }
+  .mna-home-bar {
+    display: flex !important;
+  }
+}

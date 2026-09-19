@@ -29,7 +29,8 @@ REPO = SRC.parent
 APP = REPO / "my_new_app"
 OUT = APP / "builder_files"
 FONTS_OUT = APP / "public" / "builder_assets" / "fonts"
-FONT_FILES = {REPO / "frontend" / "src" / "assets" / "Newsreader" / "Newsreader-Regular.woff2"}
+FONT_DIR = REPO / "frontend" / "src" / "assets" / "Newsreader"
+FONT_FILES = {FONT_DIR / "Newsreader-Regular.woff2", FONT_DIR / "Newsreader-Medium.woff2"}
 
 NOW = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 def slug(name):
@@ -41,6 +42,7 @@ from profile_page import (  # noqa: E402
 	build_profile,
 	build_profile_redirect,
 )
+from home_page import HOME_DATA_SCRIPT, build_home  # noqa: E402
 from post_page import POST_DATA_SCRIPT, build_post_page  # noqa: E402
 from posts_page import POSTS_DATA_SCRIPT, build_posts_page  # noqa: E402
 from search_page import SEARCH_DATA_SCRIPT, build_search  # noqa: E402
@@ -154,6 +156,7 @@ def main():
 		("MNA Profile", "JavaScript", "profile.js"),
 		("MNA Posts", "JavaScript", "posts.js"),
 		("MNA Post", "JavaScript", "post.js"),
+		("MNA Home", "JavaScript", "home.js"),
 	]
 	for index, (name, kind, filename) in enumerate(scripts, start=1):
 		write_json("client_scripts", name, client_script(name, kind, (SRC / filename).read_text(), index))
@@ -175,6 +178,19 @@ def main():
 		},
 	)
 
+	# Builder writes one @font-face per font name, without a weight, so the
+	# medium weight the Home heading uses is a second name.
+	write_json(
+		"fonts",
+		"newsreader_medium",
+		{
+			"doctype": "User Font",
+			"font_file": "/assets/my_new_app/builder_assets/fonts/Newsreader-Medium.woff2",
+			"font_name": "Newsreader Medium",
+			"name": "Newsreader Medium",
+		},
+	)
+
 	shared = ["MNA Styles", "MNA UI", "MNA Shell"]
 	pages = [
 		("mna-search", "Search", "search", build_search, shared + ["MNA Search"], SEARCH_DATA_SCRIPT, False),
@@ -182,6 +198,7 @@ def main():
 		("mna-profile-self", "My profile", "profile", build_profile_redirect, ["MNA Styles"], PROFILE_REDIRECT_SCRIPT, False),
 		("mna-profile-posts", "Profile posts", "profile/:username/posts", build_posts_page, shared + ["MNA Posts"], POSTS_DATA_SCRIPT, True),
 		("mna-post", "Post", "posts/:post_id", build_post_page, shared + ["MNA Post"], POST_DATA_SCRIPT, True),
+		("mna-home", "Home", "mna-home", build_home, shared + ["MNA Home"], HOME_DATA_SCRIPT, False),
 	]
 	for name, title, route, builder, script_names, data_script, dynamic in pages:
 		blocks = builder(shell_id, shell_block)
