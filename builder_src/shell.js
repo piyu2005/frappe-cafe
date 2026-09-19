@@ -1,4 +1,4 @@
-// Behaviour of the shared app shell (rail, bottom bar, logo menu).
+// Behaviour of the shared app shell (rail, bottom bar, logo menu). Needs ui.js.
 // Builder runs client scripts before the page data and CSRF token exist, so
 // everything that needs them runs inside event handlers or after DOMContentLoaded.
 // API calls use location.origin because Builder's editor Preview adds a <base href>
@@ -66,52 +66,19 @@
     }
   }
 
-  function el(tag, className, text) {
-    var node = document.createElement(tag)
-    if (className) node.className = className
-    if (text) node.textContent = text
-    return node
+  function logout() {
+    fetch(location.origin + '/api/method/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-Frappe-CSRF-Token': (window.frappe && window.frappe.csrf_token) || '' },
+    }).finally(function () {
+      location.assign('/login')
+    })
   }
 
   function confirmLogout() {
-    var overlay = el('div', 'mna-overlay')
-    var dialog = el('div', 'mna-dialog')
-    dialog.setAttribute('role', 'dialog')
-    dialog.setAttribute('aria-modal', 'true')
-    dialog.appendChild(el('h2', '', 'Log out?'))
-    dialog.appendChild(el('p', '', 'You can always log back in.'))
-
-    var actions = el('div', 'mna-dialog-actions')
-    var cancel = el('button', 'mna-btn mna-btn-subtle', 'Cancel')
-    var confirm = el('button', 'mna-btn mna-btn-solid', 'Log out')
-    actions.appendChild(cancel)
-    actions.appendChild(confirm)
-    dialog.appendChild(actions)
-    overlay.appendChild(dialog)
-    document.body.appendChild(overlay)
-    confirm.focus()
-
-    function close() {
-      overlay.remove()
-      document.removeEventListener('keydown', onKey)
-    }
-    function onKey(e) {
-      if (e.key === 'Escape') close()
-    }
-    document.addEventListener('keydown', onKey)
-    cancel.addEventListener('click', close)
-    overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) close()
-    })
-    confirm.addEventListener('click', function () {
-      confirm.disabled = true
-      fetch(location.origin + '/api/method/logout', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'X-Frappe-CSRF-Token': (window.frappe && window.frappe.csrf_token) || '' },
-      }).finally(function () {
-        location.assign('/login')
-      })
+    MNA.confirm({ title: 'Log out?', message: 'You can always log back in.', confirmLabel: 'Log out' }).then(function (ok) {
+      if (ok) logout()
     })
   }
 

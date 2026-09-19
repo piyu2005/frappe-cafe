@@ -18,6 +18,7 @@
   --mna-surface-2: #f3f3f3;
   --mna-surface-dark: #171717;
   --mna-hover: #ededed;
+  --mna-outline: #ededed;
   --mna-ink: #0f0f0f;
   --mna-ink-8: #171717;
   --mna-ink-5: #7c7c7c;
@@ -87,32 +88,88 @@ body {
   display: grid;
   place-items: center;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.27);
+}
+/* Dialogs and toasts are added to <body>, outside .mna-app, so they set the
+   base text style themselves. */
+.mna-overlay,
+.mna-toast {
+  font-family: 'InterVar', ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 420;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--mna-ink);
+  -webkit-font-smoothing: antialiased;
+}
+.mna-overlay *,
+.mna-overlay *::before,
+.mna-overlay *::after {
+  box-sizing: border-box;
 }
 .mna-dialog {
+  position: relative;
   width: 100%;
   max-width: 400px;
-  padding: 20px;
-  border-radius: 12px;
+  padding: 22px 24px 28px;
+  border-radius: 16px;
   background: #fff;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
 }
 .mna-dialog h2 {
   margin: 0;
+  padding-right: 40px;
   font-size: 18px;
   font-weight: 600;
+  line-height: 24px;
   color: var(--mna-ink);
 }
+.mna-dialog-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mna-ink-8);
+  cursor: pointer;
+}
+.mna-dialog-close:hover {
+  background: var(--mna-surface-2);
+}
+.mna-dialog-close svg {
+  width: 16px;
+  height: 16px;
+}
 .mna-dialog p {
-  margin: 8px 0 0;
+  margin: 12px 0 0;
   color: var(--mna-ink-5);
   font-size: 14px;
 }
+.mna-dialog:focus {
+  outline: none;
+}
+.mna-dialog.wide {
+  max-width: 448px;
+}
 .mna-dialog-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 8px;
-  margin-top: 20px;
+  margin-top: 40px;
+}
+.mna-dialog-left,
+.mna-dialog-right {
+  display: flex;
+  gap: 8px;
+}
+.mna-dialog-right {
+  margin-left: auto;
 }
 .mna-btn {
   display: inline-flex;
@@ -140,6 +197,124 @@ body {
 }
 .mna-btn-subtle:hover {
   background: var(--mna-hover);
+}
+.mna-btn-outline {
+  border: 1px solid #e2e2e2;
+  background: #fff;
+  color: var(--mna-ink-8);
+}
+.mna-btn-outline:hover {
+  background: #f8f8f8;
+}
+.mna-btn-danger {
+  background: #e03636;
+  color: #fff;
+}
+.mna-btn-danger:hover {
+  background: #c62f2f;
+}
+.mna-btn-danger-ghost {
+  background: transparent;
+  color: #e03636;
+}
+.mna-btn-danger-ghost:hover {
+  background: #fdeeee;
+}
+.mna-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ---- Form dialogs. Created by ui.js. ---- */
+.mna-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 26px;
+}
+.mna-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.mna-field.grow {
+  flex: 1;
+}
+.mna-field label {
+  font-size: 14px;
+  line-height: 1.15;
+  color: var(--mna-ink-5);
+}
+.mna-field input,
+.mna-field select,
+.mna-field textarea {
+  display: block;
+  width: 100%;
+  height: 28px;
+  padding: 6px 8px;
+  border: 1px solid var(--mna-surface-2);
+  border-radius: 8px;
+  outline: none;
+  background: var(--mna-surface-2);
+  color: var(--mna-ink-8);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+}
+.mna-field textarea {
+  height: auto;
+  resize: vertical;
+}
+.mna-field input:hover,
+.mna-field select:hover,
+.mna-field textarea:hover {
+  background: var(--mna-hover);
+  border-color: var(--mna-hover);
+}
+.mna-field input:focus,
+.mna-field select:focus,
+.mna-field textarea:focus {
+  background: #fff;
+  border-color: var(--mna-outline-strong);
+}
+.mna-field .invalid {
+  border-color: #e03636;
+}
+.mna-field-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.mna-field-text {
+  padding-bottom: 6px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--mna-ink-5);
+}
+.mna-required {
+  color: #e03636;
+}
+.mna-form-error {
+  margin: 12px 0 0;
+  color: #e03636;
+  font-size: 13px;
+}
+.mna-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: 70;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--mna-surface-dark);
+  color: #fff;
+  transform: translateX(-50%);
+  transition: opacity 0.3s;
+}
+.mna-toast.leaving {
+  opacity: 0;
 }
 
 /* ---- Header ---- */
@@ -215,6 +390,64 @@ body {
   color: #6b6b6b;
 }
 
+/* ---- Profile page ---- */
+.mna-outline-btn:hover {
+  background: #f8f8f8;
+}
+.mna-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+.mna-text-btn:hover {
+  background: var(--mna-surface-2);
+}
+.mna-text-btn[data-action='toggle-bio']:hover {
+  background: transparent;
+  color: var(--mna-ink-8);
+  text-decoration: underline;
+}
+.mna-clamp-2,
+.mna-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.mna-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+.mna-clamp-3 {
+  -webkit-line-clamp: 3;
+}
+.mna-clamp-3.expanded {
+  display: block;
+}
+/* Rows of a list are separated by a line; the first and last touch the card edge. */
+.mna-posts > * + *,
+.mna-entries > * + * {
+  border-top: 1px solid var(--mna-outline);
+}
+.mna-posts > :first-child,
+.mna-entries > :first-child {
+  padding-top: 0;
+}
+.mna-posts > :last-child,
+.mna-entries > :last-child {
+  padding-bottom: 0;
+}
+/* Work and education show three items until "Show all" is clicked. */
+.mna-entries:not(.expanded) > :nth-child(n + 4) {
+  display: none;
+}
+.mna-entries:not(.expanded) > :nth-child(3) {
+  padding-bottom: 0;
+}
+.mna-profile-initial {
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--mna-ink-5);
+  text-transform: uppercase;
+}
+
 /* ---- Mobile: rail becomes a bottom bar ---- */
 @media (max-width: 767px) {
   .mna-rail,
@@ -257,5 +490,26 @@ body {
   .mna-tab .mna-badge {
     top: 8px;
     right: calc(50% - 20px);
+  }
+  .mna-profile-head {
+    gap: 16px !important;
+  }
+  .mna-profile-avatar {
+    width: 80px !important;
+    height: 80px !important;
+  }
+  .mna-profile-avatar .mna-profile-initial {
+    font-size: 32px !important;
+    line-height: 1.5 !important;
+  }
+  .mna-name-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .mna-profile-name {
+    max-width: 100%;
+    font-size: 20px !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.01em !important;
   }
 }
