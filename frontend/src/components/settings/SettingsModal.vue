@@ -1,13 +1,5 @@
 <template>
   <SettingsDialog v-model="open" v-model:tab="tab">
-    <!-- The dialog is full screen on mobile with no close control of its own. -->
-    <Button
-      class="absolute right-2 top-2 z-10 sm:hidden"
-      variant="ghost"
-      icon="lucide-x"
-      aria-label="Close settings"
-      @click="open = false"
-    />
     <SettingsSidebar>
       <SettingsNavGroup label="User settings">
         <SettingsNavItem value="account">
@@ -27,10 +19,12 @@
 
     <SettingsContent>
       <SettingsPanel value="account">
-        <AccountSettings />
+        <SettingsHeader title="Account" class="pb-5" />
+        <SettingsBody><AccountSettings /></SettingsBody>
       </SettingsPanel>
       <SettingsPanel value="saved">
-        <SavedPostsSettings @navigate="open = false" />
+        <SettingsHeader title="Saved posts" class="pb-5" />
+        <SettingsBody><SavedPostsSettings @navigate="open = false" /></SettingsBody>
       </SettingsPanel>
     </SettingsContent>
   </SettingsDialog>
@@ -40,9 +34,10 @@
 import { computed, ref } from 'vue'
 import {
   Avatar,
-  Button,
+  SettingsBody,
   SettingsContent,
   SettingsDialog,
+  SettingsHeader,
   SettingsNavGroup,
   SettingsNavItem,
   SettingsPanel,

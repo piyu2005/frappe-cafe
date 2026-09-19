@@ -1,6 +1,5 @@
 <template>
-  <SettingsHeader title="Saved posts" class="pb-5" />
-  <SettingsBody>
+  <div>
     <LoadingText v-if="savedPosts.loading && !savedPosts.data" :lines="4" />
     <p v-else-if="savedPosts.data && savedPostsList.length === 0" class="text-p-base text-ink-gray-6">
       No saved posts yet.
@@ -22,12 +21,12 @@
         <Button icon="lucide-bookmark-minus" variant="ghost" @click="unsave(p.name)" />
       </div>
     </div>
-  </SettingsBody>
+  </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
-import { Button, LoadingText, SettingsBody, SettingsHeader, useCall } from 'frappe-ui'
+import { Button, LoadingText, useCall } from 'frappe-ui'
 
 const emit = defineEmits(['navigate'])
 

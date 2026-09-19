@@ -34,3 +34,8 @@ export function useIsMobile() {
 
   return isMobile
 }
+
+// For places with no component instance, like a route guard.
+export function isMobileViewport() {
+  return window.matchMedia(QUERY).matches
+}

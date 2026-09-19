@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { session, verifySession } from '@/data/session'
 import { settingsOpen } from '@/data/settings'
+import { isMobileViewport } from '@/composables/useIsMobile'
 
 const routes = [
   {
@@ -35,10 +36,12 @@ const routes = [
       {
         path: 'settings',
         name: 'Settings',
-        // Settings is a modal, not a page. Opening /settings shows it over
-        // the current page, or over Home on a direct load.
-        component: { render: () => null },
+        component: () => import('@/pages/Settings.vue'),
+        // Mobile gets the Settings page. On desktop Settings is a modal, so
+        // /settings opens it over the current page, or over Home on a direct
+        // load.
         beforeEnter: (to, from) => {
+          if (isMobileViewport()) return true
           settingsOpen.value = true
           return from.name ? false : { name: 'Home' }
         },

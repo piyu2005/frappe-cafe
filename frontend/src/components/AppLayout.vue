@@ -54,7 +54,7 @@
           <MobileNavItem
             label="Settings"
             icon="lucide-settings"
-            :active="settingsOpen"
+            :active="!notificationsOpen && route.name === 'Settings'"
             :to="{ name: 'Settings' }"
             @click="notificationsOpen = false"
           />
