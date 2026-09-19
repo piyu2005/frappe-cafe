@@ -36,7 +36,7 @@
           theme="gray"
           icon-left="lucide-user-plus"
           label="Invite"
-          :route="{ name: 'SearchPeople', query: { pub: route.params.handle } }"
+          :route="{ name: 'InvitePeople', query: { pub: route.params.handle } }"
         />
       </div>
 

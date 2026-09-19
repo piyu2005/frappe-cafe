@@ -1,0 +1,261 @@
+/* Shared styles for the Builder pages.
+
+   Static styles (sizes, colors, spacing, layout) are NOT here: they are set on
+   the blocks by generate.py, because Builder's editor canvas shows only block
+   styles. This file holds what a block cannot express:
+     - design tokens
+     - hover, focus and active states
+     - the mobile layout (Builder's breakpoints are 576 and 1024px, ours is 768px)
+     - the elements that JavaScript creates (result rows, dialog)
+   Values were measured from the Vue app's real frappe-ui components.
+   The mobile rules use !important so they win over the block styles. */
+
+/* InterVar comes from Builder's own reset.css, which every Builder page loads.
+   Newsreader is registered as a Builder User Font (see generate.py). */
+
+:root {
+  --mna-surface: #ffffff;
+  --mna-surface-2: #f3f3f3;
+  --mna-surface-dark: #171717;
+  --mna-hover: #ededed;
+  --mna-ink: #0f0f0f;
+  --mna-ink-8: #171717;
+  --mna-ink-5: #7c7c7c;
+  --mna-outline-strong: #999999;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--mna-surface);
+}
+
+.mna-app {
+  font-family: 'InterVar', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.mna-app *,
+.mna-app *::before,
+.mna-app *::after {
+  box-sizing: border-box;
+}
+/* :where() keeps these resets at the lowest specificity, so a block's own
+   color can still win. */
+:where(.mna-app) a {
+  color: inherit;
+  text-decoration: none;
+}
+:where(.mna-app) button {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+/* Builder wraps every inline icon in a div. Without this the svg sits on the
+   text baseline and the icon is a few pixels off-centre. */
+.mna-app svg {
+  display: block;
+}
+
+/* ---- Rail ---- */
+.mna-rail-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.mna-rail-item.active {
+  background: #fff;
+  box-shadow:
+    rgba(255, 255, 255, 0.16) 0 0.25px 1.5px 0 inset,
+    rgba(0, 0, 0, 0.2) 0 0 1px 0,
+    rgba(0, 0, 0, 0.14) 0 1px 3px 0;
+}
+.mna-badge.show {
+  display: block;
+}
+
+/* ---- Logo menu ---- */
+.mna-menu.open {
+  display: block;
+}
+.mna-menu-item:hover {
+  background: var(--mna-surface-2);
+}
+
+/* ---- Confirm dialog (Logout). Created by shell.js. ---- */
+.mna-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.mna-dialog {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+.mna-dialog h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--mna-ink);
+}
+.mna-dialog p {
+  margin: 8px 0 0;
+  color: var(--mna-ink-5);
+  font-size: 14px;
+}
+.mna-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+.mna-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mna-btn-solid {
+  background: var(--mna-surface-dark);
+  color: #fff;
+}
+.mna-btn-solid:hover {
+  background: #383838;
+}
+.mna-btn-subtle {
+  background: var(--mna-surface-2);
+  color: var(--mna-ink-8);
+}
+.mna-btn-subtle:hover {
+  background: var(--mna-hover);
+}
+
+/* ---- Header ---- */
+.mna-crumbs a:hover {
+  color: var(--mna-ink);
+}
+
+/* ---- Search page ---- */
+.mna-search input {
+  font-family: inherit;
+}
+.mna-search input::placeholder {
+  color: var(--mna-outline-strong);
+}
+.mna-search input:hover {
+  background: var(--mna-hover);
+  border-color: var(--mna-hover);
+}
+.mna-search input:focus {
+  background: #fff;
+  border-color: var(--mna-outline-strong);
+  box-shadow:
+    rgba(255, 255, 255, 0.16) 0 0.25px 1.5px 0 inset,
+    rgba(0, 0, 0, 0.2) 0 0 1px 0,
+    rgba(0, 0, 0, 0.14) 0 1px 3px 0;
+}
+
+/* Result rows. Created by search.js. */
+.mna-person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+.mna-person:hover {
+  background: #fafafa;
+}
+.mna-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--mna-surface-2);
+  color: var(--mna-ink-5);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.mna-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mna-person-name {
+  overflow: hidden;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  color: #000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mna-empty {
+  padding: 40px 0;
+  text-align: center;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  color: #6b6b6b;
+}
+
+/* ---- Mobile: rail becomes a bottom bar ---- */
+@media (max-width: 767px) {
+  .mna-rail,
+  .mna-header,
+  .mna-menu {
+    display: none !important;
+  }
+  .mna-app {
+    flex-direction: column !important;
+  }
+  .mna-container {
+    padding: 24px 16px !important;
+  }
+  .mna-scroll {
+    padding-bottom: 57px;
+  }
+  .mna-bottom-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    display: flex !important;
+    height: 57px;
+    border-top: 1px solid #e2e2e2;
+    background: #fff;
+  }
+  .mna-tab {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0;
+    color: var(--mna-ink-5);
+  }
+  .mna-tab.active {
+    color: var(--mna-ink);
+  }
+  .mna-tab .mna-badge {
+    top: 8px;
+    right: calc(50% - 20px);
+  }
+}

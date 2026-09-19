@@ -62,6 +62,14 @@ const routes = [
         name: 'SearchPeople',
         component: () => import('@/pages/SearchPeople.vue'),
       },
+      // Same page as /search in "invite people to a publication" mode
+      // (?pub=<handle>). Split out so /search can be served by a Builder page
+      // without taking the invite flow with it.
+      {
+        path: 'invite',
+        name: 'InvitePeople',
+        component: () => import('@/pages/SearchPeople.vue'),
+      },
       {
         path: 'publications/:handle',
         name: 'PublicationDetail',
@@ -91,6 +99,21 @@ let router = createRouter({
 // stale-session revalidation on tab-focus can't disagree with what
 // navigating there directly would have decided.
 export const GUEST_ROUTE_NAMES = ['Login', 'Signup']
+
+// Routes that a Builder page serves (see builder_src/). Inside the SPA, a
+// click on a link to one of them would render this app's own copy of the page
+// instead of the Builder page, so make it a real page load. The first
+// navigation of a page load has no `from.name`, so this cannot loop: if the
+// Builder page is unpublished, the server returns this app and the route
+// below renders as normal.
+const BUILDER_ROUTE_NAMES = ['SearchPeople']
+
+router.beforeEach((to, from) => {
+  if (from.name && BUILDER_ROUTE_NAMES.includes(to.name)) {
+    window.location.assign(to.fullPath)
+    return false
+  }
+})
 
 router.beforeEach(async (to) => {
   let isGuestPage = GUEST_ROUTE_NAMES.includes(to.name)

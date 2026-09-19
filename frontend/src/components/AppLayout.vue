@@ -14,7 +14,7 @@
           <MobileNavItem
             label="Explore"
             icon="lucide-search"
-            :active="!notificationsOpen && route.name === 'SearchPeople'"
+            :active="!notificationsOpen && ['SearchPeople', 'InvitePeople'].includes(route.name)"
             :to="{ name: 'SearchPeople' }"
             @click="notificationsOpen = false"
           />
@@ -95,7 +95,7 @@
               label="Search"
               variant="ghost"
               icon="lucide-search"
-              :active="!notificationsOpen && route.name === 'SearchPeople'"
+              :active="!notificationsOpen && ['SearchPeople', 'InvitePeople'].includes(route.name)"
               :to="{ name: 'SearchPeople' }"
               @click="(e) => { notificationsOpen = false; blurTrigger(e) }"
             />
@@ -184,7 +184,7 @@
             <SidebarItem
               label="Explore"
               icon="lucide-search"
-              :active="!notificationsOpen && route.name === 'SearchPeople'"
+              :active="!notificationsOpen && ['SearchPeople', 'InvitePeople'].includes(route.name)"
               :to="{ name: 'SearchPeople' }"
               @click="notificationsOpen = false"
             />
