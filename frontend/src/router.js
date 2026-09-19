@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { session, verifySession } from '@/data/session'
+import { settingsOpen } from '@/data/settings'
 
 const routes = [
   {
@@ -34,7 +35,13 @@ const routes = [
       {
         path: 'settings',
         name: 'Settings',
-        component: () => import('@/pages/Settings.vue'),
+        // Settings is a modal, not a page. Opening /settings shows it over
+        // the current page, or over Home on a direct load.
+        component: { render: () => null },
+        beforeEnter: (to, from) => {
+          settingsOpen.value = true
+          return from.name ? false : { name: 'Home' }
+        },
       },
       {
         path: 'write/:postId?',

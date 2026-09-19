@@ -54,7 +54,7 @@
           <MobileNavItem
             label="Settings"
             icon="lucide-settings"
-            :active="!notificationsOpen && route.name === 'Settings'"
+            :active="settingsOpen"
             :to="{ name: 'Settings' }"
             @click="notificationsOpen = false"
           />
@@ -247,26 +247,16 @@
 
     <NotificationsPanel v-model="notificationsOpen" :rail-offset="railOffset" :full-screen="isMobile" />
 
-    <!-- Experiment: Settings as a modal (opened from the logo menu above)
-         instead of navigating to the full Settings page - same content
-         (SettingsPanel), just reusing the app's own Dialog + Tabs. -->
-    <Dialog v-model="settingsModalOpen" title="Settings" size="lg">
-      <template #default>
-        <div class="settings-modal-panel">
-          <SettingsPanel variant="modal" @navigate="settingsModalOpen = false" />
-        </div>
-      </template>
-    </Dialog>
+    <SettingsModal v-model="settingsOpen" />
   </div>
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   Badge,
   DesktopShell,
-  Dialog,
   Dropdown,
   MobileNav,
   MobileNavItem,
@@ -281,11 +271,12 @@ import {
 import { getSocket } from '@/data/socket'
 import { logout } from '@/data/session'
 import { notificationsOpen, unreadNotifCount } from '@/data/notifications'
+import { settingsOpen } from '@/data/settings'
 import { unreadMessageCount } from '@/data/messages'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { APP_NAME } from '@/utils/appName'
 import NotificationsPanel from './NotificationsPanel.vue'
-import SettingsPanel from './SettingsPanel.vue'
+import SettingsModal from './settings/SettingsModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -295,18 +286,6 @@ const sidebarOpen = ref(false)
 // below, so the panel sits next to whichever is currently showing instead of
 // covering it.
 const railOffset = computed(() => (sidebarOpen.value ? '14rem' : '50px'))
-
-// The Settings modal (below) should center itself over the actual page
-// content column - which sits to the right of the rail/sidebar, not over
-// the full viewport - the same reasoning as NotificationsPanel's own
-// `railOffset` prop above. frappe-ui's Dialog centers itself with no way
-// to pass it an offset, and its centering wrapper is teleported to <body>
-// (see the settings-dialog :global() rules below), so this is exposed to
-// that plain CSS rule as a custom property on the root element instead of
-// a prop, updating live as the sidebar toggles.
-watchEffect(() => {
-  document.documentElement.style.setProperty('--settings-modal-rail-offset', railOffset.value)
-})
 
 // Navigating away (Home, Search, Messages, a profile link, ...) should close
 // the notifications panel rather than leaving it hanging open over whatever
@@ -331,9 +310,7 @@ function blurTrigger(event) {
 
 // Clicking the logo mark opens a small account/app menu, like Frappe Cloud's
 // own sidebar (Settings, then Logout last).
-const settingsModalOpen = ref(false)
-
-// Same confirm-then-logout flow as SettingsPanel's own "Log out" row.
+// Same confirm-then-logout flow as the Settings modal's Account tab.
 function handleLogout() {
   dialog.confirm({
     title: 'Log out?',
@@ -351,7 +328,7 @@ const logoMenuItems = [
     icon: 'lucide-settings',
     label: 'Settings',
     onClick: () => {
-      settingsModalOpen.value = true
+      settingsOpen.value = true
     },
   },
   {
@@ -399,40 +376,5 @@ onBeforeUnmount(() => {
    desktop rail/sidebar's own labels. */
 :deep([data-slot='mobile-nav'] .text-xs-medium) {
   display: none;
-}
-
-/* Dialog's `size` prop only maps to a fixed set of Tailwind max-w-* presets
-   (512px/"lg", 576px/"xl", ...) with no arbitrary-width option, and its
-   content is teleported to <body> - outside this component's own DOM
-   subtree - so normal scoped styles (even :deep()) can't reach it. `:global`
-   opts this one rule out of scoping entirely; :has() keys it to the marker
-   div this component itself renders inside the dialog, so it can't affect
-   any other Dialog on the page.
-   700px is the target *content* width - but Dialog's own body wrapper
-   always adds its own px-4/sm:px-6 padding around whatever's inside it, so
-   setting the dialog box itself to exactly 700px would leave its content
-   narrower than that. Adding that padding back on top of 700px here makes
-   the dialog's inner content area come out to the true 700px either way. */
-:global(.dialog-content:has(.settings-modal-panel)) {
-  max-width: 732px; /* 700px + 2 * 16px (Dialog's px-4 below the sm breakpoint) */
-}
-
-@media (min-width: 640px) {
-  :global(.dialog-content:has(.settings-modal-panel)) {
-    max-width: 748px; /* 700px + 2 * 24px (Dialog's sm:px-6) */
-  }
-}
-
-/* Dialog centers itself horizontally over the *entire* viewport with no way
-   to pass it an offset, but the actual page underneath (router-view) only
-   occupies the space to the right of the rail/sidebar - so a plain centered
-   modal reads as visibly off-center relative to the page content it's
-   sitting on top of. Padding the dialog's own centering wrapper on the
-   left by the same amount the rail/sidebar takes up (the CSS variable set
-   from `railOffset` in the script block) shrinks its effective centering
-   box to match that content column exactly, so the modal lines up with the
-   page underneath instead of the raw window. */
-:global([data-position]:has(.settings-modal-panel)) {
-  padding-left: var(--settings-modal-rail-offset, 50px);
 }
 </style>
