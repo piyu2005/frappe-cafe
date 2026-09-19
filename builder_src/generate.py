@@ -41,6 +41,7 @@ from profile_page import (  # noqa: E402
 	build_profile,
 	build_profile_redirect,
 )
+from posts_page import POSTS_DATA_SCRIPT, build_posts_page  # noqa: E402
 from search_page import SEARCH_DATA_SCRIPT, build_search  # noqa: E402
 from shell_component import build_shell  # noqa: E402
 
@@ -150,6 +151,7 @@ def main():
 		("MNA Shell", "JavaScript", "shell.js"),
 		("MNA Search", "JavaScript", "search.js"),
 		("MNA Profile", "JavaScript", "profile.js"),
+		("MNA Posts", "JavaScript", "posts.js"),
 	]
 	for index, (name, kind, filename) in enumerate(scripts, start=1):
 		write_json("client_scripts", name, client_script(name, kind, (SRC / filename).read_text(), index))
@@ -176,6 +178,7 @@ def main():
 		("mna-search", "Search", "search", build_search, shared + ["MNA Search"], SEARCH_DATA_SCRIPT, False),
 		("mna-profile", "Profile", "profile/:username", build_profile, shared + ["MNA Profile"], PROFILE_DATA_SCRIPT, True),
 		("mna-profile-self", "My profile", "profile", build_profile_redirect, ["MNA Styles"], PROFILE_REDIRECT_SCRIPT, False),
+		("mna-profile-posts", "Profile posts", "profile/:username/posts", build_posts_page, shared + ["MNA Posts"], POSTS_DATA_SCRIPT, True),
 	]
 	for name, title, route, builder, script_names, data_script, dynamic in pages:
 		blocks = builder(shell_id, shell_block)

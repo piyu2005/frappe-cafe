@@ -367,7 +367,7 @@
    "builder_script": "MNA Styles"
   }
  ],
- "creation": "2026-09-19 17:13:29.876254",
+ "creation": "2026-09-19 17:29:08.372293",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -377,7 +377,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-19 17:13:29.876254",
+ "modified": "2026-09-19 17:29:08.372293",
  "modified_by": "Administrator",
  "name": "mna-profile-self",
  "owner": "Administrator",
@@ -386,6 +386,6 @@
  "page_title": "My profile",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-19 17:13:29.876254",
+ "published_at": "2026-09-19 17:29:08.372293",
  "route": "profile"
 }

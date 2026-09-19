@@ -24,12 +24,14 @@ SURFACE_2 = "#f3f3f3"
 DIALOG_SHADOW = "0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.12)"
 
 
-def block(element, name=None, classes=(), attrs=None, custom=None, text=None, children=(), html=None, styles=None):
+def block(element, name=None, classes=(), attrs=None, custom=None, text=None, children=(), html=None, styles=None, inner_html=None):
 	"""`styles` are the block's static CSS (camelCase keys, as Builder stores them).
 	`text` is plain text, shown by Builder as the block's innerHTML. `html` is
 	raw markup (used for svg icons) and is marked as a raw-html block."""
 	if text is not None:
 		html_content, raw = htmllib.escape(text), False
+	elif inner_html is not None:
+		html_content, raw = inner_html, False  # markup inside a normal block, so it can still have a binding
 	else:
 		html_content, raw = html, bool(html)
 	return {
@@ -150,3 +152,44 @@ def bind(key, prop, kind):
 	"""A binding of a block property to a key of the data script's data. Inside a
 	repeater the key is looked up on the current item."""
 	return {"comesFrom": "dataScript", "key": key, "property": prop, "type": kind}
+
+
+# ---- Colours and small helpers shared by the pages ----
+
+GRAY_6 = "#525252"
+GRAY_7 = "#383838"
+GRAY_4 = "#999999"
+BUTTON_BORDER = "#e2e2e2"
+NBSP = " "
+
+
+def text_style(size, weight="420", color=INK, spacing="0.02em", line="1.15", **extra):
+	return {
+		"fontSize": f"{size}px",
+		"fontWeight": weight,
+		"color": color,
+		"letterSpacing": spacing,
+		"lineHeight": line,
+		**extra,
+	}
+
+
+def when(node, key):
+	"""Render the block only when the data script's `key` is truthy."""
+	node["visibilityCondition"] = {"key": key, "comesFrom": "dataScript"}
+	return node
+
+
+def show(node, key, prop="innerHTML"):
+	"""Fill a block property from a key of the data script's data."""
+	node["dynamicValues"] = [*node["dynamicValues"], bind(key, prop, "key")]
+	return node
+
+
+def attribute(node, key, prop):
+	node["dynamicValues"] = [*node["dynamicValues"], bind(key, prop, "attribute")]
+	return node
+
+
+def label(text, name=None, **style):
+	return block("span", name, text=text, styles=style or None)

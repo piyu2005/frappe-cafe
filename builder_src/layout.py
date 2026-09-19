@@ -84,9 +84,10 @@ def page_header(crumbs):
 	)
 
 
-def page_layout(shell_id, shell_block, crumbs, content, max_width):
+def page_layout(shell_id, shell_block, crumbs, content, max_width, mobile_header=None):
 	"""The page body: `crumbs` go in the header and `content` in the container,
-	which is `max_width` wide including its 20px side padding."""
+	which is `max_width` wide including its 20px side padding. A page can add a
+	`mobile_header`, a top bar that only shows on a phone."""
 	container = block(
 		"section",
 		"Container",
@@ -100,6 +101,7 @@ def page_layout(shell_id, shell_block, crumbs, content, max_width):
 		["mna-main"],
 		styles={"display": "flex", "flexGrow": "1", "flexDirection": "column", "minWidth": "0"},
 		children=[
+			*([mobile_header] if mobile_header else []),
 			page_header(crumbs),
 			block(
 				"div",

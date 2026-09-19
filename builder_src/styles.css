@@ -428,20 +428,22 @@ body {
 .mna-entries > * + * {
   border-top: 1px solid var(--mna-outline);
 }
+/* !important because the rows that posts.js copies from a <template> carry
+   their padding inline, and inline styles beat these rules. */
 .mna-posts > :first-child,
 .mna-entries > :first-child {
-  padding-top: 0;
+  padding-top: 0 !important;
 }
 .mna-posts > :last-child,
 .mna-entries > :last-child {
-  padding-bottom: 0;
+  padding-bottom: 0 !important;
 }
 /* Work and education show three items until "Show all" is clicked. */
 .mna-entries:not(.expanded) > :nth-child(n + 4) {
   display: none;
 }
 .mna-entries:not(.expanded) > :nth-child(3) {
-  padding-bottom: 0;
+  padding-bottom: 0 !important;
 }
 .mna-profile-initial {
   font-size: 40px;
@@ -451,12 +453,52 @@ body {
   text-transform: uppercase;
 }
 
+/* ---- Profile posts page ---- */
+.mna-back:hover {
+  background: var(--mna-hover) !important;
+}
+.mna-tab-btn[aria-selected='true'] {
+  color: var(--mna-ink) !important;
+}
+/* The underline of the open tab sits over the line under the tab list. */
+.mna-tab-btn[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--mna-surface-dark);
+}
+.mna-tab-btn:hover:not([aria-selected='true']) {
+  color: var(--mna-ink-8) !important;
+}
+.mna-loading:not([hidden]) {
+  display: flex !important;
+}
+.mna-loading .mna-skeleton {
+  background: linear-gradient(90deg, #f3f3f3, #fafafa, #f3f3f3) !important;
+  background-size: 200% 100%;
+  animation: mna-pulse 1.2s ease-in-out infinite;
+}
+@keyframes mna-pulse {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
 /* ---- Mobile: rail becomes a bottom bar ---- */
 @media (max-width: 767px) {
   .mna-rail,
   .mna-header,
   .mna-menu {
     display: none !important;
+  }
+  .mna-mobile-header {
+    display: flex !important;
   }
   .mna-app {
     flex-direction: column !important;

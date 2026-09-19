@@ -4,50 +4,31 @@ server. On your own profile, profile.js adds the editing dialogs.
 /profile (no username) is a second, empty page that redirects to your own
 /profile/<username>, so the address bar always shows the username."""
 
-from blocks import INK, MUTED, OUTLINE, SURFACE_2, bind, block, html_el, icon, raw_block, svg
+from blocks import (
+	BUTTON_BORDER,
+	GRAY_4,
+	GRAY_6,
+	GRAY_7,
+	INK,
+	MUTED,
+	NBSP,
+	OUTLINE,
+	SURFACE_2,
+	attribute,
+	bind,
+	block,
+	html_el,
+	icon,
+	label,
+	raw_block,
+	show,
+	svg,
+	text_style,
+	when,
+)
+from data_scripts import HELPERS, POST_ROWS, SAMPLE_POST, SAMPLE_WORK_AND_EDUCATION, indent
+from post_row import build_post_row
 from layout import crumb_current, crumb_link, crumb_separator, page_layout
-
-GRAY_6 = "#525252"
-GRAY_7 = "#383838"
-GRAY_4 = "#999999"
-BUTTON_BORDER = "#e2e2e2"
-NBSP = " "
-
-
-# ---- Small helpers ----
-
-
-def text_style(size, weight="420", color=INK, spacing="0.02em", line="1.15", **extra):
-	return {
-		"fontSize": f"{size}px",
-		"fontWeight": weight,
-		"color": color,
-		"letterSpacing": spacing,
-		"lineHeight": line,
-		**extra,
-	}
-
-
-def when(node, key):
-	"""Render the block only when the data script's `key` is truthy."""
-	node["visibilityCondition"] = {"key": key, "comesFrom": "dataScript"}
-	return node
-
-
-def show(node, key, prop="innerHTML"):
-	"""Fill a block property from a key of the data script's data."""
-	node["dynamicValues"] = [*node["dynamicValues"], bind(key, prop, "key")]
-	return node
-
-
-def attribute(node, key, prop):
-	node["dynamicValues"] = [*node["dynamicValues"], bind(key, prop, "attribute")]
-	return node
-
-
-def label(text, name=None, **style):
-	return block("span", name, text=text, styles=style or None)
-
 
 # ---- Buttons ----
 
@@ -409,81 +390,6 @@ def build_intro():
 	return card("user", "Introduction", [bio, see_more, hint], action=edit, name="Introduction")
 
 
-def build_post_row():
-	title = show(
-		block("div", "Title", text="Post title", styles={**text_style(16, "600", INK, "0.015em")}),
-		"title",
-	)
-	excerpt = show(
-		block(
-			"p",
-			"Excerpt",
-			["mna-clamp-2"],
-			text="A short preview of the post.",
-			styles={"margin": "4px 0 0", **text_style(14, "420", GRAY_6, "0.02em", "1.5")},
-		),
-		"excerpt",
-	)
-	meta = show(
-		block(
-			"div",
-			"Meta",
-			text="Sep 18, 2026 · 1 min read · 0 comments",
-			styles={"marginTop": "8px", **text_style(12, "420", MUTED)},
-		),
-		"meta",
-	)
-	thumbnail = when(
-		attribute(
-			block(
-				"img",
-				"Thumbnail",
-				attrs={"src": "", "alt": ""},
-				styles={
-					"width": "96px",
-					"height": "80px",
-					"flexShrink": "0",
-					"borderRadius": "10px",
-					"objectFit": "cover",
-				},
-			),
-			"thumbnail",
-			"src",
-		),
-		"thumbnail",
-	)
-	text = block(
-		"div",
-		"Text",
-		styles={
-			"display": "flex",
-			"flexDirection": "column",
-			"justifyContent": "space-between",
-			"flexGrow": "1",
-			"minWidth": "0",
-		},
-		children=[block("div", "Title and excerpt", children=[title, excerpt]), meta],
-	)
-	return attribute(
-		block(
-			"a",
-			"Post",
-			["mna-post"],
-			attrs={"href": "/posts"},
-			children=[text, thumbnail],
-			styles={
-				"display": "flex",
-				"alignItems": "stretch",
-				"justifyContent": "space-between",
-				"gap": "16px",
-				"padding": "20px 0",
-			},
-		),
-		"href",
-		"href",
-	)
-
-
 def build_posts():
 	posts = repeater("Posts list", ["mna-posts"], "posts", build_post_row())
 	empty_own = when(
@@ -681,17 +587,7 @@ def build_profile_redirect(shell_id, shell_block):
 # post titles are chosen by users, so every value that reaches the HTML is
 # escaped here. The helper functions call only builtins and `frappe`, because
 # functions defined in a server script cannot see each other.
-PROFILE_DATA_SCRIPT = '''\
-def clean(value):
-    return frappe.utils.escape_html(value or "")
-
-
-def day_month_year(value):
-    text = str(value)
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    return months[int(text[5:7]) - 1] + " " + str(int(text[8:10])) + ", " + text[:4]
-
-
+DATE_RANGE = '''\
 def date_range(start, end):
     if not (start or end):
         return ""
@@ -701,24 +597,9 @@ def date_range(start, end):
     return first + " \\u2014 " + last
 
 
-def plain_text(html):
-    text = frappe.utils.strip_html(html or "")
-    for entity, char in (("&nbsp;", " "), ("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"'), ("&#39;", "'"), ("&amp;", "&")):
-        text = text.replace(entity, char)
-    return text.strip()
+'''
 
-
-def safe_url(value):
-    value = value or ""
-    return frappe.utils.escape_html(value) if value.startswith(("/", "https://", "http://")) else ""
-
-
-def path_segment(value):
-    for char, code in (("%", "%25"), ("/", "%2F"), ("?", "%3F"), ("#", "%23"), ("\\\\", "%5C"), (" ", "%20")):
-        value = value.replace(char, code)
-    return value
-
-
+PROFILE_MAIN = '''\
 identifier = frappe.form_dict.username or ""
 
 if frappe.session.user == "Guest":
@@ -747,23 +628,8 @@ else:
     is_own = person.name == frappe.session.user
     name = person.full_name or person.username
     image = safe_url(person.user_image)
-    posts = []
-    for row in frappe.call("my_new_app.api.list_profile_posts", user=user_id, limit=3):
-        text = plain_text(row.get("content"))
-        minutes = int(len(text.split()) / 200 + 0.5)
-        if minutes < 1:
-            minutes = 1
-        comments = row.get("comment_count") or 0
-        preview = row.get("excerpt") or (text[:140] + "\\u2026" if len(text) > 140 else text)
-        thumbnail = row.get("cover_image") or (row.get("attachment") if row.get("post_type") == "Image" else "")
-        posts.append({
-            "href": "/posts/" + path_segment(row.name),
-            "title": clean(row.get("display_title") or row.get("title") or "Untitled"),
-            "excerpt": clean(preview),
-            "meta": day_month_year(row.creation) + " \\u00b7 " + str(minutes) + " min read \\u00b7 " + str(comments) + (" comment" if comments == 1 else " comments"),
-            "thumbnail": safe_url(thumbnail),
-        })
-
+    rows = frappe.call("my_new_app.api.list_profile_posts", user=user_id, limit=3)
+@@POST_ROWS@@
     work = []
     for job in person.work:
         dates = date_range(job.start_date, job.end_date)
@@ -790,6 +656,7 @@ else:
             "show_dot": bool(degree_line and dates),
         })
 
+@@SAMPLES@@
     posts_href = "/profile/" + path_segment(person.username) + "/posts"
     data.profile = {
         "found": True,
@@ -828,6 +695,14 @@ else:
     data.work = work
     data.education = education
 '''
+
+PROFILE_DATA_SCRIPT = (
+	HELPERS
+	+ DATE_RANGE
+	+ PROFILE_MAIN.replace("@@POST_ROWS@@\n", indent(POST_ROWS, 4)).replace(
+		"@@SAMPLES@@\n", indent(SAMPLE_POST + SAMPLE_WORK_AND_EDUCATION, 4)
+	)
+)
 
 PROFILE_REDIRECT_SCRIPT = '''\
 if frappe.session.user == "Guest":
