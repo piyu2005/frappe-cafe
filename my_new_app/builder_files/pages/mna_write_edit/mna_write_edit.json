@@ -75,7 +75,7 @@
           "minHeight": "0"
          },
          "blockId": "3qk8xzxtb",
-         "blockName": "Editor",
+         "blockName": "Page",
          "children": [],
          "classes": [],
          "clientScript": {},
@@ -87,7 +87,7 @@
          "dynamicValues": [
           {
            "comesFrom": "dataScript",
-           "key": "w.post_id",
+           "key": "w.id",
            "property": "data-post",
            "type": "attribute"
           }
@@ -137,7 +137,7 @@
        ],
        "classes": [
         "mna-main",
-        "mna-write-main"
+        "mna-island-main"
        ],
        "clientScript": {},
        "customAttributes": {},
@@ -220,25 +220,25 @@
    "builder_script": "MNA Notifications"
   }
  ],
- "creation": "2026-09-20 10:57:10.964635",
+ "creation": "2026-09-20 11:13:57.637683",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
  "draft_blocks": null,
  "dynamic_route": 1,
- "head_html": "<link rel=\"stylesheet\" href=\"/assets/my_new_app/builder_assets/write/write.css?v=4fb25b5634\">\n<script src=\"/assets/my_new_app/builder_assets/write/write.js?v=146af8c9a1\" defer></script>",
+ "head_html": "<link rel=\"stylesheet\" href=\"/assets/my_new_app/builder_assets/write/write.css?v=4fb25b5634\">\n<script src=\"/assets/my_new_app/builder_assets/write/write.js?v=dd222b8184\" defer></script>",
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 10:57:10.964635",
+ "modified": "2026-09-20 11:13:57.637683",
  "modified_by": "Administrator",
  "name": "mna-write-edit",
  "owner": "Administrator",
- "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\npost_id = frappe.form_dict.post_id or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/write\" + (\"/\" + path_segment(post_id) if post_id else \"\"))\n\ndata.w = {\"post_id\": clean(post_id)}\n",
+ "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\nitem = frappe.form_dict.post_id or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/write\" + (\"/\" + path_segment(item) if item else \"\"))\n\ndata.w = {\"id\": clean(item)}\n",
  "page_name": "mna-write-edit",
  "page_title": "Edit post",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 10:57:10.964635",
+ "published_at": "2026-09-20 11:13:57.637683",
  "route": "write/:post_id"
 }

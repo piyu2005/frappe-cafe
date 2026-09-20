@@ -56,7 +56,7 @@ from search_page import SEARCH_DATA_SCRIPT, build_search  # noqa: E402
 from auth_page import LOGIN_DATA_SCRIPT, SIGNUP_DATA_SCRIPT, build_login, build_signup  # noqa: E402
 from blocks import svg  # noqa: E402
 from shell_component import build_shell  # noqa: E402
-from write_page import WRITE_DATA_SCRIPT, build_write, head_html  # noqa: E402
+from island_page import CHAT_DATA_SCRIPT, WRITE_DATA_SCRIPT, build_chat, build_write, head_html  # noqa: E402
 
 
 def client_script(name, script_type, source, idx):
@@ -225,8 +225,10 @@ def main():
 		("mna-settings", "Settings", "settings", build_settings, shared, SETTINGS_DATA_SCRIPT, False),
 		("mna-login", "Login", "login", build_login, alone + ["MNA Auth"], LOGIN_DATA_SCRIPT, False),
 		("mna-signup", "Signup", "signup", build_signup, alone + ["MNA Auth"], SIGNUP_DATA_SCRIPT, False),
-		("mna-write", "Write", "write", build_write, shared, WRITE_DATA_SCRIPT, False, head_html()),
-		("mna-write-edit", "Edit post", "write/:post_id", build_write, shared, WRITE_DATA_SCRIPT, True, head_html()),
+		("mna-write", "Write", "write", build_write, shared, WRITE_DATA_SCRIPT, False, head_html("write")),
+		("mna-write-edit", "Edit post", "write/:post_id", build_write, shared, WRITE_DATA_SCRIPT, True, head_html("write")),
+		("mna-chat", "Messages", "messages", build_chat, shared, CHAT_DATA_SCRIPT, False, head_html("chat")),
+		("mna-chat-thread", "Conversation", "messages/:conversation_id", build_chat, shared, CHAT_DATA_SCRIPT, True, head_html("chat")),
 	]
 	for name, title, route, builder, script_names, data_script, dynamic, *extra in pages:
 		blocks = builder(shell_id, shell_block)

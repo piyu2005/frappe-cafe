@@ -21,13 +21,13 @@
       "letterSpacing": "0.02em",
       "lineHeight": "1.15"
      },
-     "blockId": "0pqqtv7c9",
+     "blockId": "4ks341kn5",
      "blockName": "App",
      "children": [
       {
        "attributes": {},
        "baseStyles": {},
-       "blockId": "9a7prjavx",
+       "blockId": "bvp8uhqry",
        "blockName": "Shell",
        "children": [],
        "classes": [],
@@ -60,12 +60,12 @@
         "height": "100vh",
         "overflow": "hidden"
        },
-       "blockId": "sztfa7mzn",
+       "blockId": "dr9o5eb0d",
        "blockName": "Main",
        "children": [
         {
          "attributes": {
-          "id": "mna-write-root"
+          "id": "mna-chat-root"
          },
          "baseStyles": {
           "display": "flex",
@@ -74,13 +74,13 @@
           "height": "100%",
           "minHeight": "0"
          },
-         "blockId": "tbnx9cmtb",
+         "blockId": "nin47202p",
          "blockName": "Page",
          "children": [],
          "classes": [],
          "clientScript": {},
          "customAttributes": {
-          "data-post": ""
+          "data-conversation": ""
          },
          "dataKey": null,
          "draggable": false,
@@ -88,7 +88,7 @@
           {
            "comesFrom": "dataScript",
            "key": "w.id",
-           "property": "data-post",
+           "property": "data-conversation",
            "type": "attribute"
           }
          ],
@@ -111,7 +111,7 @@
          "baseStyles": {
           "display": "none"
          },
-         "blockId": "brlpdz1t8",
+         "blockId": "v7zxnez3a",
          "blockName": "Bell template",
          "children": [],
          "classes": [],
@@ -220,25 +220,25 @@
    "builder_script": "MNA Notifications"
   }
  ],
- "creation": "2026-09-20 11:13:57.637683",
+ "creation": "2026-09-20 11:29:31.926581",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
  "draft_blocks": null,
- "dynamic_route": 0,
- "head_html": "<link rel=\"stylesheet\" href=\"/assets/my_new_app/builder_assets/write/write.css?v=4fb25b5634\">\n<script src=\"/assets/my_new_app/builder_assets/write/write.js?v=dd222b8184\" defer></script>",
+ "dynamic_route": 1,
+ "head_html": "<link rel=\"stylesheet\" href=\"/assets/my_new_app/builder_assets/chat/chat.css?v=55f138da71\">\n<script src=\"/assets/my_new_app/builder_assets/chat/chat.js?v=301372ad0f\" defer></script>",
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 11:13:57.637683",
+ "modified": "2026-09-20 11:29:31.926581",
  "modified_by": "Administrator",
- "name": "mna-write",
+ "name": "mna-chat-thread",
  "owner": "Administrator",
- "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\nitem = frappe.form_dict.post_id or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/write\" + (\"/\" + path_segment(item) if item else \"\"))\n\ndata.w = {\"id\": clean(item)}\n",
- "page_name": "mna-write",
- "page_title": "Write",
+ "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\nitem = frappe.form_dict.conversation_id or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/messages\" + (\"/\" + path_segment(item) if item else \"\"))\n\ndata.w = {\"id\": clean(item)}\n",
+ "page_name": "mna-chat-thread",
+ "page_title": "Conversation",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 11:13:57.637683",
- "route": "write"
+ "published_at": "2026-09-20 11:29:31.926581",
+ "route": "messages/:conversation_id"
 }

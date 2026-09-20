@@ -1591,19 +1591,22 @@ button.mna-rail-item {
   animation: mna-pulse 1.2s ease-in-out infinite;
 }
 
-/* ---- Post editor ---- */
-.mna-write-main {
+/* ---- Pages run from the Vue app (editor, chat) ---- */
+.mna-island-main {
   min-height: 0;
 }
 /* The editor's phone header takes its height from this, as in the Vue app's shell. */
-#mna-write-root {
+#mna-write-root,
+#mna-chat-root {
   --mobile-header-height: 52px;
 }
 /* The header keeps its height; the scroll area takes what is left. */
-#mna-write-root > header {
+#mna-write-root > header,
+#mna-chat-root > header {
   flex-shrink: 0;
 }
-#mna-write-root > :not(header) {
+#mna-write-root > :not(header),
+#mna-chat-root > :not(header) {
   flex: 0 0 auto;
 }
 /* Only the editor's scroll area (the one with h-full) fills the height. The
@@ -1656,7 +1659,8 @@ button.mna-rail-item {
   border-top: 1px solid var(--mna-outline);
 }
 @media (max-width: 767px) {
-  .mna-write-main {
+  .mna-island-main {
+    flex-grow: 0 !important;
     height: calc(100vh - 57px) !important;
   }
   .mna-np {

@@ -20,8 +20,10 @@ const dropInterFont = () => ({
   },
 })
 
-// Builds the post editor into one script and one stylesheet that a Builder
-// page loads (see src/island/). Run with: yarn build:write
+// Builds a page of the Vue app into one script and one stylesheet that a
+// Builder page loads (see src/island/). ISLAND picks which: write (the post
+// editor) or chat (Messages). Run with: yarn build:write, yarn build:chat.
+const ISLAND = process.env.ISLAND || 'write'
 export default defineConfig({
   plugins: [frappeui({ frappeProxy: false, lucideIcons: true, jinjaBootData: false, buildConfig: false }), vue(), dropInterFont()],
   resolve: {
@@ -29,28 +31,31 @@ export default defineConfig({
       // The Vue app's own bell opens the Vue notifications panel; the Builder
       // page has its own.
       { find: '@/components/MobileNotificationBell.vue', replacement: path.resolve(__dirname, 'src/island/HostBell.vue') },
+      // Live updates and the unread count belong to the Builder page's shell.
+      { find: '@/data/socket', replacement: path.resolve(__dirname, 'src/island/socket.js') },
+      { find: '@/data/messages', replacement: path.resolve(__dirname, 'src/island/messages.js') },
       { find: '@', replacement: path.resolve(__dirname, 'src') },
     ],
   },
   css: {
-    postcss: { plugins: [tailwindcss({ config: './tailwind.write.config.js' }), autoprefixer()] },
+    postcss: { plugins: [tailwindcss({ config: './tailwind.island.config.js' }), autoprefixer()] },
   },
   define: { 'process.env.NODE_ENV': JSON.stringify('production') },
   // Not library mode: that inlines every font into the stylesheet (4.5 MB).
   publicDir: false,
   // Where the files are served from; the fonts in the stylesheet are found from here.
-  base: '/assets/my_new_app/builder_assets/write/',
+  base: `/assets/my_new_app/builder_assets/${ISLAND}/`,
   build: {
-    outDir: '../my_new_app/public/builder_assets/write',
+    outDir: `../my_new_app/public/builder_assets/${ISLAND}`,
     emptyOutDir: true,
     cssCodeSplit: false,
     rollupOptions: {
-      input: path.resolve(__dirname, 'src/island/write.js'),
+      input: path.resolve(__dirname, `src/island/${ISLAND}.js`),
       output: {
         format: 'iife',
         inlineDynamicImports: true,
-        entryFileNames: 'write.js',
-        assetFileNames: (info) => (info.name && info.name.endsWith('.css') ? 'write.css' : 'assets/[name]-[hash][extname]'),
+        entryFileNames: `${ISLAND}.js`,
+        assetFileNames: (info) => (info.name && info.name.endsWith('.css') ? `${ISLAND}.css` : 'assets/[name]-[hash][extname]'),
       },
     },
   },
