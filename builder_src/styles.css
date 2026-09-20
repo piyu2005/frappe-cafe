@@ -1591,6 +1591,23 @@ button.mna-rail-item {
   animation: mna-pulse 1.2s ease-in-out infinite;
 }
 
+/* ---- Post editor ---- */
+.mna-write-main {
+  min-height: 0;
+}
+/* The editor's phone header takes its height from this, as in the Vue app's shell. */
+#mna-write-root {
+  --mobile-header-height: 52px;
+}
+/* The header keeps its height; the scroll area takes what is left. */
+#mna-write-root > header {
+  flex-shrink: 0;
+}
+#mna-write-root > :not(header) {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
 /* ---- Login and Signup ---- */
 .mna-auth-input:focus {
   border-color: #999 !important;
@@ -1633,6 +1650,9 @@ button.mna-rail-item {
   border-top: 1px solid var(--mna-outline);
 }
 @media (max-width: 767px) {
+  .mna-write-main {
+    height: calc(100vh - 57px) !important;
+  }
   .mna-np {
     left: 0;
     width: 100%;

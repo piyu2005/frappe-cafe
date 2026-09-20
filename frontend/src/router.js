@@ -106,7 +106,7 @@ export const GUEST_ROUTE_NAMES = ['Login', 'Signup']
 // navigation of a page load has no `from.name`, so this cannot loop: if the
 // Builder page is unpublished, the server returns this app and the route
 // below renders as normal.
-const BUILDER_ROUTE_NAMES = ['Login', 'Signup', 'Home', 'SearchPeople', 'Profile', 'ProfilePosts', 'PostDetail']
+const BUILDER_ROUTE_NAMES = ['WritePost', 'Login', 'Signup', 'Home', 'SearchPeople', 'Profile', 'ProfilePosts', 'PostDetail']
 
 router.beforeEach((to, from) => {
   // Settings is a dialog on a desktop, so only a phone gets the Builder page.

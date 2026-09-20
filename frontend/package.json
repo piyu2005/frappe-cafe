@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "postbuild": "cp ../my_new_app/www/index.html ../my_new_app/www/me.html",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:write": "vite build --config vite.write.config.js"
   },
   "dependencies": {
     "frappe-ui": "1.0.0-beta.29",

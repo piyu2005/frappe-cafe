@@ -56,6 +56,7 @@ from search_page import SEARCH_DATA_SCRIPT, build_search  # noqa: E402
 from auth_page import LOGIN_DATA_SCRIPT, SIGNUP_DATA_SCRIPT, build_login, build_signup  # noqa: E402
 from blocks import svg  # noqa: E402
 from shell_component import build_shell  # noqa: E402
+from write_page import WRITE_DATA_SCRIPT, build_write, head_html  # noqa: E402
 
 
 def client_script(name, script_type, source, idx):
@@ -91,7 +92,7 @@ def component(component_id, name, root_block):
 	}
 
 
-def page(name, title, route, blocks, script_names, data_script, dynamic=False):
+def page(name, title, route, blocks, script_names, data_script, dynamic=False, head=None):
 	return {
 		"app": "my_new_app",
 		"authenticated_access": 0,
@@ -103,7 +104,7 @@ def page(name, title, route, blocks, script_names, data_script, dynamic=False):
 		"doctype": "Builder Page",
 		"draft_blocks": None,
 		"dynamic_route": 1 if dynamic else 0,
-		"head_html": None,
+		"head_html": head,
 		"idx": 0,
 		"is_standard": 1,
 		"is_template": 0,
@@ -224,10 +225,13 @@ def main():
 		("mna-settings", "Settings", "settings", build_settings, shared, SETTINGS_DATA_SCRIPT, False),
 		("mna-login", "Login", "login", build_login, alone + ["MNA Auth"], LOGIN_DATA_SCRIPT, False),
 		("mna-signup", "Signup", "signup", build_signup, alone + ["MNA Auth"], SIGNUP_DATA_SCRIPT, False),
+		("mna-write", "Write", "write", build_write, shared, WRITE_DATA_SCRIPT, False, head_html()),
+		("mna-write-edit", "Edit post", "write/:post_id", build_write, shared, WRITE_DATA_SCRIPT, True, head_html()),
 	]
-	for name, title, route, builder, script_names, data_script, dynamic in pages:
+	for name, title, route, builder, script_names, data_script, dynamic, *extra in pages:
 		blocks = builder(shell_id, shell_block)
-		write_json("pages", name, page(name, title, route, blocks, script_names, data_script, dynamic))
+		head = extra[0] if extra else None
+		write_json("pages", name, page(name, title, route, blocks, script_names, data_script, dynamic, head))
 	print(f"Wrote Builder files to {OUT}")
 
 
