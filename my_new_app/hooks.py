@@ -55,6 +55,9 @@ website_route_rules = [
 	{"from_route": "/<path:app_path>", "to_route": "index"},
 ]
 
+# Serves the Builder Home page at "/" while it is published (see routing.py).
+page_renderer = "my_new_app.routing.HomeRenderer"
+
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 
@@ -280,5 +283,8 @@ has_permission = {
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
-after_migrate = ["my_new_app.setup.after_migrate"]
+after_migrate = [
+	"my_new_app.setup.after_migrate",
+	"my_new_app.builder_previews.generate_missing_previews",
+]
 
