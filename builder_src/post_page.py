@@ -533,7 +533,7 @@ if not post_id:
 post = None
 if post_id:
     try:
-        post = frappe.call("my_new_app.api.get_post", post_id=post_id)
+        post = frappe.call("cafe.api.get_post", post_id=post_id)
     except Exception:
         post = None
 

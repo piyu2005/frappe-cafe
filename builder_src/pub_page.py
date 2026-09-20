@@ -1,6 +1,6 @@
 """The publication pages: /publications/<handle>, its members, and /invite.
 pub_*.js draw them into #mna-pub, #mna-pub-members and #mna-invite from the
-same my_new_app.api methods the Vue pages used.
+same cafe.api methods the Vue pages used.
 
 Builder's editor and the folder thumbnail do not run scripts, so each root
 starts with a still picture; the script replaces it."""

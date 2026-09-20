@@ -8,7 +8,7 @@
   var WORDS_PER_MINUTE = 200
 
   P.ICONS = '@@ICONS@@'
-  P.API = 'my_new_app.api.'
+  P.API = 'cafe.api.'
 
   P.el = function (tag, className, text) { return MNA.el(tag, className, text) }
 

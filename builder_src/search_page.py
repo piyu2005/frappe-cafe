@@ -146,7 +146,7 @@ SEARCH_DATA_SCRIPT = """\
 if frappe.session.user == "Guest":
     redirect("/login?redirect=/search")
 
-people = frappe.call("my_new_app.api.list_people")
+people = frappe.call("cafe.api.list_people")
 for person in people:
     identifier = person.get("username") or person.get("name")
     label = person.get("full_name") or identifier

@@ -183,7 +183,7 @@ onBeforeUnmount(() => {
 })
 
 const commentCounts = useCall({
-  url: '/api/v2/method/my_new_app.api.get_comment_counts',
+  url: '/api/v2/method/cafe.api.get_comment_counts',
   method: 'POST',
   immediate: false,
 })

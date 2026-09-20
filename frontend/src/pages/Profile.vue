@@ -450,7 +450,7 @@ watch(targetUser, () => {
 })
 
 const profile = useCall({
-  url: '/api/v2/method/my_new_app.api.get_profile',
+  url: '/api/v2/method/cafe.api.get_profile',
   params: () => ({ user: targetUser.value }),
   refetch: true,
 })
@@ -490,7 +490,7 @@ const breadcrumbItems = computed(() => {
 // isOwnProfile always gets the button regardless of this count.
 const postsLimit = 3
 const recentPosts = useCall({
-  url: '/api/v2/method/my_new_app.api.list_profile_posts',
+  url: '/api/v2/method/cafe.api.list_profile_posts',
   params: () => ({ user: targetUser.value, limit: postsLimit }),
   refetch: true,
 })
@@ -575,14 +575,14 @@ function combineMonthYear(year, month) {
 }
 
 const updateProfile = useCall({
-  url: '/api/v2/method/my_new_app.api.update_profile',
+  url: '/api/v2/method/cafe.api.update_profile',
   method: 'POST',
   immediate: false,
   onSuccess: () => profile.reload(),
 })
 
 const addEducation = useCall({
-  url: '/api/v2/method/my_new_app.api.add_education',
+  url: '/api/v2/method/cafe.api.add_education',
   method: 'POST',
   immediate: false,
   onSuccess: () => {
@@ -592,21 +592,21 @@ const addEducation = useCall({
 })
 
 const updateEducation = useCall({
-  url: '/api/v2/method/my_new_app.api.update_education',
+  url: '/api/v2/method/cafe.api.update_education',
   method: 'POST',
   immediate: false,
   onSuccess: () => profile.reload(),
 })
 
 const deleteEducation = useCall({
-  url: '/api/v2/method/my_new_app.api.delete_education',
+  url: '/api/v2/method/cafe.api.delete_education',
   method: 'POST',
   immediate: false,
   onSuccess: () => profile.reload(),
 })
 
 const addWork = useCall({
-  url: '/api/v2/method/my_new_app.api.add_work',
+  url: '/api/v2/method/cafe.api.add_work',
   method: 'POST',
   immediate: false,
   onSuccess: () => {
@@ -616,14 +616,14 @@ const addWork = useCall({
 })
 
 const updateWork = useCall({
-  url: '/api/v2/method/my_new_app.api.update_work',
+  url: '/api/v2/method/cafe.api.update_work',
   method: 'POST',
   immediate: false,
   onSuccess: () => profile.reload(),
 })
 
 const deleteWork = useCall({
-  url: '/api/v2/method/my_new_app.api.delete_work',
+  url: '/api/v2/method/cafe.api.delete_work',
   method: 'POST',
   immediate: false,
   onSuccess: () => profile.reload(),

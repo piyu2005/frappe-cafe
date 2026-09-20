@@ -279,7 +279,7 @@ else:
         redirect("/profile/" + path_segment(username) + "/posts" + ("?tab=" + tab if tab != "published" else ""))
 
     name = info.full_name or username
-    rows = frappe.call("my_new_app.api.list_profile_posts", user=user_id, limit=0)
+    rows = frappe.call("cafe.api.list_profile_posts", user=user_id, limit=0)
 @@POST_ROWS@@
 @@SAMPLE@@
     data.pp = {

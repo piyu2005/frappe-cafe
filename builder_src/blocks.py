@@ -8,7 +8,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 LUCIDE = REPO / "frontend" / "node_modules" / "lucide-static" / "icons"
 
-_ids = random.Random("my_new_app.builder")
+_ids = random.Random("cafe.builder")
 
 
 def block_id():

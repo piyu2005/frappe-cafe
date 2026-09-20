@@ -621,14 +621,14 @@ if not user_id:
     data.work = []
     data.education = []
 else:
-    person = frappe.call("my_new_app.api.get_profile", user=user_id)
+    person = frappe.call("cafe.api.get_profile", user=user_id)
     if identifier and person.username != identifier:
         redirect("/profile/" + path_segment(person.username))
 
     is_own = person.name == frappe.session.user
     name = person.full_name or person.username
     image = safe_url(person.user_image)
-    rows = frappe.call("my_new_app.api.list_profile_posts", user=user_id, limit=3)
+    rows = frappe.call("cafe.api.list_profile_posts", user=user_id, limit=3)
 @@POST_ROWS@@
     work = []
     for job in person.work:
@@ -708,6 +708,6 @@ PROFILE_REDIRECT_SCRIPT = '''\
 if frappe.session.user == "Guest":
     redirect("/login?redirect=/profile")
 
-me = frappe.call("my_new_app.api.get_profile")
+me = frappe.call("cafe.api.get_profile")
 redirect("/profile/" + me.username)
 '''

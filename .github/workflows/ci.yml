@@ -7,7 +7,7 @@ on:
   pull_request:
 
 concurrency:
-  group: version-16-my_new_app-${{ github.event.number }}
+  group: version-16-cafe-${{ github.event.number }}
   cancel-in-progress: true
 
 jobs:
@@ -88,13 +88,13 @@ jobs:
       - name: Install
         working-directory: /home/runner/frappe-bench
         run: |
-          bench get-app my_new_app $GITHUB_WORKSPACE
+          bench get-app cafe $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
-          bench --site test_site install-app my_new_app
+          bench --site test_site install-app cafe
           # install-app alone doesn't run after_migrate, so the custom User
           # fields it creates (is_private, job_title, company, headline —
-          # see my_new_app/setup.py) wouldn't exist on a fresh site without
+          # see cafe/setup.py) wouldn't exist on a fresh site without
           # this, same as a first-time production deploy.
           bench --site test_site migrate
           bench build
@@ -105,6 +105,6 @@ jobs:
         working-directory: /home/runner/frappe-bench
         run: |
           bench --site test_site set-config allow_tests true
-          bench --site test_site run-tests --app my_new_app
+          bench --site test_site run-tests --app cafe
         env:
           TYPE: server

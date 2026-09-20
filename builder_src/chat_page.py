@@ -1,6 +1,6 @@
 """The native Messages page. No Vue: chat_*.js draw the list, the open
 conversation and the composer into #mna-chat, and talk to the same
-whitelisted methods (my_new_app.chat.*) as the Vue page.
+whitelisted methods (cafe.chat.*) as the Vue page.
 
 Builder's editor and the folder thumbnail do not run scripts, so #mna-chat
 starts with a still picture of the chat; the script replaces it."""

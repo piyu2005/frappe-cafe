@@ -75,7 +75,7 @@
     // Flip at once, then use the server's real numbers. Put it back if the request fails.
     setActive(button, !was)
     counter.textContent = String(was ? before - 1 : before + 1)
-    MNA.api('my_new_app.api.toggle_like', { reference_doctype: 'Post', reference_name: postId }).then(
+    MNA.api('cafe.api.toggle_like', { reference_doctype: 'Post', reference_name: postId }).then(
       function (result) {
         setActive(button, result.liked)
         counter.textContent = String(result.count)
@@ -92,7 +92,7 @@
     var button = root.querySelector('.mna-save')
     var was = button.getAttribute('data-on') === '1'
     setActive(button, !was)
-    MNA.api('my_new_app.api.toggle_save_post', { post: postId }).then(
+    MNA.api('cafe.api.toggle_save_post', { post: postId }).then(
       function (result) {
         setActive(button, result.saved)
         MNA.toast(result.saved ? 'Saved' : 'Removed from saved posts')
@@ -113,7 +113,7 @@
   }
 
   function openShare() {
-    MNA.get('my_new_app.api.list_people', { query: '' }).then(function (people) {
+    MNA.get('cafe.api.list_people', { query: '' }).then(function (people) {
       MNA.form({
         title: 'Share this post',
         submitLabel: 'Send',
@@ -129,8 +129,8 @@
           },
         ],
         onSubmit: function (values) {
-          return MNA.api('my_new_app.chat.start_dm', { other_user: values.user }).then(function (data) {
-            return MNA.api('my_new_app.chat.send_message', { conversation: data.conversation, shared_post: postId })
+          return MNA.api('cafe.chat.start_dm', { other_user: values.user }).then(function (data) {
+            return MNA.api('cafe.chat.send_message', { conversation: data.conversation, shared_post: postId })
           }).then(function () { MNA.toast('Post shared') })
         },
       })
@@ -302,7 +302,7 @@
       comment.liked_by_me = !was
       comment.like_count = was ? before - 1 : before + 1
       paint()
-      MNA.api('my_new_app.api.toggle_like', { reference_doctype: 'Post Comment', reference_name: comment.name }).then(
+      MNA.api('cafe.api.toggle_like', { reference_doctype: 'Post Comment', reference_name: comment.name }).then(
         function (result) { comment.liked_by_me = result.liked; comment.like_count = result.count; paint() },
         function (err) { comment.liked_by_me = was; comment.like_count = before; paint(); MNA.toast(err.message) },
       )
@@ -365,7 +365,7 @@
   function confirmDelete(comment) {
     MNA.confirm({ title: 'Delete comment?', message: 'This will permanently remove your comment.', confirmLabel: 'Delete', danger: true }).then(function (ok) {
       if (!ok) return
-      MNA.api('my_new_app.api.delete_comment', { name: comment.name }).then(
+      MNA.api('cafe.api.delete_comment', { name: comment.name }).then(
         function () {
           // The server removes the replies of a deleted top-level comment too.
           comments = comments.filter(function (c) { return c.name !== comment.name && c.parent_comment !== comment.name })
@@ -448,7 +448,7 @@
     renderList()
     var args = { post: postId, content: content }
     if (parent) args.parent_comment = parent
-    MNA.api('my_new_app.api.add_comment', args).then(
+    MNA.api('cafe.api.add_comment', args).then(
       function (result) {
         // Fill in the real name and time, so it can be liked or deleted.
         Object.assign(optimistic, result, { like_count: 0, liked_by_me: false })
@@ -473,7 +473,7 @@
   }
 
   function loadComments() {
-    MNA.get('my_new_app.api.list_comments', { post: postId }).then(
+    MNA.get('cafe.api.list_comments', { post: postId }).then(
       function (rows) {
         comments = rows || []
         updateCounts()

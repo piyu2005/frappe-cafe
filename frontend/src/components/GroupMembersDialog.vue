@@ -96,7 +96,7 @@ const emit = defineEmits(['renamed', 'left'])
 const router = useRouter()
 
 const members = useCall({
-  url: '/api/v2/method/my_new_app.chat.list_group_members',
+  url: '/api/v2/method/cafe.chat.list_group_members',
   params: () => ({ conversation: props.conversation }),
   immediate: false,
 })
@@ -116,7 +116,7 @@ const isAdmin = computed(() => members.data?.my_is_admin || false)
 const memberIds = computed(() => (members.data?.members || []).map((m) => m.user))
 
 const renameCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.rename_group',
+  url: '/api/v2/method/cafe.chat.rename_group',
   method: 'POST',
   immediate: false,
   onSuccess: () => emit('renamed', titleDraft.value),
@@ -130,7 +130,7 @@ function commitRename() {
 }
 
 const inviteCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.invite_to_group',
+  url: '/api/v2/method/cafe.chat.invite_to_group',
   method: 'POST',
   immediate: false,
   onError: (err) => toast.error(err.message),
@@ -146,7 +146,7 @@ async function sendInvites() {
 }
 
 const cancelInviteCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.cancel_group_invite',
+  url: '/api/v2/method/cafe.chat.cancel_group_invite',
   method: 'POST',
   immediate: false,
   onSuccess: () => members.reload(),
@@ -157,7 +157,7 @@ function cancelInvite(name) {
 }
 
 const removeCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.remove_group_member',
+  url: '/api/v2/method/cafe.chat.remove_group_member',
   method: 'POST',
   immediate: false,
   onSuccess: () => members.reload(),
@@ -165,7 +165,7 @@ const removeCall = useCall({
 })
 
 const adminCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.set_group_admin',
+  url: '/api/v2/method/cafe.chat.set_group_admin',
   method: 'POST',
   immediate: false,
   onSuccess: () => members.reload(),
@@ -201,7 +201,7 @@ function memberOptions(m) {
 }
 
 const leaveCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.leave_group',
+  url: '/api/v2/method/cafe.chat.leave_group',
   method: 'POST',
   immediate: false,
   onSuccess: () => {

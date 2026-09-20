@@ -1,10 +1,10 @@
-"""Generates the Builder files in my_new_app/builder_files/ from the sources here.
+"""Generates the Builder files in cafe/builder_files/ from the sources here.
 
 Builder stores pages, components and scripts as JSON that is long and hard to
 review. The sources of truth are the plain files in this folder (styles.css,
 shell.js, search.js) and this script. Run it after changing any of them:
 
-	python3 apps/my_new_app/builder_src/generate.py
+	python3 apps/cafe/builder_src/generate.py
 
 Styling is split on purpose. Everything static (sizes, colors, spacing, layout)
 is set on the blocks, because Builder's editor canvas shows only block styles:
@@ -26,7 +26,7 @@ from pathlib import Path
 
 SRC = Path(__file__).resolve().parent
 REPO = SRC.parent
-APP = REPO / "my_new_app"
+APP = REPO / "cafe"
 OUT = APP / "builder_files"
 FONTS_OUT = APP / "public" / "builder_assets" / "fonts"
 SCRIPT_ICONS = {
@@ -109,7 +109,7 @@ def component(component_id, name, root_block):
 
 def page(name, title, route, blocks, script_names, data_script, dynamic=False, head=None):
 	return {
-		"app": "my_new_app",
+		"app": "cafe",
 		"authenticated_access": 0,
 		"blocks": blocks,
 		"client_scripts": [{"builder_script": script} for script in script_names],
@@ -130,7 +130,7 @@ def page(name, title, route, blocks, script_names, data_script, dynamic=False, h
 		"page_data_script": data_script,
 		"page_name": name,
 		"page_title": title,
-		"project_folder": "my_new_app",
+		"project_folder": "cafe",
 		"published": 1,
 		"published_at": NOW,
 		"route": route,
@@ -204,7 +204,7 @@ def main():
 			source = source.replace("'@@ICONS@@'", json.dumps({name: svg(name, 16) for name in SCRIPT_ICONS[filename]}))
 		write_json("client_scripts", name, client_script(name, kind, source, index))
 
-	shell_id = hashlib.sha1(b"my_new_app:MNA Shell").hexdigest()[:16]
+	shell_id = hashlib.sha1(b"cafe:MNA Shell").hexdigest()[:16]
 	shell_block = build_shell()
 	write_json("components", "MNA Shell", component(shell_id, "MNA Shell", shell_block))
 
@@ -215,7 +215,7 @@ def main():
 		"newsreader",
 		{
 			"doctype": "User Font",
-			"font_file": "/assets/my_new_app/builder_assets/fonts/Newsreader-Regular.woff2",
+			"font_file": "/assets/cafe/builder_assets/fonts/Newsreader-Regular.woff2",
 			"font_name": "Newsreader",
 			"name": "Newsreader",
 		},
@@ -228,7 +228,7 @@ def main():
 		"newsreader_medium",
 		{
 			"doctype": "User Font",
-			"font_file": "/assets/my_new_app/builder_assets/fonts/Newsreader-Medium.woff2",
+			"font_file": "/assets/cafe/builder_assets/fonts/Newsreader-Medium.woff2",
 			"font_name": "Newsreader Medium",
 			"name": "Newsreader Medium",
 		},
