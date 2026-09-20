@@ -1110,9 +1110,12 @@
   },
   {
    "builder_script": "MNA Settings"
+  },
+  {
+   "builder_script": "MNA Notifications"
   }
  ],
- "creation": "2026-09-19 22:09:39.811849",
+ "creation": "2026-09-20 09:14:33.459752",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -1122,7 +1125,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-19 22:09:39.811849",
+ "modified": "2026-09-20 09:14:33.459752",
  "modified_by": "Administrator",
  "name": "mna-settings",
  "owner": "Administrator",
@@ -1131,6 +1134,6 @@
  "page_title": "Settings",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-19 22:09:39.811849",
+ "published_at": "2026-09-20 09:14:33.459752",
  "route": "settings"
 }

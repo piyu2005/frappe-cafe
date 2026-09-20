@@ -29,6 +29,12 @@ REPO = SRC.parent
 APP = REPO / "my_new_app"
 OUT = APP / "builder_files"
 FONTS_OUT = APP / "public" / "builder_assets" / "fonts"
+SCRIPT_ICONS = {
+	"settings.js": ("bookmark", "bookmark-minus"),
+	"notifications.js": ("heart", "message-circle", "at-sign", "users", "newspaper", "bell", "check-check", "x"),
+}
+VENDOR_OUT = APP / "public" / "builder_assets" / "vendor"
+SOCKET_CLIENT = REPO / "frontend" / "node_modules" / "socket.io-client" / "dist" / "socket.io.min.js"
 FONT_DIR = REPO / "frontend" / "src" / "assets" / "Newsreader"
 FONT_FILES = {FONT_DIR / "Newsreader-Regular.woff2", FONT_DIR / "Newsreader-Medium.woff2"}
 
@@ -146,6 +152,10 @@ def main():
 	if OUT.exists():
 		shutil.rmtree(OUT)
 
+	# The live-updates client, so pages do not depend on a path inside Frappe.
+	VENDOR_OUT.mkdir(parents=True, exist_ok=True)
+	shutil.copy(SOCKET_CLIENT, VENDOR_OUT / SOCKET_CLIENT.name)
+
 	FONTS_OUT.mkdir(parents=True, exist_ok=True)
 	for font in FONT_FILES:
 		shutil.copy(font, FONTS_OUT / font.name)
@@ -160,11 +170,13 @@ def main():
 		("MNA Post", "JavaScript", "post.js"),
 		("MNA Home", "JavaScript", "home.js"),
 		("MNA Settings", "JavaScript", "settings.js"),
+		("MNA Notifications", "JavaScript", "notifications.js"),
 	]
 	for index, (name, kind, filename) in enumerate(scripts, start=1):
 		source = (SRC / filename).read_text()
-		# settings.js draws its icons from the same lucide files as the blocks.
-		source = source.replace("'@@ICONS@@'", json.dumps({name: svg(name, 16) for name in ("bookmark", "bookmark-minus")}))
+		# These scripts draw their icons from the same lucide files as the blocks.
+		if filename in SCRIPT_ICONS:
+			source = source.replace("'@@ICONS@@'", json.dumps({name: svg(name, 16) for name in SCRIPT_ICONS[filename]}))
 		write_json("client_scripts", name, client_script(name, kind, source, index))
 
 	shell_id = hashlib.sha1(b"my_new_app:MNA Shell").hexdigest()[:16]
@@ -197,7 +209,7 @@ def main():
 		},
 	)
 
-	shared = ["MNA Styles", "MNA UI", "MNA Shell", "MNA Settings"]
+	shared = ["MNA Styles", "MNA UI", "MNA Shell", "MNA Settings", "MNA Notifications"]
 	pages = [
 		("mna-search", "Search", "search", build_search, shared + ["MNA Search"], SEARCH_DATA_SCRIPT, False),
 		("mna-profile", "Profile", "profile/:username", build_profile, shared + ["MNA Profile"], PROFILE_DATA_SCRIPT, True),

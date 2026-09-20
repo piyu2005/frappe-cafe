@@ -169,11 +169,13 @@
           {
            "attributes": {},
            "baseStyles": {
+            "display": "flex",
             "flexShrink": "0",
+            "justifyContent": "flex-end",
             "width": "32px"
            },
            "blockId": "s10f9w6uk",
-           "blockName": "Spacer",
+           "blockName": "Notifications",
            "children": [],
            "classes": [],
            "clientScript": {},
@@ -184,11 +186,11 @@
            "element": "div",
            "elementBeforeConversion": null,
            "extendedFromComponent": null,
-           "innerHTML": null,
+           "innerHTML": "<button class=\"mna-bell\" type=\"button\" aria-label=\"Notifications\" data-bell=\"\" style=\"position:relative;display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;padding:0;border:0;border-radius:8px;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\" />\n  <path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\" /></svg><span class=\"mna-badge\" data-badge=\"notifications\" style=\"display:none;position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 6px;border-radius:9999px;background-color:#ce2c2c;color:#ffffff;font-size:12px;font-weight:420;line-height:16px;letter-spacing:0.02em;text-align:center\"></span></button>",
            "isChildOfComponent": null,
            "isRepeaterBlock": false,
            "mobileStyles": {},
-           "originalElement": null,
+           "originalElement": "__raw_html__",
            "props": {},
            "rawStyles": {},
            "referenceBlockId": null,
@@ -2096,10 +2098,13 @@
    "builder_script": "MNA Settings"
   },
   {
+   "builder_script": "MNA Notifications"
+  },
+  {
    "builder_script": "MNA Post"
   }
  ],
- "creation": "2026-09-19 22:02:47.408030",
+ "creation": "2026-09-20 09:22:19.140028",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -2109,7 +2114,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-19 22:02:47.408030",
+ "modified": "2026-09-20 09:22:19.140028",
  "modified_by": "Administrator",
  "name": "mna-post",
  "owner": "Administrator",
@@ -2118,6 +2123,6 @@
  "page_title": "Post",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-19 22:02:47.408030",
+ "published_at": "2026-09-20 09:22:19.140028",
  "route": "posts/:post_id"
 }

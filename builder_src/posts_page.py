@@ -172,7 +172,7 @@ def build_published_panel():
 			"Nothing yet",
 			children=[
 				block("span", text="You haven't published anything yet. "),
-				block("a", "Write link", text="Write your first blog.", attrs={"href": "/write"}, styles={"fontWeight": "500", "color": INK}),
+				block("a", "Write link", ["mna-plain-link"], text="Write your first blog.", attrs={"href": "/write"}, styles={"fontWeight": "500", "color": INK}),
 			],
 			styles={"margin": "24px 0 0", **text_style(14, "420", MUTED)},
 		),

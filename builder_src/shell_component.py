@@ -17,6 +17,8 @@ NAV_ITEMS = [
 ]
 TAB_ITEMS = NAV_ITEMS + [("settings", "Settings", "/settings", "settings")]
 
+# The count pill of frappe-ui's Badge (solid, red, small): white 12px text on
+# red, 16px high, 6px at the sides.
 BADGE_STYLES = {
 	"display": "none",
 	"position": "absolute",
@@ -24,15 +26,25 @@ BADGE_STYLES = {
 	"right": "-6px",
 	"minWidth": "16px",
 	"height": "16px",
-	"padding": "0 4px",
-	"borderRadius": "8px",
-	"backgroundColor": "#e03636",
+	"padding": "0 6px",
+	"borderRadius": "9999px",
+	"backgroundColor": "#ce2c2c",
 	"color": "#ffffff",
-	"fontSize": "10px",
-	"fontWeight": "500",
+	"fontSize": "12px",
+	"fontWeight": "420",
 	"lineHeight": "16px",
-	"letterSpacing": "0",
+	"letterSpacing": "0.02em",
 	"textAlign": "center",
+}
+# On the rail the pill hangs off the item's top right, inside a white ring.
+RAIL_BADGE_STYLES = {
+	**BADGE_STYLES,
+	"top": "-8px",
+	"right": "auto",
+	"left": "20px",
+	"height": "18px",
+	"border": "1px solid #ffffff",
+	"boxSizing": "border-box",
 }
 RAIL_ITEM_STYLES = {
 	"position": "relative",
@@ -105,20 +117,31 @@ MENU_STYLES = {
 }
 
 
-def badge():
-	return html_el("span", ["mna-badge"], {"data-badge": "messages"}, BADGE_STYLES)
+def badge(kind="messages", styles=BADGE_STYLES):
+	return html_el("span", ["mna-badge"], {"data-badge": kind}, styles)
 
 
 def rail_item(key, label, href, icon_name):
 	children = [svg(icon_name, 16)]
 	if key == "messages":
-		children.append(badge())
+		children.append(badge(styles=RAIL_BADGE_STYLES))
 	return html_el(
 		"a",
 		["mna-rail-item"],
 		{"href": href, "title": label, "aria-label": label, "data-nav": key},
 		RAIL_ITEM_STYLES,
 		children,
+	)
+
+
+def bell_item():
+	"""The rail's notification bell. A button: it opens the panel (notifications.js)."""
+	return html_el(
+		"button",
+		["mna-rail-item"],
+		{"type": "button", "title": "Notifications", "aria-label": "Notifications", "data-nav": "notifications", "data-bell": ""},
+		{**RAIL_ITEM_STYLES, "padding": "0", "border": "0", "cursor": "pointer"},
+		[svg("bell", 16), badge("notifications", RAIL_BADGE_STYLES)],
 	)
 
 
@@ -166,7 +189,7 @@ def build_shell_html():
 				["mna-rail-content"],
 				None,
 				RAIL_CONTENT_STYLES,
-				[logo] + [rail_item(*item) for item in NAV_ITEMS],
+				[logo] + [rail_item(*item) for item in NAV_ITEMS[:3]] + [bell_item(), rail_item(*NAV_ITEMS[3])],
 			)
 		],
 	)

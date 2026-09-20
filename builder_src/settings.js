@@ -201,6 +201,7 @@
 
   function openDialog(tab) {
     if (dialog) return
+    if (MNA.closeNotifications) MNA.closeNotifications()
     var user = currentUser()
     var opener = document.activeElement
     var overlay = el('div', 'mna-overlay mna-set-overlay')

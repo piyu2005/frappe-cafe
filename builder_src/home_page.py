@@ -24,6 +24,7 @@ from blocks import (
 	text_style,
 	when,
 )
+from bell import mobile_bell
 from data_scripts import HELPERS
 from layout import crumb_current, crumb_link, crumb_separator, page_layout
 
@@ -104,7 +105,7 @@ def build_feed_row():
 
 def build_mobile_bar():
 	"""The phone's top bar. Unlike the other pages' it is not sticky: it scrolls
-	away with the page, as on the Vue Home. No notification bell yet."""
+	away with the page, as on the Vue Home."""
 	brand = raw_block(
 		"Brand",
 		svg("feather", 20, INK)
@@ -112,8 +113,9 @@ def build_mobile_bar():
 		styles={"display": "flex", "alignItems": "center", "gap": "6px"},
 	)
 	write = raw_block(
-		"Write",
-		html_el(
+		"Bell and write",
+		mobile_bell()
+		+ html_el(
 			"a",
 			["mna-btn", "mna-btn-solid"],
 			{"href": "/write", "aria-label": "New post"},
@@ -129,7 +131,7 @@ def build_mobile_bar():
 			},
 			[svg("plus", 16)],
 		),
-		styles={"display": "flex"},
+		styles={"display": "flex", "alignItems": "center", "gap": "4px"},
 	)
 	return block(
 		"header",
@@ -155,9 +157,9 @@ def build_home(shell_id, shell_block):
 			"First post",
 			children=[
 				block("span", text="You haven't written anything yet. "),
-				block("a", "Write link", text="Write your first blog.", attrs={"href": "/write"}, styles={"fontWeight": "500", "color": INK}),
+				block("a", "Write link", ["mna-plain-link"], text="Write your first blog.", attrs={"href": "/write"}, styles={"fontWeight": "500", "color": INK}),
 			],
-			styles={"margin": "0 0 24px", **text_style(16, "420", "#7c7c7c", "0.02em", "1.5")},
+			styles={"margin": "0 0 24px", **text_style(14, "420", "#7c7c7c")},
 		),
 		"hp.no_posts",
 	)

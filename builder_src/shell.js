@@ -14,6 +14,7 @@
     messages: function (p) { return p.indexOf('/messages') === 0 },
     profile: function (p) { return p.indexOf('/profile') === 0 },
     settings: function (p) { return p.indexOf('/settings') === 0 },
+    notifications: function () { return false },
   }
 
   function markActiveNav() {
@@ -25,18 +26,36 @@
     })
   }
 
-  function showUnreadBadge() {
-    fetch(location.origin + '/api/v2/method/my_new_app.chat.unread_message_count', { credentials: 'same-origin' })
-      .then(function (r) { return r.ok ? r.json() : null })
-      .then(function (body) {
-        var count = body && body.data
-        if (!count) return
-        document.querySelectorAll('[data-badge="messages"]').forEach(function (el) {
-          el.textContent = count > 99 ? '99+' : String(count)
-          el.classList.add('show')
-        })
-      })
-      .catch(function () {})
+  // The unread counts on the rail's and the top bars' badges.
+  var COUNTS = {
+    messages: 'my_new_app.chat.unread_message_count',
+    notifications: 'my_new_app.follow.unread_notification_count',
+  }
+  var REFRESH_MS = 60000
+
+  function setBadge(kind, count) {
+    document.querySelectorAll('[data-badge="' + kind + '"]').forEach(function (el) {
+      el.textContent = count > 99 ? '99+' : String(count)
+      el.classList.toggle('show', count > 0)
+    })
+  }
+
+  function refreshBadges() {
+    Object.keys(COUNTS).forEach(function (kind) {
+      fetch(location.origin + '/api/v2/method/' + COUNTS[kind], { credentials: 'same-origin' })
+        .then(function (r) { return r.ok ? r.json() : null })
+        .then(function (body) { if (body && typeof body.data === 'number') setBadge(kind, body.data) })
+        .catch(function () {})
+    })
+  }
+  MNA.refreshBadges = refreshBadges
+
+  // Counts change while a page sits open, so look again now and then and
+  // when the tab comes back into view. (Live updates are in notifications.js.)
+  function keepBadgesFresh() {
+    refreshBadges()
+    setInterval(function () { if (!document.hidden) refreshBadges() }, REFRESH_MS)
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) refreshBadges() })
   }
 
   function setupLogoMenu() {
@@ -90,6 +109,6 @@
   document.addEventListener('DOMContentLoaded', function () {
     markActiveNav()
     setupLogoMenu()
-    showUnreadBadge()
+    keepBadgesFresh()
   })
 })()

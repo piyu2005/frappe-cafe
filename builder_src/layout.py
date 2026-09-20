@@ -1,6 +1,7 @@
 """The frame every page shares: shell, header with breadcrumbs, scroll area and
 a centered container."""
 
+from bell import mobile_bell
 from blocks import INK, INK_BLACK, MUTED, OUTLINE, attribute, block, html_el, instance_of, raw_block, show, svg, text_style
 
 
@@ -141,10 +142,8 @@ def page_layout(shell_id, shell_block, crumbs, content, max_width, mobile_header
 
 
 def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
-	"""The top bar on a phone: a back chevron and the title. The Vue pages also
-	have a notification bell on the right; the bell is not built for Builder
-	pages yet, so a blank space of the same width keeps the title centered.
-	`title_key` and `back_key` bind the title and the back link to page data."""
+	"""The top bar on a phone: a back chevron, the title and the notification
+	bell. `title_key` and `back_key` bind the title and the back link to page data."""
 	back = block(
 		"a",
 		"Back",
@@ -181,7 +180,7 @@ def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
 	)
 	if title_key:
 		heading = show(heading, title_key)
-	spacer = block("div", "Spacer", styles={"flexShrink": "0", "width": "32px"})
+	bell = raw_block("Notifications", mobile_bell(), styles={"display": "flex", "flexShrink": "0", "justifyContent": "flex-end", "width": "32px"})
 	return block(
 		"header",
 		"Mobile header",
@@ -199,5 +198,5 @@ def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
 			"borderBottom": f"1px solid {OUTLINE}",
 			"backgroundColor": "#ffffff",
 		},
-		children=[back, heading, spacer],
+		children=[back, heading, bell],
 	)
