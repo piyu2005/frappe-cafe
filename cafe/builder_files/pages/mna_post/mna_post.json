@@ -729,13 +729,15 @@
                     "fontWeight": "600",
                     "color": "#0f0f0f",
                     "letterSpacing": "0.015em",
-                    "lineHeight": "1.15"
+                    "lineHeight": "24px",
+                    "display": "block"
                    },
                    "blockId": "cq3fr5096",
                    "blockName": "Author name",
                    "children": [],
                    "classes": [
-                    "mna-author"
+                    "mna-author",
+                    "mna-author-head"
                    ],
                    "clientScript": {},
                    "customAttributes": {},
@@ -2107,7 +2109,7 @@
    "builder_script": "MNA Code"
   }
  ],
- "creation": "2026-09-20 15:51:38.452808",
+ "creation": "2026-09-20 16:28:00.238496",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -2117,7 +2119,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 15:51:38.452808",
+ "modified": "2026-09-20 16:28:00.238496",
  "modified_by": "Administrator",
  "name": "mna-post",
  "owner": "Administrator",
@@ -2126,6 +2128,6 @@
  "page_title": "Post",
  "project_folder": "cafe",
  "published": 1,
- "published_at": "2026-09-20 15:51:38.452808",
+ "published_at": "2026-09-20 16:28:00.238496",
  "route": "posts/:post_id"
 }

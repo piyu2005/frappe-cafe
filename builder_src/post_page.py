@@ -175,10 +175,10 @@ def build_author_row():
 			block(
 				"a",
 				"Author name",
-				["mna-author"],
+				["mna-author", "mna-author-head"],
 				attrs={"href": "/profile"},
 				text="Author",
-				styles=text_style(16, "600", INK_BLACK, "0.015em", "1.15"),
+				styles={**text_style(16, "600", INK_BLACK, "0.015em", "24px"), "display": "block"},
 			),
 			"pp.author_name",
 		),

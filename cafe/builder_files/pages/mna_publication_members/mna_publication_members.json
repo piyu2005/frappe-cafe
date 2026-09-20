@@ -701,7 +701,7 @@
    "builder_script": "MNA Pub Members"
   }
  ],
- "creation": "2026-09-20 15:51:38.452808",
+ "creation": "2026-09-20 16:19:06.555875",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -711,7 +711,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 15:51:38.452808",
+ "modified": "2026-09-20 16:19:06.555875",
  "modified_by": "Administrator",
  "name": "mna-publication-members",
  "owner": "Administrator",
@@ -720,6 +720,6 @@
  "page_title": "Publication members",
  "project_folder": "cafe",
  "published": 1,
- "published_at": "2026-09-20 15:51:38.452808",
+ "published_at": "2026-09-20 16:19:06.555875",
  "route": "publications/:handle/members"
 }
