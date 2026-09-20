@@ -83,10 +83,16 @@
 
   // ---- Toast ----
 
+  // Messages stack in the bottom right corner, newest at the bottom, like Frappe's own apps.
+  var toastBox = null
   MNA.toast = function (text) {
+    if (!toastBox || !toastBox.isConnected) {
+      toastBox = el('div', 'mna-toasts')
+      document.body.appendChild(toastBox)
+    }
     var toast = el('div', 'mna-toast', text)
     toast.setAttribute('role', 'status')
-    document.body.appendChild(toast)
+    toastBox.appendChild(toast)
     setTimeout(function () { toast.classList.add('leaving') }, 2200)
     setTimeout(function () { toast.remove() }, 2600)
   }
