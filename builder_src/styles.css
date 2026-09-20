@@ -544,6 +544,9 @@ p.mna-clamp-3:empty::before {
   display: block;
   line-height: 20px !important;
 }
+.mna-author.mna-author-head {
+  line-height: 24px !important;
+}
 .mna-author:hover {
   text-decoration: underline;
 }

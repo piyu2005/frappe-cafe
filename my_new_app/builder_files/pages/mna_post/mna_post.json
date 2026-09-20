@@ -729,13 +729,15 @@
                     "fontWeight": "600",
                     "color": "#0f0f0f",
                     "letterSpacing": "0.015em",
-                    "lineHeight": "1.15"
+                    "lineHeight": "24px",
+                    "display": "block"
                    },
                    "blockId": "cl3nsta2w",
                    "blockName": "Author name",
                    "children": [],
                    "classes": [
-                    "mna-author"
+                    "mna-author",
+                    "mna-author-head"
                    ],
                    "clientScript": {},
                    "customAttributes": {},
@@ -2107,7 +2109,7 @@
    "builder_script": "MNA Code"
   }
  ],
- "creation": "2026-09-20 11:42:32.975654",
+ "creation": "2026-09-20 18:09:58.831608",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -2117,7 +2119,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 11:42:32.975654",
+ "modified": "2026-09-20 18:09:58.831608",
  "modified_by": "Administrator",
  "name": "mna-post",
  "owner": "Administrator",
@@ -2126,6 +2128,6 @@
  "page_title": "Post",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 11:42:32.975654",
+ "published_at": "2026-09-20 18:09:58.831608",
  "route": "posts/:post_id"
 }

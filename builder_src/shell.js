@@ -37,7 +37,7 @@
 
   var NAV_PATHS = {
     home: function (p) { return p === '/' },
-    search: function (p) { return p === '/search' || p.indexOf('/search/') === 0 },
+    search: function (p) { return p === '/search' || p.indexOf('/search/') === 0 || p === '/invite' },
     messages: function (p) { return p.indexOf('/messages') === 0 },
     profile: function (p) { return p.indexOf('/profile') === 0 },
     settings: function (p) { return p.indexOf('/settings') === 0 },

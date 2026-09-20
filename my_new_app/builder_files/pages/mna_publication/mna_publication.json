@@ -80,45 +80,6 @@
          "blockName": "Mobile header",
          "children": [
           {
-           "attributes": {
-            "href": "/",
-            "aria-label": "Back"
-           },
-           "baseStyles": {
-            "display": "grid",
-            "placeItems": "center",
-            "flexShrink": "0",
-            "width": "32px",
-            "height": "32px",
-            "borderRadius": "8px",
-            "color": "#171717"
-           },
-           "blockId": "qldhbpr8n",
-           "blockName": "Back",
-           "children": [],
-           "classes": [
-            "mna-mobile-back"
-           ],
-           "clientScript": {},
-           "customAttributes": {},
-           "dataKey": null,
-           "draggable": false,
-           "dynamicValues": [],
-           "element": "a",
-           "elementBeforeConversion": null,
-           "extendedFromComponent": null,
-           "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:18px;height:18px\"><path d=\"m15 18-6-6 6-6\" /></svg>",
-           "isChildOfComponent": null,
-           "isRepeaterBlock": false,
-           "mobileStyles": {},
-           "originalElement": null,
-           "props": {},
-           "rawStyles": {},
-           "referenceBlockId": null,
-           "tabletStyles": {},
-           "visibilityCondition": null
-          },
-          {
            "attributes": {},
            "baseStyles": {
             "margin": "0",
@@ -128,6 +89,10 @@
             "textOverflow": "ellipsis",
             "whiteSpace": "nowrap",
             "textAlign": "center",
+            "position": "absolute",
+            "left": "0",
+            "right": "0",
+            "pointerEvents": "none",
             "fontSize": "17px",
             "fontWeight": "600",
             "color": "#0f0f0f",
@@ -162,10 +127,13 @@
           {
            "attributes": {},
            "baseStyles": {
+            "position": "relative",
             "display": "flex",
             "flexShrink": "0",
+            "alignItems": "center",
             "justifyContent": "flex-end",
-            "width": "32px"
+            "gap": "4px",
+            "marginLeft": "auto"
            },
            "blockId": "q1hwij2om",
            "blockName": "Notifications",
@@ -179,7 +147,7 @@
            "element": "div",
            "elementBeforeConversion": null,
            "extendedFromComponent": null,
-           "innerHTML": "<button class=\"mna-bell\" type=\"button\" aria-label=\"Notifications\" data-bell=\"\" style=\"position:relative;display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;padding:0;border:0;border-radius:8px;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\" />\n  <path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\" /></svg><span class=\"mna-badge\" data-badge=\"notifications\" style=\"display:none;position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 6px;border-radius:9999px;background-color:#ce2c2c;color:#ffffff;font-size:12px;font-weight:420;line-height:16px;letter-spacing:0.02em;text-align:center\"></span></button>",
+           "innerHTML": "<button class=\"mna-bell\" type=\"button\" aria-label=\"Notifications\" data-bell=\"\" style=\"position:relative;display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;padding:0;border:0;border-radius:8px;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\" />\n  <path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\" /></svg><span class=\"mna-badge\" data-badge=\"notifications\" style=\"display:none;position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 6px;border-radius:9999px;background-color:#ce2c2c;color:#ffffff;font-size:12px;font-weight:420;line-height:16px;letter-spacing:0.02em;text-align:center\"></span></button><a class=\"mna-btn mna-btn-solid\" href=\"/write\" aria-label=\"New Post\" style=\"display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background-color:#171717;color:#ffffff\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg></a>",
            "isChildOfComponent": null,
            "isRepeaterBlock": false,
            "mobileStyles": {},
@@ -702,7 +670,7 @@
    "builder_script": "MNA Pub Detail"
   }
  ],
- "creation": "2026-09-20 15:29:40.738553",
+ "creation": "2026-09-20 18:09:58.831608",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -712,7 +680,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 15:29:40.738553",
+ "modified": "2026-09-20 18:09:58.831608",
  "modified_by": "Administrator",
  "name": "mna-publication",
  "owner": "Administrator",
@@ -721,6 +689,6 @@
  "page_title": "Publication",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 15:29:40.738553",
+ "published_at": "2026-09-20 18:09:58.831608",
  "route": "publications/:handle"
 }

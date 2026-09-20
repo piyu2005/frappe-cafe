@@ -141,10 +141,12 @@ def page_layout(shell_id, shell_block, crumbs, content, max_width, mobile_header
 	return [root]
 
 
-def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
+def build_mobile_header(title, title_key=None, back_href="/", back_key=None, back=True, bell=True, action=""):
 	"""The top bar on a phone: a back chevron, the title and the notification
-	bell. `title_key` and `back_key` bind the title and the back link to page data."""
-	back = block(
+	bell. `title_key` and `back_key` bind the title and the back link to page data.
+	`back=False` and `bell=False` leave those out, and `action` is markup shown
+	before the bell. Without a back link the title is centered on the whole bar."""
+	back_link = block(
 		"a",
 		"Back",
 		["mna-mobile-back"],
@@ -161,7 +163,7 @@ def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
 		},
 	)
 	if back_key:
-		back = attribute(back, back_key, "href")
+		back_link = attribute(back_link, back_key, "href")
 	heading = block(
 		"h1",
 		"Title",
@@ -175,12 +177,16 @@ def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
 			"textOverflow": "ellipsis",
 			"whiteSpace": "nowrap",
 			"textAlign": "center",
+			**({} if back else {"position": "absolute", "left": "0", "right": "0", "pointerEvents": "none"}),
 			**text_style(17, "600", INK_BLACK, "0.015em", "1.25"),
 		},
 	)
 	if title_key:
 		heading = show(heading, title_key)
-	bell = raw_block("Notifications", mobile_bell(), styles={"display": "flex", "flexShrink": "0", "justifyContent": "flex-end", "width": "32px"})
+	styles = {"display": "flex", "flexShrink": "0", "justifyContent": "flex-end", "width": "32px"}
+	if action or not bell:
+		styles = {"position": "relative", "display": "flex", "flexShrink": "0", "alignItems": "center", "justifyContent": "flex-end", "gap": "4px", "marginLeft": "auto"}
+	right = raw_block("Notifications", (mobile_bell() if bell else "") + action, styles=styles)
 	return block(
 		"header",
 		"Mobile header",
@@ -198,5 +204,5 @@ def build_mobile_header(title, title_key=None, back_href="/", back_key=None):
 			"borderBottom": f"1px solid {OUTLINE}",
 			"backgroundColor": "#ffffff",
 		},
-		children=[back, heading, bell],
+		children=[*([back_link] if back else []), heading, right],
 	)
