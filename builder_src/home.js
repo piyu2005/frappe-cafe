@@ -90,7 +90,7 @@
 
   function showCounts(posts, rows) {
     if (!posts.length) return
-    MNA.api('my_new_app.api.get_comment_counts', { posts: posts.map(function (post) { return post.name }) }).then(
+    MNA.api('cafe.api.get_comment_counts', { posts: posts.map(function (post) { return post.name }) }).then(
       function (counts) {
         posts.forEach(function (post, index) {
           var node = rows[index].querySelector('.mna-feed-comments')

@@ -5,7 +5,7 @@
   'use strict'
 
   var ICONS = '@@ICONS@@'
-  var HLJS = '/assets/my_new_app/builder_assets/vendor/highlight.min.js'
+  var HLJS = '/assets/cafe/builder_assets/vendor/highlight.min.js'
   var COPIED_MS = 2000
 
   function icon(name) {

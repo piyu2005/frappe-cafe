@@ -14,7 +14,7 @@
   var SIDEBAR_KEY = 'mna-sidebar'
   try {
     if (localStorage.getItem(SIDEBAR_KEY) === 'open') document.documentElement.setAttribute('data-mna-sidebar', 'open')
-  } catch (e) {}
+  } catch (e) { /* storage may be blocked */ }
 
   function setSidebar(open) {
     if (open) document.documentElement.setAttribute('data-mna-sidebar', 'open')
@@ -22,7 +22,7 @@
     try {
       if (open) localStorage.setItem(SIDEBAR_KEY, 'open')
       else localStorage.removeItem(SIDEBAR_KEY)
-    } catch (e) {}
+    } catch (e) { /* storage may be blocked */ }
   }
 
   function setupSidebarToggle() {
@@ -55,8 +55,8 @@
 
   // The unread counts on the rail's and the top bars' badges.
   var COUNTS = {
-    messages: 'my_new_app.chat.unread_message_count',
-    notifications: 'my_new_app.follow.unread_notification_count',
+    messages: 'cafe.chat.unread_message_count',
+    notifications: 'cafe.follow.unread_notification_count',
   }
   var REFRESH_MS = 60000
 

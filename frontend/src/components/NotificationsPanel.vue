@@ -153,19 +153,19 @@ const open = computed({
 const router = useRouter()
 
 const notifications = useCall({
-  url: '/api/v2/method/my_new_app.follow.list_notifications',
+  url: '/api/v2/method/cafe.follow.list_notifications',
   refetch: true,
 })
 
 const markRead = useCall({
-  url: '/api/v2/method/my_new_app.follow.mark_notification_read',
+  url: '/api/v2/method/cafe.follow.mark_notification_read',
   method: 'POST',
   immediate: false,
   onSuccess: () => unreadNotifCount.reload(),
 })
 
 const markAllRead = useCall({
-  url: '/api/v2/method/my_new_app.follow.mark_notification_read',
+  url: '/api/v2/method/cafe.follow.mark_notification_read',
   method: 'POST',
   immediate: false,
   onSuccess: () => {
@@ -191,14 +191,14 @@ async function onMarkAllReadClick() {
 }
 
 const respondGroupInvite = useCall({
-  url: '/api/v2/method/my_new_app.chat.respond_to_group_invite',
+  url: '/api/v2/method/cafe.chat.respond_to_group_invite',
   method: 'POST',
   immediate: false,
   onSuccess: () => notifications.reload(),
 })
 
 const respondPublicationInvite = useCall({
-  url: '/api/v2/method/my_new_app.api.respond_to_publication_invite',
+  url: '/api/v2/method/cafe.api.respond_to_publication_invite',
   method: 'POST',
   immediate: false,
   onSuccess: () => notifications.reload(),
