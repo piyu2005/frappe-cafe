@@ -26,7 +26,7 @@
       try {
         var first = JSON.parse(JSON.parse(body._server_messages)[0])
         if (first && first.message) return String(first.message).replace(/<[^>]+>/g, '')
-      } catch (e) { /* not a JSON message */ }
+      } catch (e) {}
     }
     return ''
   }
@@ -83,16 +83,10 @@
 
   // ---- Toast ----
 
-  // Messages stack in the bottom right corner, newest at the bottom, like Frappe's own apps.
-  var toastBox = null
   MNA.toast = function (text) {
-    if (!toastBox || !toastBox.isConnected) {
-      toastBox = el('div', 'mna-toasts')
-      document.body.appendChild(toastBox)
-    }
     var toast = el('div', 'mna-toast', text)
     toast.setAttribute('role', 'status')
-    toastBox.appendChild(toast)
+    document.body.appendChild(toast)
     setTimeout(function () { toast.classList.add('leaving') }, 2200)
     setTimeout(function () { toast.remove() }, 2600)
   }

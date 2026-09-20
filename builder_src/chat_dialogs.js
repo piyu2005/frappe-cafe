@@ -378,7 +378,7 @@
       if (data.my_is_admin) {
         var nameBox = textInput('')
         nameBox.value = title
-        var rename = function () {
+        function rename() {
           var value = nameBox.value.trim()
           if (!value || value === title) return
           C.call('rename_group', { conversation: id, title: value }).then(function () { title = value; C.reloadConversation(); C.loadConversations() }, function (e) { MNA.toast(e.message) })

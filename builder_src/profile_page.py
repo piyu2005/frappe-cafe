@@ -27,8 +27,8 @@ from blocks import (
 	when,
 )
 from data_scripts import HELPERS, POST_ROWS, SAMPLE_POST, SAMPLE_WORK_AND_EDUCATION, indent
-from layout import crumb_current, crumb_link, crumb_separator, page_layout
 from post_row import build_post_row
+from layout import crumb_current, crumb_link, crumb_separator, page_layout
 
 # ---- Buttons ----
 
@@ -224,10 +224,7 @@ def build_job_line():
 			"span",
 			"Job",
 			styles={"display": "flex", "alignItems": "center", "gap": "4px"},
-			children=[
-				icon("briefcase", 16),
-				show(block("span", text="Intern at Frappe"), "profile.job_line"),
-			],
+			children=[icon("briefcase", 16), show(block("span", text="Intern at Frappe"), "profile.job_line")],
 		),
 		"profile.has_job",
 	)
@@ -250,9 +247,7 @@ def build_job_line():
 
 def build_headline():
 	def paragraph(name, text, color, key, condition):
-		p = block(
-			"p", name, text=text, styles={"margin": "0", **text_style(16, "420", color, "0.02em", "1.5")}
-		)
+		p = block("p", name, text=text, styles={"margin": "0", **text_style(16, "420", color, "0.02em", "1.5")})
 		return when(show(p, key) if key else p, condition)
 
 	# The wrapper is left out when there is nothing to show, so its top margin adds no gap.
@@ -262,13 +257,7 @@ def build_headline():
 			"Headline",
 			styles={"marginTop": "4px"},
 			children=[
-				paragraph(
-					"Headline text",
-					"Debugging my code by day",
-					GRAY_6,
-					"profile.headline",
-					"profile.headline",
-				),
+				paragraph("Headline text", "Debugging my code by day", GRAY_6, "profile.headline", "profile.headline"),
 				paragraph("Headline hint", "Add a short bio.", GRAY_4, None, "profile.show_headline_hint"),
 			],
 		),
@@ -301,12 +290,7 @@ def card(icon_name, title, body, action=None, name=None):
 	title_block = raw_block(
 		"Card title",
 		svg(icon_name, 16) + html_el("span", text=title),
-		styles={
-			"display": "flex",
-			"alignItems": "center",
-			"gap": "6px",
-			**text_style(14, "500", INK, "0.015em"),
-		},
+		styles={"display": "flex", "alignItems": "center", "gap": "6px", **text_style(14, "500", INK, "0.015em")},
 	)
 	head = block(
 		"div",
@@ -344,17 +328,12 @@ def repeater(name, classes, key, row, attrs=None):
 
 
 def muted_paragraph(text, condition, name, line="1.15"):
-	return when(
-		block("p", name, text=text, styles={"margin": "0", **text_style(14, "420", MUTED, "0.02em", line)}),
-		condition,
-	)
+	return when(block("p", name, text=text, styles={"margin": "0", **text_style(14, "420", MUTED, "0.02em", line)}), condition)
 
 
 def show_all_row(text, target, condition):
 	"""The centered "Show all ..." button under a card, as one block."""
-	button = html_el(
-		"button", ["mna-text-btn"], {"type": "button", "data-expand": target}, TEXT_BUTTON_STYLES, text=text
-	)
+	button = html_el("button", ["mna-text-btn"], {"type": "button", "data-expand": target}, TEXT_BUTTON_STYLES, text=text)
 	return when(
 		raw_block(
 			"More",
@@ -446,17 +425,13 @@ def build_posts():
 		"profile.posts_href",
 		"href",
 	)
-	return block(
-		"div", "Posts section", children=[card_block, more_row([view_all, view_others], "profile.posts_more")]
-	)
+	return block("div", "Posts section", children=[card_block, more_row([view_all, view_others], "profile.posts_more")])
 
 
 def build_entry_row(primary, secondary_key, secondary_color, edit_action, edit_label, extra=None):
 	"""One work or education item: a bold first line, then a second line and
 	dates, then an optional description, with an edit button on your own."""
-	title = show(
-		block("div", "Primary", text="Company", styles=text_style(14, "600", INK, "0.015em", "1.5")), primary
-	)
+	title = show(block("div", "Primary", text="Company", styles=text_style(14, "600", INK, "0.015em", "1.5")), primary)
 	second = when(
 		show(block("span", "Secondary", text="Title"), secondary_key),
 		secondary_key,
@@ -525,18 +500,13 @@ def build_work():
 	return block(
 		"div",
 		"Work section",
-		children=[
-			card("briefcase", "Work History", body, action=add, name="Work History"),
-			show_all_row("Show all History", "mna-work-list", "profile.work_more"),
-		],
+		children=[card("briefcase", "Work History", body, action=add, name="Work History"), show_all_row("Show all History", "mna-work-list", "profile.work_more")],
 	)
 
 
 def build_education():
 	row = build_entry_row("school", "degree_line", GRAY_7, "edit-education", "Edit education")
-	entries = repeater(
-		"Education list", ["mna-entries"], "education", row, attrs={"id": "mna-education-list"}
-	)
+	entries = repeater("Education list", ["mna-entries"], "education", row, attrs={"id": "mna-education-list"})
 	body = [
 		entries,
 		muted_paragraph("Add your education.", "profile.education_empty_own", "No education (yours)"),
@@ -546,10 +516,7 @@ def build_education():
 	return block(
 		"div",
 		"Education section",
-		children=[
-			card("graduation-cap", "Education", body, action=add, name="Education"),
-			show_all_row("Show all Education", "mna-education-list", "profile.education_more"),
-		],
+		children=[card("graduation-cap", "Education", body, action=add, name="Education"), show_all_row("Show all Education", "mna-education-list", "profile.education_more")],
 	)
 
 
@@ -558,13 +525,7 @@ def build_not_found():
 		raw_block(
 			"Not found",
 			svg("user-x", 32, "#c8c8c8")
-			+ html_el(
-				"p",
-				None,
-				None,
-				{"margin": "0", **text_style(14, "420", MUTED, "0.02em", "1.5")},
-				text="This profile does not exist.",
-			),
+			+ html_el("p", None, None, {"margin": "0", **text_style(14, "420", MUTED, "0.02em", "1.5")}, text="This profile does not exist."),
 			styles={
 				"display": "flex",
 				"flexDirection": "column",
@@ -626,7 +587,7 @@ def build_profile_redirect(shell_id, shell_block):
 # post titles are chosen by users, so every value that reaches the HTML is
 # escaped here. The helper functions call only builtins and `frappe`, because
 # functions defined in a server script cannot see each other.
-DATE_RANGE = """\
+DATE_RANGE = '''\
 def date_range(start, end):
     if not (start or end):
         return ""
@@ -636,9 +597,9 @@ def date_range(start, end):
     return first + " \\u2014 " + last
 
 
-"""
+'''
 
-PROFILE_MAIN = """\
+PROFILE_MAIN = '''\
 identifier = frappe.form_dict.username or ""
 
 if frappe.session.user == "Guest":
@@ -660,14 +621,14 @@ if not user_id:
     data.work = []
     data.education = []
 else:
-    person = frappe.call("cafe.api.get_profile", user=user_id)
+    person = frappe.call("my_new_app.api.get_profile", user=user_id)
     if identifier and person.username != identifier:
         redirect("/profile/" + path_segment(person.username))
 
     is_own = person.name == frappe.session.user
     name = person.full_name or person.username
     image = safe_url(person.user_image)
-    rows = frappe.call("cafe.api.list_profile_posts", user=user_id, limit=3)
+    rows = frappe.call("my_new_app.api.list_profile_posts", user=user_id, limit=3)
 @@POST_ROWS@@
     work = []
     for job in person.work:
@@ -733,7 +694,7 @@ else:
     data.posts = posts
     data.work = work
     data.education = education
-"""
+'''
 
 PROFILE_DATA_SCRIPT = (
 	HELPERS
@@ -743,10 +704,10 @@ PROFILE_DATA_SCRIPT = (
 	)
 )
 
-PROFILE_REDIRECT_SCRIPT = """\
+PROFILE_REDIRECT_SCRIPT = '''\
 if frappe.session.user == "Guest":
     redirect("/login?redirect=/profile")
 
-me = frappe.call("cafe.api.get_profile")
+me = frappe.call("my_new_app.api.get_profile")
 redirect("/profile/" + me.username)
-"""
+'''

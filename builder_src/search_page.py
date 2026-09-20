@@ -19,9 +19,7 @@ def build_person_row():
 	avatar_image["visibilityCondition"] = {"key": "user_image", "comesFrom": "dataScript"}
 	# Both avatar children share one grid cell. On the page only one of them is
 	# rendered; the editor canvas ignores the conditions and shows both.
-	avatar_initial = block(
-		"span", "Avatar initial", classes=["initial"], text="P", styles={"gridArea": "1 / 1"}
-	)
+	avatar_initial = block("span", "Avatar initial", classes=["initial"], text="P", styles={"gridArea": "1 / 1"})
 	avatar_initial["dynamicValues"] = [bind("initial", "innerHTML", "key")]
 	avatar_initial["visibilityCondition"] = {"key": "no_image", "comesFrom": "dataScript"}
 	avatar = block(
@@ -148,7 +146,7 @@ SEARCH_DATA_SCRIPT = """\
 if frappe.session.user == "Guest":
     redirect("/login?redirect=/search")
 
-people = frappe.call("cafe.api.list_people")
+people = frappe.call("my_new_app.api.list_people")
 for person in people:
     identifier = person.get("username") or person.get("name")
     label = person.get("full_name") or identifier

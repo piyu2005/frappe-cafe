@@ -75,11 +75,11 @@ export function errorMessage(e, fallback = 'Something went wrong. Please try aga
 }
 
 export async function sendLoginCode(email) {
-  await call('cafe.api.send_login_code', { email })
+  await call('my_new_app.api.send_login_code', { email })
 }
 
 export async function verifyLoginCode(email, code) {
-  await call('cafe.api.verify_login_code', { email, code })
+  await call('my_new_app.api.verify_login_code', { email, code })
   session.refresh()
 }
 

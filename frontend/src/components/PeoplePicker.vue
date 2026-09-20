@@ -58,7 +58,7 @@ const emit = defineEmits(['update:modelValue'])
 const query = ref('')
 
 const search = useCall({
-  url: '/api/v2/method/cafe.chat.search_people_to_message',
+  url: '/api/v2/method/my_new_app.chat.search_people_to_message',
   params: () => ({ query: query.value }),
   immediate: false,
 })

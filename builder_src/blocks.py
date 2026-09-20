@@ -8,7 +8,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 LUCIDE = REPO / "frontend" / "node_modules" / "lucide-static" / "icons"
 
-_ids = random.Random("cafe.builder")
+_ids = random.Random("my_new_app.builder")
 
 
 def block_id():
@@ -24,18 +24,7 @@ SURFACE_2 = "#f3f3f3"
 DIALOG_SHADOW = "0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.12)"
 
 
-def block(
-	element,
-	name=None,
-	classes=(),
-	attrs=None,
-	custom=None,
-	text=None,
-	children=(),
-	html=None,
-	styles=None,
-	inner_html=None,
-):
+def block(element, name=None, classes=(), attrs=None, custom=None, text=None, children=(), html=None, styles=None, inner_html=None):
 	"""`styles` are the block's static CSS (camelCase keys, as Builder stores them).
 	`text` is plain text, shown by Builder as the block's innerHTML. `html` is
 	raw markup (used for svg icons) and is marked as a raw-html block."""
@@ -135,9 +124,7 @@ def svg(name, size, color=None):
 	"""A lucide icon as an inline svg of a fixed size (stroke 1.5, like frappe-ui)."""
 	source = (LUCIDE / f"{name}.svg").read_text()
 	inner = re.search(r"<svg[^>]*>(.*)</svg>", source, re.S).group(1).strip()
-	style = f"display:block;flex-shrink:0;width:{size}px;height:{size}px" + (
-		f";color:{color}" if color else ""
-	)
+	style = f"display:block;flex-shrink:0;width:{size}px;height:{size}px" + (f";color:{color}" if color else "")
 	return (
 		f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" '
 		'stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" '
@@ -173,7 +160,7 @@ GRAY_6 = "#525252"
 GRAY_7 = "#383838"
 GRAY_4 = "#999999"
 BUTTON_BORDER = "#e2e2e2"
-NBSP = "\u00a0"
+NBSP = " "
 
 
 def text_style(size, weight="420", color=INK, spacing="0.02em", line="1.15", **extra):

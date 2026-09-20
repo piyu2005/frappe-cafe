@@ -15,8 +15,8 @@
   }
   var OTHER_TYPE = { icon: 'bell', color: '#383838' }
   var RESPOND = {
-    'Group Invite': 'cafe.chat.respond_to_group_invite',
-    'Publication Invite': 'cafe.api.respond_to_publication_invite',
+    'Group Invite': 'my_new_app.chat.respond_to_group_invite',
+    'Publication Invite': 'my_new_app.api.respond_to_publication_invite',
   }
   var UNITS = [['year', 31536000], ['month', 2592000], ['day', 86400], ['hour', 3600], ['minute', 60]]
 
@@ -142,9 +142,9 @@
     var self = this
     var request = ++this.request
     if (!this.list.children.length) this.showSkeleton()
-    var start = markRead ? MNA.api('cafe.follow.mark_notification_read', {}).catch(function () {}) : Promise.resolve()
+    var start = markRead ? MNA.api('my_new_app.follow.mark_notification_read', {}).catch(function () {}) : Promise.resolve()
     start
-      .then(function () { return MNA.get('cafe.follow.list_notifications') })
+      .then(function () { return MNA.get('my_new_app.follow.list_notifications') })
       .then(
         function (rows) {
           if (request !== self.request) return
@@ -162,7 +162,7 @@
     var self = this
     var node = this.node.querySelector('.mna-np-mark-all')
     node.disabled = true
-    MNA.api('cafe.follow.mark_notification_read', {}).then(
+    MNA.api('my_new_app.follow.mark_notification_read', {}).then(
       function () {
         node.disabled = false
         if (announce) MNA.toast('All notifications marked as read')
@@ -225,7 +225,7 @@
   Panel.prototype.go = function (n) {
     if (!n.is_read) {
       n.is_read = 1
-      MNA.api('cafe.follow.mark_notification_read', { name: n.name }).then(function () {
+      MNA.api('my_new_app.follow.mark_notification_read', { name: n.name }).then(function () {
         if (MNA.refreshBadges) MNA.refreshBadges()
       }, function () {})
     }
@@ -262,7 +262,7 @@
     else socketWaiters.push(callback)
   }
 
-  var SOCKET_SCRIPT = '/assets/cafe/builder_assets/vendor/socket.io.min.js'
+  var SOCKET_SCRIPT = '/assets/my_new_app/builder_assets/vendor/socket.io.min.js'
 
   function connectRealtime(panel) {
     var script = document.createElement('script')

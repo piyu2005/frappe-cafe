@@ -31,7 +31,7 @@ import { Button, LoadingText, useCall } from 'frappe-ui'
 const emit = defineEmits(['navigate'])
 
 const savedPosts = useCall({
-  url: '/api/v2/method/cafe.api.list_saved_posts',
+  url: '/api/v2/method/my_new_app.api.list_saved_posts',
 })
 
 // Removing a post needs to drop it from the list the instant it's clicked,
@@ -48,7 +48,7 @@ watch(
 )
 
 const unsavePost = useCall({
-  url: '/api/v2/method/cafe.api.toggle_save_post',
+  url: '/api/v2/method/my_new_app.api.toggle_save_post',
   method: 'POST',
   immediate: false,
 })

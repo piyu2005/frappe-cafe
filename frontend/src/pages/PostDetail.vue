@@ -312,7 +312,7 @@ async function focusCommentBox() {
 const visibleCount = ref(5)
 
 const post = useCall({
-  url: '/api/v2/method/cafe.api.get_post',
+  url: '/api/v2/method/my_new_app.api.get_post',
   params: () => ({ post_id: route.params.postId }),
   refetch: true,
 })
@@ -320,11 +320,11 @@ const post = useCall({
 // Only needed to fill in an optimistic comment's avatar/name before the
 // server round-trip confirms it (see submitComment/submitReply below).
 const myProfile = useCall({
-  url: '/api/v2/method/cafe.api.get_profile',
+  url: '/api/v2/method/my_new_app.api.get_profile',
 })
 
 const comments = useCall({
-  url: '/api/v2/method/cafe.api.list_comments',
+  url: '/api/v2/method/my_new_app.api.list_comments',
   params: () => ({ post: route.params.postId }),
   refetch: true,
 })
@@ -460,7 +460,7 @@ function onReplyEnter(e, comment) {
 }
 
 const deleteComment = useCall({
-  url: '/api/v2/method/cafe.api.delete_comment',
+  url: '/api/v2/method/my_new_app.api.delete_comment',
   method: 'POST',
   immediate: false,
   onError: (err) => toast.error(err.message),
@@ -560,13 +560,13 @@ const breadcrumbItems = computed(() => {
 })
 
 const toggleLike = useCall({
-  url: '/api/v2/method/cafe.api.toggle_like',
+  url: '/api/v2/method/my_new_app.api.toggle_like',
   method: 'POST',
   immediate: false,
 })
 
 const addComment = useCall({
-  url: '/api/v2/method/cafe.api.add_comment',
+  url: '/api/v2/method/my_new_app.api.add_comment',
   method: 'POST',
   immediate: false,
   // No comments.reload() here — the submit's own response already has the
@@ -610,7 +610,7 @@ function like() {
 }
 
 const toggleCommentLikeCall = useCall({
-  url: '/api/v2/method/cafe.api.toggle_like',
+  url: '/api/v2/method/my_new_app.api.toggle_like',
   method: 'POST',
   immediate: false,
 })
@@ -635,7 +635,7 @@ function toggleCommentLike(comment) {
 }
 
 const toggleSave = useCall({
-  url: '/api/v2/method/cafe.api.toggle_save_post',
+  url: '/api/v2/method/my_new_app.api.toggle_save_post',
   method: 'POST',
   immediate: false,
 })
@@ -685,11 +685,11 @@ function copyLink() {
 }
 
 const shareablePeople = useCall({
-  url: '/api/v2/method/cafe.api.list_people',
+  url: '/api/v2/method/my_new_app.api.list_people',
 })
 
 const startShareDm = useCall({
-  url: '/api/v2/method/cafe.chat.start_dm',
+  url: '/api/v2/method/my_new_app.chat.start_dm',
   method: 'POST',
   immediate: false,
   onSuccess: (data) => {
@@ -699,7 +699,7 @@ const startShareDm = useCall({
 })
 
 const sendSharedPost = useCall({
-  url: '/api/v2/method/cafe.chat.send_message',
+  url: '/api/v2/method/my_new_app.chat.send_message',
   method: 'POST',
   immediate: false,
   onSuccess: () => toast.success('Post shared'),

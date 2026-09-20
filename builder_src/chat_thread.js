@@ -123,7 +123,7 @@
       dom.banner.classList.add('request')
       dom.banner.appendChild(C.el('span', '', c.display_name + ' wants to message you. Accept to start chatting, or decline to ignore.'))
       var actions = C.el('div', 'mna-c-banner-actions')
-      var reply = function (accept, label, kind) {
+      function reply(accept, label, kind) {
         var button = C.el('button', 'mna-btn mna-btn-' + kind, label)
         button.type = 'button'
         button.addEventListener('click', function () { respond(accept) })

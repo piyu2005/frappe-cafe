@@ -1,5 +1,5 @@
 [project]
-name = "cafe"
+name = "my_new_app"
 authors = [
     { name = "Priyanshi", email = "hodagepriyanshi@gmail.com"}
 ]

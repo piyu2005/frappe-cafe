@@ -128,13 +128,13 @@ const isMobile = useIsMobile()
 const route = useRoute()
 
 const pub = useCall({
-  url: '/api/v2/method/cafe.api.get_publication',
+  url: '/api/v2/method/my_new_app.api.get_publication',
   params: () => ({ handle: route.params.handle }),
   refetch: true,
 })
 
 const subscribe = useCall({
-  url: '/api/v2/method/cafe.api.toggle_subscribe',
+  url: '/api/v2/method/my_new_app.api.toggle_subscribe',
   method: 'POST',
   immediate: false,
   onSuccess: () => pub.reload(),

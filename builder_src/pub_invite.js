@@ -90,7 +90,7 @@
 
   function loadPeople() {
     var mine = ++token
-    MNA.get('cafe.chat.search_people_to_message', { query: input.value.trim() }).then(function (rows) {
+    MNA.get('my_new_app.chat.search_people_to_message', { query: input.value.trim() }).then(function (rows) {
       if (mine !== token) return
       people = rows || []
       draw()

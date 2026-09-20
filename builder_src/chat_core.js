@@ -38,7 +38,7 @@
   C.emit = function (name, payload) { (listeners[name] || []).forEach(function (callback) { callback(payload) }) }
 
   // ---- The server ----
-  var PATH = 'cafe.chat.'
+  var PATH = 'my_new_app.chat.'
   C.call = function (method, args) { return MNA.api(PATH + method, args || {}) }
   C.fetch = function (method, params) { return MNA.get(PATH + method, params || {}) }
 

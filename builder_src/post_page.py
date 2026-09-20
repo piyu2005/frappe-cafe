@@ -32,9 +32,7 @@ ICON_SPAN = {"display": "flex", "flexShrink": "0"}
 
 def crumb_html(*parts):
 	"""Always-the-same crumbs as one block, laid out like the breadcrumb bar."""
-	return raw_block(
-		"Crumbs", "".join(parts), styles={"display": "flex", "alignItems": "center", "gap": "4px"}
-	)
+	return raw_block("Crumbs", "".join(parts), styles={"display": "flex", "alignItems": "center", "gap": "4px"})
 
 
 def sep():
@@ -50,11 +48,7 @@ def sep():
 def build_crumbs():
 	"""Cafe / Explore / <author> / <title>. The author and the closing separator
 	are left out when the post is not available."""
-	start = crumb_html(
-		html_el("a", None, {"href": "/"}, None, text="Cafe"),
-		sep(),
-		html_el("a", None, {"href": "/"}, None, text="Explore"),
-	)
+	start = crumb_html(html_el("a", None, {"href": "/"}, None, text="Cafe"), sep(), html_el("a", None, {"href": "/"}, None, text="Explore"))
 	author = when(
 		attribute(show(crumb_link("Author", "/profile"), "pp.author_name"), "pp.author_href", "href"),
 		"pp.found",
@@ -85,12 +79,7 @@ def build_title():
 def build_avatar():
 	picture = when(
 		attribute(
-			block(
-				"img",
-				"Avatar image",
-				attrs={"src": "", "alt": ""},
-				styles={"gridArea": "1 / 1", "width": "100%", "height": "100%", "objectFit": "cover"},
-			),
+			block("img", "Avatar image", attrs={"src": "", "alt": ""}, styles={"gridArea": "1 / 1", "width": "100%", "height": "100%", "objectFit": "cover"}),
 			"pp.author_image",
 			"src",
 		),
@@ -98,16 +87,7 @@ def build_avatar():
 	)
 	initial = when(
 		show(
-			block(
-				"span",
-				"Initial",
-				text="P",
-				styles={
-					**text_style(20, "500", MUTED, "0.005em", "1.15"),
-					"gridArea": "1 / 1",
-					"textTransform": "uppercase",
-				},
-			),
+			block("span", "Initial", text="P", styles={**text_style(20, "500", MUTED, "0.005em", "1.15"), "gridArea": "1 / 1", "textTransform": "uppercase"}),
 			"pp.author_initial",
 		),
 		"pp.author_no_image",
@@ -206,12 +186,7 @@ def build_author_row():
 		"href",
 	)
 	meta = show(
-		block(
-			"div",
-			"Date and read time",
-			text="Aug 18, 2026 · 2 min read",
-			styles={"marginTop": "6px", **text_style(14, "420", MUTED)},
-		),
+		block("div", "Date and read time", text="Aug 18, 2026 · 2 min read", styles={"marginTop": "6px", **text_style(14, "420", MUTED)}),
 		"pp.meta",
 	)
 	return block(
@@ -339,9 +314,7 @@ def action_button(action, icon_name, count_key, count_id, attrs=None):
 
 
 def build_action_bar():
-	like = attribute(
-		action_button("like", "heart", "pp.like_count", "mna-like-count"), "pp.like_flag", "data-on"
-	)
+	like = attribute(action_button("like", "heart", "pp.like_count", "mna-like-count"), "pp.like_flag", "data-on")
 	comment = action_button("comment", "message-circle", "pp.comment_count", "mna-comment-count")
 	share = raw_block(
 		"Share",
@@ -402,18 +375,8 @@ def build_action_bar():
 			"borderBottom": f"1px solid {OUTLINE}",
 		},
 		children=[
-			block(
-				"div",
-				"Counts",
-				styles={"display": "flex", "alignItems": "center", "gap": "24px"},
-				children=[like, comment],
-			),
-			block(
-				"div",
-				"Buttons",
-				styles={"display": "flex", "alignItems": "center", "gap": "4px"},
-				children=[share, save],
-			),
+			block("div", "Counts", styles={"display": "flex", "alignItems": "center", "gap": "24px"}, children=[like, comment]),
+			block("div", "Buttons", styles={"display": "flex", "alignItems": "center", "gap": "4px"}, children=[share, save]),
 		],
 	)
 
@@ -432,12 +395,7 @@ def build_responses():
 	field = html_el(
 		"textarea",
 		["mna-textarea"],
-		{
-			"id": "mna-comment-text",
-			"rows": "3",
-			"placeholder": "What are your thoughts?",
-			"aria-label": "Write a comment",
-		},
+		{"id": "mna-comment-text", "rows": "3", "placeholder": "What are your thoughts?", "aria-label": "Write a comment"},
 		{
 			"display": "block",
 			"width": "100%",
@@ -464,23 +422,9 @@ def build_responses():
 	# posts.js fills this. The blocks below are only what shows before it does.
 	comments = raw_block(
 		"Comments",
-		html_el(
-			"div",
-			["mna-comment-loading"],
-			None,
-			{"display": "flex", "flexDirection": "column", "gap": "16px"},
-			[
-				"".join(
-					html_el(
-						"div",
-						["mna-skeleton"],
-						None,
-						{"height": "64px", "borderRadius": "8px", "backgroundColor": SURFACE_2},
-					)
-					for _ in range(2)
-				)
-			],
-		),
+		html_el("div", ["mna-comment-loading"], None, {"display": "flex", "flexDirection": "column", "gap": "16px"}, [
+			"".join(html_el("div", ["mna-skeleton"], None, {"height": "64px", "borderRadius": "8px", "backgroundColor": SURFACE_2}) for _ in range(2))
+		]),
 		styles={"marginTop": "24px"},
 		classes=["mna-comments"],
 	)
@@ -575,7 +519,7 @@ def build_post_page(shell_id, shell_block):
 
 # ---- Data script ----
 
-POST_MAIN = """\
+POST_MAIN = '''\
 post_id = frappe.form_dict.post_id or ""
 
 if frappe.session.user == "Guest":
@@ -589,7 +533,7 @@ if not post_id:
 post = None
 if post_id:
     try:
-        post = frappe.call("cafe.api.get_post", post_id=post_id)
+        post = frappe.call("my_new_app.api.get_post", post_id=post_id)
     except Exception:
         post = None
 
@@ -646,6 +590,6 @@ else:
     }
     data.images = images
     data.tags = tags
-"""
+'''
 
 POST_DATA_SCRIPT = HELPERS + POST_MAIN
