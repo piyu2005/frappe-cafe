@@ -17,6 +17,8 @@
 
   // ---- API ----
 
+  MNA.DEFAULT_ERROR = 'Something went wrong. Please try again.'
+
   function errorText(body) {
     if (!body) return ''
     if (body.errors && body.errors[0] && body.errors[0].message) return String(body.errors[0].message)
@@ -42,7 +44,7 @@
       body: JSON.stringify(args || {}),
     }).then(function (response) {
       return response.json().catch(function () { return {} }).then(function (body) {
-        if (!response.ok) throw new Error(errorText(body) || 'Something went wrong. Please try again.')
+        if (!response.ok) throw new Error(errorText(body) || MNA.DEFAULT_ERROR)
         return body.data
       })
     })

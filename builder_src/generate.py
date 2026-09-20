@@ -53,6 +53,7 @@ from post_page import POST_DATA_SCRIPT, build_post_page  # noqa: E402
 from posts_page import POSTS_DATA_SCRIPT, build_posts_page  # noqa: E402
 from settings_page import SETTINGS_DATA_SCRIPT, build_settings  # noqa: E402
 from search_page import SEARCH_DATA_SCRIPT, build_search  # noqa: E402
+from auth_page import LOGIN_DATA_SCRIPT, SIGNUP_DATA_SCRIPT, build_login, build_signup  # noqa: E402
 from blocks import svg  # noqa: E402
 from shell_component import build_shell  # noqa: E402
 
@@ -171,6 +172,7 @@ def main():
 		("MNA Home", "JavaScript", "home.js"),
 		("MNA Settings", "JavaScript", "settings.js"),
 		("MNA Notifications", "JavaScript", "notifications.js"),
+		("MNA Auth", "JavaScript", "auth.js"),
 	]
 	for index, (name, kind, filename) in enumerate(scripts, start=1):
 		source = (SRC / filename).read_text()
@@ -210,6 +212,8 @@ def main():
 	)
 
 	shared = ["MNA Styles", "MNA UI", "MNA Shell", "MNA Settings", "MNA Notifications"]
+	# The sign-in pages have no shell, so none of the scripts that work with it.
+	alone = ["MNA Styles", "MNA UI"]
 	pages = [
 		("mna-search", "Search", "search", build_search, shared + ["MNA Search"], SEARCH_DATA_SCRIPT, False),
 		("mna-profile", "Profile", "profile/:username", build_profile, shared + ["MNA Profile"], PROFILE_DATA_SCRIPT, True),
@@ -218,6 +222,8 @@ def main():
 		("mna-post", "Post", "posts/:post_id", build_post_page, shared + ["MNA Post"], POST_DATA_SCRIPT, True),
 		("mna-home", "Home", "mna-home", build_home, shared + ["MNA Home"], HOME_DATA_SCRIPT, False),
 		("mna-settings", "Settings", "settings", build_settings, shared, SETTINGS_DATA_SCRIPT, False),
+		("mna-login", "Login", "login", build_login, alone + ["MNA Auth"], LOGIN_DATA_SCRIPT, False),
+		("mna-signup", "Signup", "signup", build_signup, alone + ["MNA Auth"], SIGNUP_DATA_SCRIPT, False),
 	]
 	for name, title, route, builder, script_names, data_script, dynamic in pages:
 		blocks = builder(shell_id, shell_block)

@@ -1591,6 +1591,43 @@ button.mna-rail-item {
   animation: mna-pulse 1.2s ease-in-out infinite;
 }
 
+/* ---- Login and Signup ---- */
+.mna-auth-input:focus {
+  border-color: #999 !important;
+  background: #fff !important;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.14);
+}
+.mna-auth-input::placeholder,
+.mna-otp::placeholder {
+  color: var(--mna-ink-5);
+  opacity: 1;
+}
+.mna-otp:focus {
+  border-color: #999 !important;
+  box-shadow: 0 0 0 2px #077ddf;
+}
+.mna-auth-btn-solid:hover:not(:disabled) {
+  background: #383838 !important;
+}
+.mna-auth-btn-outline:hover:not(:disabled) {
+  background: #f8f8f8 !important;
+}
+.mna-auth-btn-solid:disabled,
+.mna-auth-btn-outline:disabled {
+  cursor: default !important;
+}
+.mna-auth-link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mna-ink);
+  font: inherit;
+  font-weight: 500;
+  letter-spacing: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* ---- Home feed ---- */
 .mna-feed > * + * {
   border-top: 1px solid var(--mna-outline);
