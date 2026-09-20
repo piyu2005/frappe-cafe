@@ -9,9 +9,9 @@
     "postbuild": "cp ../my_new_app/www/index.html ../my_new_app/www/me.html",
     "preview": "vite preview",
     "build:write": "ISLAND=write vite build --config vite.island.config.js",
-    "build:chat": "ISLAND=chat vite build --config vite.island.config.js",
-    "build:islands": "yarn build:write && yarn build:chat",
-    "build:hljs": "esbuild src/island/hljs-entry.js --bundle --minify --format=iife --outfile=../my_new_app/public/builder_assets/vendor/highlight.min.js"
+    "build:islands": "yarn build:write",
+    "build:hljs": "esbuild src/island/hljs-entry.js --bundle --minify --format=iife --outfile=../my_new_app/public/builder_assets/vendor/highlight.min.js",
+    "build:chat-editor": "esbuild src/island/chat-editor-entry.js --bundle --minify --format=iife --outfile=../my_new_app/public/builder_assets/vendor/chat-editor.min.js"
   },
   "dependencies": {
     "frappe-ui": "1.0.0-beta.29",

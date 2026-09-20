@@ -255,6 +255,13 @@
 
   // ---- Live updates ----
 
+  // Other scripts (the chat) share this page's live connection.
+  var socketWaiters = []
+  MNA.onSocket = function (callback) {
+    if (MNA.socket) callback(MNA.socket)
+    else socketWaiters.push(callback)
+  }
+
   var SOCKET_SCRIPT = '/assets/my_new_app/builder_assets/vendor/socket.io.min.js'
 
   function connectRealtime(panel) {
@@ -264,6 +271,8 @@
       var port = location.port ? ':9000' : ''
       var url = (port ? 'http' : 'https') + '://' + location.hostname + port + '/' + location.hostname
       var socket = window.io(url, { withCredentials: true })
+      MNA.socket = socket
+      socketWaiters.splice(0).forEach(function (callback) { callback(socket) })
       socket.on('notification:new', function (payload) {
         if (MNA.refreshBadges) MNA.refreshBadges()
         if (panel.isOpen) panel.load(true)

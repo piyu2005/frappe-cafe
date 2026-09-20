@@ -22,7 +22,7 @@ const dropInterFont = () => ({
 
 // Builds a page of the Vue app into one script and one stylesheet that a
 // Builder page loads (see src/island/). ISLAND picks which: write (the post
-// editor) or chat (Messages). Run with: yarn build:write, yarn build:chat.
+// editor). Run with: yarn build:write.
 const ISLAND = process.env.ISLAND || 'write'
 export default defineConfig({
   plugins: [frappeui({ frappeProxy: false, lucideIcons: true, jinjaBootData: false, buildConfig: false }), vue(), dropInterFont()],

@@ -1,9 +1,9 @@
-"""The pages that run a page of the Vue app inside a Builder page: the post
-editor (/write, /write/<post>) and Messages (/messages, /messages/<id>).
+"""The page that runs a page of the Vue app inside a Builder page: the post
+editor (/write, /write/<post>).
 
-Each is the Vue page as it is, built into one script and one stylesheet
-(frontend/vite.island.config.js; yarn build:write, yarn build:chat; output in
-public/builder_assets/<name>/) that the page loads in its <head>. The Builder
+It is the Vue page as it is, built into one script and one stylesheet
+(frontend/vite.island.config.js; yarn build:write; output in
+public/builder_assets/write/) that the page loads in its <head>. The Builder
 page gives it the app shell, the id in the address, and the bell of the
 phone's top bar. Everything else is the Vue page's own code, so it works and
 looks exactly as it does in the Vue app."""
@@ -65,7 +65,7 @@ def write_skeleton():
 	return header_bar("Write", [pill("Save Draft"), pill("Publish", True)]) + body
 
 
-def chat_skeleton():
+def chat_panes():
 	bars = "".join(
 		html_el("div", None, None, {"display": "flex", "gap": "12px", "alignItems": "center", "padding": "10px 12px"}, [
 			html_el("span", None, None, {"width": "24px", "height": "24px", "borderRadius": "9999px", "backgroundColor": SURFACE_2}),
@@ -79,10 +79,10 @@ def chat_skeleton():
 	search = html_el("div", None, None, {"padding": "12px", "borderBottom": f"1px solid {OUTLINE}"}, [html_el("div", None, None, {"height": "28px", "borderRadius": "8px", "backgroundColor": SURFACE_2})])
 	left = html_el("div", None, None, {"width": "320px", "flexShrink": "0", "borderRight": f"1px solid {OUTLINE}"}, [search, bars])
 	right = html_el("div", None, None, {"flex": "1", "display": "grid", "placeItems": "center", **text_style(14, "420", "#525252")}, text="Select a conversation to start messaging.")
-	return header_bar("Messages", [pill("New group")]) + html_el("div", None, None, {"display": "flex", "flex": "1", "minHeight": "0"}, [left, right])
+	return html_el("div", None, None, {"display": "flex", "flex": "1", "minHeight": "0", "width": "100%", "height": "100%"}, [left, right])
 
 
-SKELETONS = {"write": write_skeleton, "chat": chat_skeleton}
+SKELETONS = {"write": write_skeleton}
 
 
 def build_island(name, id_attr, shell_id, shell_block):
@@ -124,10 +124,6 @@ def build_write(shell_id, shell_block):
 	return build_island("write", "data-post", shell_id, shell_block)
 
 
-def build_chat(shell_id, shell_block):
-	return build_island("chat", "data-conversation", shell_id, shell_block)
-
-
 def data_script(page, param):
 	"""Sends a guest to sign in first; the Vue page loads everything else."""
 	return HELPERS + f'''\
@@ -141,4 +137,3 @@ data.w = {{"id": clean(item)}}
 
 
 WRITE_DATA_SCRIPT = data_script("write", "post_id")
-CHAT_DATA_SCRIPT = data_script("messages", "conversation_id")
