@@ -21,13 +21,13 @@
       "letterSpacing": "0.02em",
       "lineHeight": "1.15"
      },
-     "blockId": "uc1vso84g",
+     "blockId": "v7zxnez3a",
      "blockName": "App",
      "children": [
       {
        "attributes": {},
        "baseStyles": {},
-       "blockId": "4evpnjrpf",
+       "blockId": "nin47202p",
        "blockName": "Shell",
        "children": [],
        "classes": [],
@@ -60,7 +60,7 @@
         "height": "100vh",
         "overflow": "hidden"
        },
-       "blockId": "uxijmjpxt",
+       "blockId": "ygxhggv7b",
        "blockName": "Main",
        "children": [
         {
@@ -74,9 +74,43 @@
           "height": "100%",
           "minHeight": "0"
          },
-         "blockId": "g7qpidasr",
+         "blockId": "4evpnjrpf",
          "blockName": "Page",
-         "children": [],
+         "children": [
+          {
+           "attributes": {},
+           "baseStyles": {
+            "display": "flex",
+            "flexDirection": "column",
+            "flex": "1",
+            "minHeight": "0"
+           },
+           "blockId": "uxijmjpxt",
+           "blockName": "Preview",
+           "children": [],
+           "classes": [
+            "mna-skeleton-page"
+           ],
+           "clientScript": {},
+           "customAttributes": {},
+           "dataKey": null,
+           "draggable": false,
+           "dynamicValues": [],
+           "element": "div",
+           "elementBeforeConversion": null,
+           "extendedFromComponent": null,
+           "innerHTML": "<div style=\"display:flex;align-items:center;justify-content:space-between;height:48px;flex-shrink:0;padding:0 20px;border-bottom:1px solid #ededed\"><div style=\"display:flex;gap:4px;font-size:16px;font-weight:500;letter-spacing:0.015em;color:#7c7c7c\"><span >Cafe</span><span style=\"color:#999999\">/</span><span style=\"color:#0f0f0f\">Messages</span></div><div style=\"display:flex;gap:8px\"><span style=\"display:inline-flex;align-items:center;height:28px;padding:0 8px;border-radius:8px;font-size:14px;letter-spacing:0.02em;border:1px solid #e2e2e2;color:#171717\">New group</span></div></div><div style=\"display:flex;flex:1;min-height:0\"><div style=\"width:320px;flex-shrink:0;border-right:1px solid #ededed\"><div style=\"padding:12px;border-bottom:1px solid #ededed\"><div style=\"height:28px;border-radius:8px;background-color:#f3f3f3\"></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div></div><div style=\"flex:1;display:grid;place-items:center;font-size:14px;font-weight:420;color:#525252;letter-spacing:0.02em;line-height:1.15\">Select a conversation to start messaging.</div></div>",
+           "isChildOfComponent": null,
+           "isRepeaterBlock": false,
+           "mobileStyles": {},
+           "originalElement": "__raw_html__",
+           "props": {},
+           "rawStyles": {},
+           "referenceBlockId": null,
+           "tabletStyles": {},
+           "visibilityCondition": null
+          }
+         ],
          "classes": [],
          "clientScript": {},
          "customAttributes": {
@@ -111,7 +145,7 @@
          "baseStyles": {
           "display": "none"
          },
-         "blockId": "0aghfg6uh",
+         "blockId": "uc1vso84g",
          "blockName": "Bell template",
          "children": [],
          "classes": [],
@@ -220,7 +254,7 @@
    "builder_script": "MNA Notifications"
   }
  ],
- "creation": "2026-09-20 11:29:31.926581",
+ "creation": "2026-09-20 11:38:06.306609",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -230,7 +264,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 11:29:31.926581",
+ "modified": "2026-09-20 11:38:06.306609",
  "modified_by": "Administrator",
  "name": "mna-chat",
  "owner": "Administrator",
@@ -239,6 +273,6 @@
  "page_title": "Messages",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 11:29:31.926581",
+ "published_at": "2026-09-20 11:38:06.306609",
  "route": "messages"
 }

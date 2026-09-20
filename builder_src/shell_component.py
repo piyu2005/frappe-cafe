@@ -8,6 +8,8 @@ in Builder's editor.
 """
 
 from blocks import DIALOG_SHADOW, INK, MUTED, OUTLINE, SURFACE_1, block, html_el, svg
+from shell_component_parts import BADGE_STYLES
+from sidebar import build_sidebar
 
 NAV_ITEMS = [
 	("home", "Home", "/", "house"),
@@ -17,25 +19,6 @@ NAV_ITEMS = [
 ]
 TAB_ITEMS = NAV_ITEMS + [("settings", "Settings", "/settings", "settings")]
 
-# The count pill of frappe-ui's Badge (solid, red, small): white 12px text on
-# red, 16px high, 6px at the sides.
-BADGE_STYLES = {
-	"display": "none",
-	"position": "absolute",
-	"top": "-4px",
-	"right": "-6px",
-	"minWidth": "16px",
-	"height": "16px",
-	"padding": "0 6px",
-	"borderRadius": "9999px",
-	"backgroundColor": "#ce2c2c",
-	"color": "#ffffff",
-	"fontSize": "12px",
-	"fontWeight": "420",
-	"lineHeight": "16px",
-	"letterSpacing": "0.02em",
-	"textAlign": "center",
-}
 # On the rail the pill hangs off the item's top right, inside a white ring.
 RAIL_BADGE_STYLES = {
 	**BADGE_STYLES,
@@ -145,6 +128,17 @@ def bell_item():
 	)
 
 
+def expand_item():
+	"""The rail's bottom button, which opens the sidebar."""
+	return html_el(
+		"button",
+		["mna-rail-item", "mna-expand"],
+		{"type": "button", "title": "Expand", "aria-label": "Expand", "data-sidebar-toggle": "open"},
+		{**RAIL_ITEM_STYLES, "marginTop": "auto", "padding": "0", "border": "0", "cursor": "pointer"},
+		[svg("panel-right-open", 16, None).replace('style="', 'style="transform:rotate(180deg);', 1)],
+	)
+
+
 def tab_item(key, label, href, icon_name):
 	"""Mobile bottom-bar tab. Its look is in styles.css, under the 768px media
 	query, because Builder has no breakpoint at that width."""
@@ -174,7 +168,7 @@ def build_shell_html():
 	logo = html_el(
 		"button",
 		["mna-logo"],
-		{"id": "mna-logo", "type": "button", "aria-label": "Cafe menu", "aria-haspopup": "menu"},
+		{"type": "button", "aria-label": "Cafe menu", "aria-haspopup": "menu", "data-logo": ""},
 		LOGO_STYLES,
 		[svg("feather", 16)],
 	)
@@ -189,7 +183,7 @@ def build_shell_html():
 				["mna-rail-content"],
 				None,
 				RAIL_CONTENT_STYLES,
-				[logo] + [rail_item(*item) for item in NAV_ITEMS[:3]] + [bell_item(), rail_item(*NAV_ITEMS[3])],
+				[logo] + [rail_item(*item) for item in NAV_ITEMS[:3]] + [bell_item(), rail_item(*NAV_ITEMS[3]), expand_item()],
 			)
 		],
 	)
@@ -210,7 +204,7 @@ def build_shell_html():
 			menu_item("button", {"id": "mna-logout", "type": "button"}, "log-out", "Logout"),
 		],
 	)
-	return rail + bottom_nav + menu
+	return rail + build_sidebar() + bottom_nav + menu
 
 
 def build_shell():

@@ -2102,9 +2102,12 @@
   },
   {
    "builder_script": "MNA Post"
+  },
+  {
+   "builder_script": "MNA Code"
   }
  ],
- "creation": "2026-09-20 09:22:19.140028",
+ "creation": "2026-09-20 11:42:32.975654",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -2114,7 +2117,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 09:22:19.140028",
+ "modified": "2026-09-20 11:42:32.975654",
  "modified_by": "Administrator",
  "name": "mna-post",
  "owner": "Administrator",
@@ -2123,6 +2126,6 @@
  "page_title": "Post",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 09:22:19.140028",
+ "published_at": "2026-09-20 11:42:32.975654",
  "route": "posts/:post_id"
 }

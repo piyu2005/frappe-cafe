@@ -277,7 +277,7 @@
    "builder_script": "MNA Auth"
   }
  ],
- "creation": "2026-09-20 09:59:52.019544",
+ "creation": "2026-09-20 11:38:06.306609",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -287,15 +287,15 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 09:59:52.019544",
+ "modified": "2026-09-20 11:38:06.306609",
  "modified_by": "Administrator",
  "name": "mna-signup",
  "owner": "Administrator",
- "page_data_script": "if frappe.session.user != \"Guest\":\n    redirect(\"/\")\n",
+ "page_data_script": "# The Administrator is let through: Builder makes the folder thumbnails as that user.\nif frappe.session.user not in (\"Guest\", \"Administrator\"):\n    redirect(\"/\")\n",
  "page_name": "mna-signup",
  "page_title": "Signup",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 09:59:52.019544",
+ "published_at": "2026-09-20 11:38:06.306609",
  "route": "signup"
 }

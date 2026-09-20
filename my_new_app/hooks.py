@@ -283,5 +283,8 @@ has_permission = {
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
-after_migrate = ["my_new_app.setup.after_migrate"]
+after_migrate = [
+	"my_new_app.setup.after_migrate",
+	"my_new_app.builder_previews.generate_missing_previews",
+]
 

@@ -966,10 +966,19 @@
              ],
              "classes": [],
              "clientScript": {},
-             "customAttributes": {},
+             "customAttributes": {
+              "data-admin": ""
+             },
              "dataKey": null,
              "draggable": false,
-             "dynamicValues": [],
+             "dynamicValues": [
+              {
+               "comesFrom": "dataScript",
+               "key": "st.admin",
+               "property": "data-admin",
+               "type": "attribute"
+              }
+             ],
              "element": "div",
              "elementBeforeConversion": null,
              "extendedFromComponent": null,
@@ -1115,7 +1124,7 @@
    "builder_script": "MNA Notifications"
   }
  ],
- "creation": "2026-09-20 09:14:33.459752",
+ "creation": "2026-09-20 11:39:21.593799",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -1125,15 +1134,15 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 09:14:33.459752",
+ "modified": "2026-09-20 11:39:21.593799",
  "modified_by": "Administrator",
  "name": "mna-settings",
  "owner": "Administrator",
- "page_data_script": "if frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/settings\")\n\nemail = frappe.session.user\ndata.st = {\n    \"username\": frappe.utils.escape_html(\"@\" + email.split(\"@\")[0]),\n    \"email\": frappe.utils.escape_html(email),\n}\n",
+ "page_data_script": "if frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/settings\")\n\nemail = frappe.session.user\ndata.st = {\n    \"username\": frappe.utils.escape_html(\"@\" + email.split(\"@\")[0]),\n    \"email\": frappe.utils.escape_html(email),\n    # Builder draws the folder thumbnail as this user, and has no address for a redirect to use.\n    \"admin\": \"1\" if email == \"Administrator\" else \"\",\n}\n",
  "page_name": "mna-settings",
  "page_title": "Settings",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 09:14:33.459752",
+ "published_at": "2026-09-20 11:39:21.593799",
  "route": "settings"
 }

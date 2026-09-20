@@ -31,6 +31,7 @@ OUT = APP / "builder_files"
 FONTS_OUT = APP / "public" / "builder_assets" / "fonts"
 SCRIPT_ICONS = {
 	"settings.js": ("bookmark", "bookmark-minus"),
+	"code.js": ("copy", "check"),
 	"notifications.js": ("heart", "message-circle", "at-sign", "users", "newspaper", "bell", "check-check", "x"),
 }
 VENDOR_OUT = APP / "public" / "builder_assets" / "vendor"
@@ -174,6 +175,7 @@ def main():
 		("MNA Settings", "JavaScript", "settings.js"),
 		("MNA Notifications", "JavaScript", "notifications.js"),
 		("MNA Auth", "JavaScript", "auth.js"),
+		("MNA Code", "JavaScript", "code.js"),
 	]
 	for index, (name, kind, filename) in enumerate(scripts, start=1):
 		source = (SRC / filename).read_text()
@@ -220,7 +222,7 @@ def main():
 		("mna-profile", "Profile", "profile/:username", build_profile, shared + ["MNA Profile"], PROFILE_DATA_SCRIPT, True),
 		("mna-profile-self", "My profile", "profile", build_profile_redirect, ["MNA Styles"], PROFILE_REDIRECT_SCRIPT, False),
 		("mna-profile-posts", "Profile posts", "profile/:username/posts", build_posts_page, shared + ["MNA Posts"], POSTS_DATA_SCRIPT, True),
-		("mna-post", "Post", "posts/:post_id", build_post_page, shared + ["MNA Post"], POST_DATA_SCRIPT, True),
+		("mna-post", "Post", "posts/:post_id", build_post_page, shared + ["MNA Post", "MNA Code"], POST_DATA_SCRIPT, True),
 		("mna-home", "Home", "mna-home", build_home, shared + ["MNA Home"], HOME_DATA_SCRIPT, False),
 		("mna-settings", "Settings", "settings", build_settings, shared, SETTINGS_DATA_SCRIPT, False),
 		("mna-login", "Login", "login", build_login, alone + ["MNA Auth"], LOGIN_DATA_SCRIPT, False),

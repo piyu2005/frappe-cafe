@@ -8,6 +8,33 @@
 
   var MNA = (window.MNA = window.MNA || {})
 
+  // The rail is either the narrow icon rail or the wide sidebar. The choice is
+  // kept in this browser, and set on <html> as early as this script runs, so
+  // the page is drawn with the right one.
+  var SIDEBAR_KEY = 'mna-sidebar'
+  try {
+    if (localStorage.getItem(SIDEBAR_KEY) === 'open') document.documentElement.setAttribute('data-mna-sidebar', 'open')
+  } catch (e) {}
+
+  function setSidebar(open) {
+    if (open) document.documentElement.setAttribute('data-mna-sidebar', 'open')
+    else document.documentElement.removeAttribute('data-mna-sidebar')
+    try {
+      if (open) localStorage.setItem(SIDEBAR_KEY, 'open')
+      else localStorage.removeItem(SIDEBAR_KEY)
+    } catch (e) {}
+  }
+
+  function setupSidebarToggle() {
+    document.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-sidebar-toggle]')
+      if (!button) return
+      setSidebar(button.getAttribute('data-sidebar-toggle') === 'open')
+      // The button that was pressed is gone; keep its tooltip and focus ring from lingering.
+      button.blur()
+    })
+  }
+
   var NAV_PATHS = {
     home: function (p) { return p === '/' },
     search: function (p) { return p === '/search' || p.indexOf('/search/') === 0 },
@@ -59,18 +86,20 @@
   }
 
   function setupLogoMenu() {
-    var logo = document.getElementById('mna-logo')
+    var logos = document.querySelectorAll('[data-logo]')
     var menu = document.getElementById('mna-menu')
-    if (!logo || !menu) return
+    if (!logos.length || !menu) return
 
     function setOpen(open) {
       menu.classList.toggle('open', open)
-      logo.setAttribute('aria-expanded', open ? 'true' : 'false')
+      logos.forEach(function (logo) { logo.setAttribute('aria-expanded', open ? 'true' : 'false') })
     }
     MNA.closeMenu = function () { setOpen(false) }
-    logo.addEventListener('click', function (e) {
-      e.stopPropagation()
-      setOpen(!menu.classList.contains('open'))
+    logos.forEach(function (logo) {
+      logo.addEventListener('click', function (e) {
+        e.stopPropagation()
+        setOpen(!menu.classList.contains('open'))
+      })
     })
     document.addEventListener('click', function (e) {
       if (!menu.contains(e.target)) setOpen(false)
@@ -109,6 +138,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     markActiveNav()
     setupLogoMenu()
+    setupSidebarToggle()
     keepBadgesFresh()
   })
 })()

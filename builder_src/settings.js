@@ -315,7 +315,8 @@
     if (!root) return setupDialogTriggers()
     // A desktop gets the dialog over the Home feed. The Builder editor's
     // Preview shows this page inside a frame: leave that one alone.
-    if (DESKTOP.matches && window.top === window) {
+    // The Administrator stays: Builder draws the folder thumbnail as that user.
+    if (DESKTOP.matches && window.top === window && !root.getAttribute('data-admin')) {
       var tab = new URLSearchParams(location.search).get('tab') === 'saved' ? 'saved' : 'account'
       location.replace('/?settings=' + tab)
       return

@@ -14,6 +14,7 @@ from blocks import (
 	MUTED,
 	OUTLINE,
 	SURFACE_2,
+	attribute,
 	block,
 	html_el,
 	raw_block,
@@ -142,8 +143,10 @@ def build_settings(shell_id, shell_block):
 		"div",
 		"Settings",
 		attrs={"id": "mna-settings-page"},
+		custom={"data-admin": ""},
 		children=[build_tabs(), build_account_panel(), build_saved_panel()],
 	)
+	root = attribute(root, "st.admin", "data-admin")
 	crumbs = [crumb_link("Cafe", "/"), crumb_separator(), crumb_current("Settings")]
 	return page_layout(shell_id, shell_block, crumbs, [root], "600px", padding="24px 16px")
 
@@ -158,5 +161,7 @@ email = frappe.session.user
 data.st = {
     "username": frappe.utils.escape_html("@" + email.split("@")[0]),
     "email": frappe.utils.escape_html(email),
+    # Builder draws the folder thumbnail as this user, and has no address for a redirect to use.
+    "admin": "1" if email == "Administrator" else "",
 }
 """

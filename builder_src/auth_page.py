@@ -238,7 +238,8 @@ def build_signup(shell_id, shell_block):
 # A signed-in visitor has nothing to do here. The Desk's own redirect to
 # /login?redirect-to=... asks for the password card.
 LOGIN_DATA_SCRIPT = """\
-if frappe.session.user != "Guest":
+# The Administrator is let through: Builder makes the folder thumbnails as that user.
+if frappe.session.user not in ("Guest", "Administrator"):
     redirect("/")
 
 system = bool(frappe.form_dict.get("redirect-to"))
@@ -246,6 +247,7 @@ data.lg = {"system": system, "member": not system}
 """
 
 SIGNUP_DATA_SCRIPT = """\
-if frappe.session.user != "Guest":
+# The Administrator is let through: Builder makes the folder thumbnails as that user.
+if frappe.session.user not in ("Guest", "Administrator"):
     redirect("/")
 """
