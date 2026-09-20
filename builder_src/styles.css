@@ -1604,6 +1604,12 @@ button.mna-rail-item {
   flex-shrink: 0;
 }
 #mna-write-root > :not(header) {
+  flex: 0 0 auto;
+}
+/* Only the editor's scroll area (the one with h-full) fills the height. The
+   other children (the file input, the dialog and toast holders) must not
+   take a share of it. */
+#mna-write-root > .h-full {
   flex: 1 1 0;
   min-height: 0;
 }
