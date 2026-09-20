@@ -13,21 +13,21 @@
      "baseStyles": {
       "display": "flex",
       "width": "100%",
-      "height": "100vh",
+      "minHeight": "100vh",
       "backgroundColor": "#ffffff",
+      "color": "#0f0f0f",
       "fontSize": "14px",
       "fontWeight": "420",
-      "color": "#0f0f0f",
-      "letterSpacing": "0.02em",
-      "lineHeight": "1.15"
+      "lineHeight": "1.15",
+      "letterSpacing": "0.02em"
      },
-     "blockId": "irq3ez3hi",
+     "blockId": "nin47202p",
      "blockName": "App",
      "children": [
       {
        "attributes": {},
        "baseStyles": {},
-       "blockId": "kfpv90xjt",
+       "blockId": "ygxhggv7b",
        "blockName": "Shell",
        "children": [],
        "classes": [],
@@ -56,60 +56,58 @@
         "display": "flex",
         "flexGrow": "1",
         "flexDirection": "column",
-        "minWidth": "0",
-        "height": "100vh",
-        "overflow": "hidden"
+        "minWidth": "0"
        },
-       "blockId": "ynr8knbq4",
+       "blockId": "uc1vso84g",
        "blockName": "Main",
        "children": [
         {
          "attributes": {},
          "baseStyles": {
           "display": "none",
-          "position": "relative",
+          "position": "sticky",
+          "top": "0",
+          "zIndex": "10",
           "alignItems": "center",
           "justifyContent": "space-between",
           "gap": "16px",
           "height": "52px",
-          "flexShrink": "0",
           "padding": "0 12px",
           "borderBottom": "1px solid #ededed",
           "backgroundColor": "#ffffff"
          },
-         "blockId": "742msgkhe",
+         "blockId": "x9k6duueh",
          "blockName": "Mobile header",
          "children": [
           {
-           "attributes": {},
-           "baseStyles": {
-            "position": "absolute",
-            "left": "0",
-            "right": "0",
-            "margin": "0",
-            "textAlign": "center",
-            "pointerEvents": "none",
-            "fontSize": "17px",
-            "fontWeight": "600",
-            "color": "#0f0f0f",
-            "letterSpacing": "0.015em",
-            "lineHeight": "1.25"
+           "attributes": {
+            "href": "/",
+            "aria-label": "Back"
            },
-           "blockId": "3pqphl67u",
-           "blockName": "Title",
+           "baseStyles": {
+            "display": "grid",
+            "placeItems": "center",
+            "flexShrink": "0",
+            "width": "32px",
+            "height": "32px",
+            "borderRadius": "8px",
+            "color": "#171717"
+           },
+           "blockId": "qldhbpr8n",
+           "blockName": "Back",
            "children": [],
            "classes": [
-            "mna-mobile-title"
+            "mna-mobile-back"
            ],
            "clientScript": {},
            "customAttributes": {},
            "dataKey": null,
            "draggable": false,
            "dynamicValues": [],
-           "element": "h1",
+           "element": "a",
            "elementBeforeConversion": null,
            "extendedFromComponent": null,
-           "innerHTML": "Messages",
+           "innerHTML": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:18px;height:18px\"><path d=\"m15 18-6-6 6-6\" /></svg>",
            "isChildOfComponent": null,
            "isRepeaterBlock": false,
            "mobileStyles": {},
@@ -123,15 +121,54 @@
           {
            "attributes": {},
            "baseStyles": {
-            "position": "relative",
-            "display": "flex",
-            "alignItems": "center",
-            "gap": "4px",
-            "flexShrink": "0",
-            "marginLeft": "auto"
+            "margin": "0",
+            "flexGrow": "1",
+            "minWidth": "0",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "whiteSpace": "nowrap",
+            "textAlign": "center",
+            "fontSize": "17px",
+            "fontWeight": "600",
+            "color": "#0f0f0f",
+            "letterSpacing": "0.015em",
+            "lineHeight": "1.25"
            },
-           "blockId": "jrhv6emai",
-           "blockName": "Actions",
+           "blockId": "pum0my4vz",
+           "blockName": "Title",
+           "children": [],
+           "classes": [
+            "mna-mobile-title"
+           ],
+           "clientScript": {},
+           "customAttributes": {},
+           "dataKey": null,
+           "draggable": false,
+           "dynamicValues": [],
+           "element": "h1",
+           "elementBeforeConversion": null,
+           "extendedFromComponent": null,
+           "innerHTML": "Publication",
+           "isChildOfComponent": null,
+           "isRepeaterBlock": false,
+           "mobileStyles": {},
+           "originalElement": null,
+           "props": {},
+           "rawStyles": {},
+           "referenceBlockId": null,
+           "tabletStyles": {},
+           "visibilityCondition": null
+          },
+          {
+           "attributes": {},
+           "baseStyles": {
+            "display": "flex",
+            "flexShrink": "0",
+            "justifyContent": "flex-end",
+            "width": "32px"
+           },
+           "blockId": "q1hwij2om",
+           "blockName": "Notifications",
            "children": [],
            "classes": [],
            "clientScript": {},
@@ -142,7 +179,7 @@
            "element": "div",
            "elementBeforeConversion": null,
            "extendedFromComponent": null,
-           "innerHTML": "<button class=\"mna-bell\" type=\"button\" aria-label=\"Notifications\" data-bell=\"\" style=\"position:relative;display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;padding:0;border:0;border-radius:8px;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\" />\n  <path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\" /></svg><span class=\"mna-badge\" data-badge=\"notifications\" style=\"display:none;position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 6px;border-radius:9999px;background-color:#ce2c2c;color:#ffffff;font-size:12px;font-weight:420;line-height:16px;letter-spacing:0.02em;text-align:center\"></span></button><button class=\"mna-btn mna-btn-outline mna-c-new-group\" type=\"button\" id=\"mna-new-group-m\" aria-label=\"New group\" style=\"display:inline-flex;align-items:center;justify-content:center;gap:8px;height:28px;padding:0;border:1px solid #e2e2e2;border-radius:8px;background-color:#ffffff;color:#171717;font-size:14px;white-space:nowrap;cursor:pointer;width:28px\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" />\n  <circle cx=\"9\" cy=\"7\" r=\"4\" />\n  <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" />\n  <path d=\"M16 3.13a4 4 0 0 1 0 7.75\" /></svg></button>",
+           "innerHTML": "<button class=\"mna-bell\" type=\"button\" aria-label=\"Notifications\" data-bell=\"\" style=\"position:relative;display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;padding:0;border:0;border-radius:8px;color:#171717;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9\" />\n  <path d=\"M10.3 21a1.94 1.94 0 0 0 3.4 0\" /></svg><span class=\"mna-badge\" data-badge=\"notifications\" style=\"display:none;position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 6px;border-radius:9999px;background-color:#ce2c2c;color:#ffffff;font-size:12px;font-weight:420;line-height:16px;letter-spacing:0.02em;text-align:center\"></span></button>",
            "isChildOfComponent": null,
            "isRepeaterBlock": false,
            "mobileStyles": {},
@@ -155,8 +192,7 @@
           }
          ],
          "classes": [
-          "mna-mobile-header",
-          "mna-chat-mobile-head"
+          "mna-mobile-header"
          ],
          "clientScript": {},
          "customAttributes": {},
@@ -192,7 +228,7 @@
           "borderBottom": "1px solid #ededed",
           "backgroundColor": "#ffffff"
          },
-         "blockId": "h19lnqnja",
+         "blockId": "uxijmjpxt",
          "blockName": "Header",
          "children": [
           {
@@ -207,7 +243,7 @@
             "letterSpacing": "0.015em",
             "color": "#7c7c7c"
            },
-           "blockId": "kvwwwo16b",
+           "blockId": "g7qpidasr",
            "blockName": "Breadcrumbs",
            "children": [
             {
@@ -215,7 +251,7 @@
               "href": "/"
              },
              "baseStyles": {},
-             "blockId": "hjehu57db",
+             "blockId": "tbnx9cmtb",
              "blockName": null,
              "children": [],
              "classes": [],
@@ -246,7 +282,7 @@
               "fontWeight": "420",
               "letterSpacing": "0.02em"
              },
-             "blockId": "fjamlgxrq",
+             "blockId": "brlpdz1t8",
              "blockName": "Separator",
              "children": [],
              "classes": [
@@ -272,12 +308,75 @@
              "visibilityCondition": null
             },
             {
+             "attributes": {
+              "href": "/"
+             },
+             "baseStyles": {},
+             "blockId": "sztfa7mzn",
+             "blockName": null,
+             "children": [],
+             "classes": [],
+             "clientScript": {},
+             "customAttributes": {},
+             "dataKey": null,
+             "draggable": false,
+             "dynamicValues": [],
+             "element": "a",
+             "elementBeforeConversion": null,
+             "extendedFromComponent": null,
+             "innerHTML": "Explore",
+             "isChildOfComponent": null,
+             "isRepeaterBlock": false,
+             "mobileStyles": {},
+             "originalElement": null,
+             "props": {},
+             "rawStyles": {},
+             "referenceBlockId": null,
+             "tabletStyles": {},
+             "visibilityCondition": null
+            },
+            {
              "attributes": {},
+             "baseStyles": {
+              "color": "#999999",
+              "fontSize": "14px",
+              "fontWeight": "420",
+              "letterSpacing": "0.02em"
+             },
+             "blockId": "9a7prjavx",
+             "blockName": "Separator",
+             "children": [],
+             "classes": [
+              "sep"
+             ],
+             "clientScript": {},
+             "customAttributes": {},
+             "dataKey": null,
+             "draggable": false,
+             "dynamicValues": [],
+             "element": "span",
+             "elementBeforeConversion": null,
+             "extendedFromComponent": null,
+             "innerHTML": "/",
+             "isChildOfComponent": null,
+             "isRepeaterBlock": false,
+             "mobileStyles": {},
+             "originalElement": null,
+             "props": {},
+             "rawStyles": {},
+             "referenceBlockId": null,
+             "tabletStyles": {},
+             "visibilityCondition": null
+            },
+            {
+             "attributes": {
+              "id": "mna-p-crumb"
+             },
              "baseStyles": {
               "color": "#0f0f0f"
              },
-             "blockId": "gj62cyf3j",
-             "blockName": null,
+             "blockId": "0pqqtv7c9",
+             "blockName": "Current",
              "children": [],
              "classes": [
               "current"
@@ -290,7 +389,7 @@
              "element": "span",
              "elementBeforeConversion": null,
              "extendedFromComponent": null,
-             "innerHTML": "Messages",
+             "innerHTML": "Publication",
              "isChildOfComponent": null,
              "isRepeaterBlock": false,
              "mobileStyles": {},
@@ -329,8 +428,8 @@
            "baseStyles": {
             "display": "flex"
            },
-           "blockId": "e67c7twnq",
-           "blockName": "New group",
+           "blockId": "0aghfg6uh",
+           "blockName": "New Post",
            "children": [],
            "classes": [],
            "clientScript": {},
@@ -341,7 +440,7 @@
            "element": "div",
            "elementBeforeConversion": null,
            "extendedFromComponent": null,
-           "innerHTML": "<button class=\"mna-btn mna-btn-outline mna-c-new-group\" type=\"button\" id=\"mna-new-group\" aria-label=\"New group\" style=\"display:inline-flex;align-items:center;justify-content:center;gap:8px;height:28px;padding:0 8px;border:1px solid #e2e2e2;border-radius:8px;background-color:#ffffff;color:#171717;font-size:14px;white-space:nowrap;cursor:pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" />\n  <circle cx=\"9\" cy=\"7\" r=\"4\" />\n  <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" />\n  <path d=\"M16 3.13a4 4 0 0 1 0 7.75\" /></svg><span >New group</span></button>",
+           "innerHTML": "<a class=\"mna-btn mna-btn-solid\" href=\"/write\" style=\"display:inline-flex;align-items:center;justify-content:center;gap:8px;height:28px;padding:0 8px;border-radius:8px;background-color:#171717;color:#ffffff;font-size:14px;white-space:nowrap\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display:block;flex-shrink:0;width:16px;height:16px\"><path d=\"M5 12h14\" />\n  <path d=\"M12 5v14\" /></svg><span >New Post</span></a>",
            "isChildOfComponent": null,
            "isRepeaterBlock": false,
            "mobileStyles": {},
@@ -376,46 +475,110 @@
          "visibilityCondition": null
         },
         {
-         "attributes": {
-          "id": "mna-chat"
-         },
+         "attributes": {},
          "baseStyles": {
-          "display": "flex",
-          "flex": "1",
-          "minHeight": "0",
-          "width": "100%",
-          "backgroundColor": "#ffffff"
+          "flexGrow": "1"
          },
-         "blockId": "2pqwf9ou3",
-         "blockName": "Chat",
+         "blockId": "4evpnjrpf",
+         "blockName": "Scroll area",
          "children": [
           {
            "attributes": {},
            "baseStyles": {
-            "display": "flex",
-            "flex": "1",
-            "minHeight": "0",
-            "width": "100%"
+            "width": "100%",
+            "maxWidth": "760px",
+            "margin": "0 auto",
+            "padding": "32px 20px"
            },
-           "blockId": "4z7qyq21p",
-           "blockName": "Preview",
-           "children": [],
+           "blockId": "60zoi8nhb",
+           "blockName": "Container",
+           "children": [
+            {
+             "attributes": {
+              "id": "mna-pub"
+             },
+             "baseStyles": {},
+             "blockId": "3qk8xzxtb",
+             "blockName": "Publication",
+             "children": [
+              {
+               "attributes": {},
+               "baseStyles": {},
+               "blockId": "9kqdjawtj",
+               "blockName": "Preview",
+               "children": [],
+               "classes": [
+                "mna-p-preview"
+               ],
+               "clientScript": {},
+               "customAttributes": {},
+               "dataKey": null,
+               "draggable": false,
+               "dynamicValues": [],
+               "element": "div",
+               "elementBeforeConversion": null,
+               "extendedFromComponent": null,
+               "innerHTML": "<div style=\"display:flex;gap:16px;align-items:center\"><div style=\"width:64px;height:64px;border-radius:16px;background-color:#171717;flex-shrink:0\"></div><div style=\"flex:1;display:flex;flex-direction:column;gap:10px\"><div style=\"width:40%;height:20px;border-radius:6px;background-color:#f3f3f3\"></div><div style=\"width:25%;height:12px;border-radius:6px;background-color:#f3f3f3\"></div><div style=\"width:70%;height:12px;border-radius:6px;background-color:#f3f3f3\"></div></div></div><div style=\"margin-top:24px\"><div style=\"padding:20px 0;border-top:1px solid #ededed\"><div style=\"width:60%;height:14px;border-radius:6px;background-color:#f3f3f3\"></div><div style=\"height:8px\"></div><div style=\"width:90%;height:12px;border-radius:6px;background-color:#f3f3f3\"></div></div><div style=\"padding:20px 0;border-top:1px solid #ededed\"><div style=\"width:60%;height:14px;border-radius:6px;background-color:#f3f3f3\"></div><div style=\"height:8px\"></div><div style=\"width:90%;height:12px;border-radius:6px;background-color:#f3f3f3\"></div></div><div style=\"padding:20px 0;border-top:1px solid #ededed\"><div style=\"width:60%;height:14px;border-radius:6px;background-color:#f3f3f3\"></div><div style=\"height:8px\"></div><div style=\"width:90%;height:12px;border-radius:6px;background-color:#f3f3f3\"></div></div></div>",
+               "isChildOfComponent": null,
+               "isRepeaterBlock": false,
+               "mobileStyles": {},
+               "originalElement": "__raw_html__",
+               "props": {},
+               "rawStyles": {},
+               "referenceBlockId": null,
+               "tabletStyles": {},
+               "visibilityCondition": null
+              }
+             ],
+             "classes": [
+              "mna-p-root"
+             ],
+             "clientScript": {},
+             "customAttributes": {
+              "data-handle": ""
+             },
+             "dataKey": null,
+             "draggable": false,
+             "dynamicValues": [
+              {
+               "comesFrom": "dataScript",
+               "key": "w.id",
+               "property": "data-handle",
+               "type": "attribute"
+              }
+             ],
+             "element": "div",
+             "elementBeforeConversion": null,
+             "extendedFromComponent": null,
+             "innerHTML": null,
+             "isChildOfComponent": null,
+             "isRepeaterBlock": false,
+             "mobileStyles": {},
+             "originalElement": null,
+             "props": {},
+             "rawStyles": {},
+             "referenceBlockId": null,
+             "tabletStyles": {},
+             "visibilityCondition": null
+            }
+           ],
            "classes": [
-            "mna-c-preview"
+            "mna-container",
+            "mna-container-pub"
            ],
            "clientScript": {},
            "customAttributes": {},
            "dataKey": null,
            "draggable": false,
            "dynamicValues": [],
-           "element": "div",
+           "element": "section",
            "elementBeforeConversion": null,
            "extendedFromComponent": null,
-           "innerHTML": "<div style=\"display:flex;flex:1;min-height:0;width:100%;height:100%\"><div style=\"width:320px;flex-shrink:0;border-right:1px solid #ededed\"><div style=\"padding:12px;border-bottom:1px solid #ededed\"><div style=\"height:28px;border-radius:8px;background-color:#f3f3f3\"></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div><div style=\"display:flex;gap:12px;align-items:center;padding:10px 12px\"><span style=\"width:24px;height:24px;border-radius:9999px;background-color:#f3f3f3\"></span><div style=\"flex:1\"><div style=\"width:50%;height:10px;border-radius:5px;background-color:#f3f3f3\"></div><div style=\"width:75%;height:8px;margin-top:8px;border-radius:4px;background-color:#f3f3f3\"></div></div></div></div><div style=\"flex:1;display:grid;place-items:center;font-size:14px;font-weight:420;color:#525252;letter-spacing:0.02em;line-height:1.15\">Select a conversation to start messaging.</div></div>",
+           "innerHTML": null,
            "isChildOfComponent": null,
            "isRepeaterBlock": false,
            "mobileStyles": {},
-           "originalElement": "__raw_html__",
+           "originalElement": null,
            "props": {},
            "rawStyles": {},
            "referenceBlockId": null,
@@ -424,22 +587,13 @@
           }
          ],
          "classes": [
-          "mna-c-root"
+          "mna-scroll"
          ],
          "clientScript": {},
-         "customAttributes": {
-          "data-conversation": ""
-         },
+         "customAttributes": {},
          "dataKey": null,
          "draggable": false,
-         "dynamicValues": [
-          {
-           "comesFrom": "dataScript",
-           "key": "w.id",
-           "property": "data-conversation",
-           "type": "attribute"
-          }
-         ],
+         "dynamicValues": [],
          "element": "div",
          "elementBeforeConversion": null,
          "extendedFromComponent": null,
@@ -456,8 +610,7 @@
         }
        ],
        "classes": [
-        "mna-main",
-        "mna-chat-main"
+        "mna-main"
        ],
        "clientScript": {},
        "customAttributes": {},
@@ -540,40 +693,13 @@
    "builder_script": "MNA Notifications"
   },
   {
-   "builder_script": "MNA Chat Styles"
+   "builder_script": "MNA Publications Styles"
   },
   {
-   "builder_script": "MNA Chat Core"
+   "builder_script": "MNA Pub Core"
   },
   {
-   "builder_script": "MNA Chat List"
-  },
-  {
-   "builder_script": "MNA Chat Messages"
-  },
-  {
-   "builder_script": "MNA Chat Thread"
-  },
-  {
-   "builder_script": "MNA Chat Composer"
-  },
-  {
-   "builder_script": "MNA Chat Emoji"
-  },
-  {
-   "builder_script": "MNA Chat Actions"
-  },
-  {
-   "builder_script": "MNA Chat Search"
-  },
-  {
-   "builder_script": "MNA Chat Dialogs"
-  },
-  {
-   "builder_script": "MNA Chat Mentions"
-  },
-  {
-   "builder_script": "MNA Chat Live"
+   "builder_script": "MNA Pub Detail"
   }
  ],
  "creation": "2026-09-20 15:29:40.738553",
@@ -582,19 +708,19 @@
  "doctype": "Builder Page",
  "draft_blocks": null,
  "dynamic_route": 1,
- "head_html": "<script src=\"/assets/my_new_app/builder_assets/vendor/chat-editor.min.js?v=cfc0425590\" defer></script>",
+ "head_html": null,
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
  "modified": "2026-09-20 15:29:40.738553",
  "modified_by": "Administrator",
- "name": "mna-chat-thread",
+ "name": "mna-publication",
  "owner": "Administrator",
- "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\nitem = frappe.form_dict.conversation_id or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/messages\" + (\"/\" + path_segment(item) if item else \"\"))\n\ndata.w = {\"id\": clean(item)}\n",
- "page_name": "mna-chat-thread",
- "page_title": "Conversation",
+ "page_data_script": "def clean(value):\n    return frappe.utils.escape_html(value or \"\")\n\n\ndef day_month_year(value):\n    text = str(value)\n    months = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"]\n    return months[int(text[5:7]) - 1] + \" \" + str(int(text[8:10])) + \", \" + text[:4]\n\n\ndef plain_text(html):\n    text = frappe.utils.strip_html(html or \"\")\n    for entity, char in ((\"&nbsp;\", \" \"), (\"&lt;\", \"<\"), (\"&gt;\", \">\"), (\"&quot;\", '\"'), (\"&#39;\", \"'\"), (\"&amp;\", \"&\")):\n        text = text.replace(entity, char)\n    return text.strip()\n\n\ndef safe_url(value):\n    value = value or \"\"\n    return frappe.utils.escape_html(value) if value.startswith((\"/\", \"https://\", \"http://\")) else \"\"\n\n\ndef path_segment(value):\n    for char, code in ((\"%\", \"%25\"), (\"/\", \"%2F\"), (\"?\", \"%3F\"), (\"#\", \"%23\"), (\"\\\\\", \"%5C\"), (\" \", \"%20\")):\n        value = value.replace(char, code)\n    return value\n\n\nhandle = frappe.form_dict.handle or \"\"\n\nif frappe.session.user == \"Guest\":\n    redirect(\"/login?redirect=/publications/\" + path_segment(handle))\n\ndata.w = {\"id\": clean(handle)}\n",
+ "page_name": "mna-publication",
+ "page_title": "Publication",
  "project_folder": "my_new_app",
  "published": 1,
  "published_at": "2026-09-20 15:29:40.738553",
- "route": "messages/:conversation_id"
+ "route": "publications/:handle"
 }

@@ -186,6 +186,39 @@
     })
   }
 
+  // ---- Pop-up menu ----
+
+  var popup = null
+  function closePopup() { if (popup) { popup.remove(); popup = null } }
+  document.addEventListener('mousedown', function (event) { if (popup && !popup.contains(event.target) && !event.target.closest('[data-popup-anchor]')) closePopup() })
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') closePopup() })
+
+  // A small menu under `anchor`. items: { label, onClick, danger, icon (svg markup) }. A second
+  // call on the same anchor closes it.
+  MNA.popupMenu = function (anchor, items) {
+    var wasOpen = popup && anchor.hasAttribute('data-popup-open')
+    closePopup()
+    document.querySelectorAll('[data-popup-open]').forEach(function (node) { node.removeAttribute('data-popup-open') })
+    if (wasOpen) return
+    var menu = el('div', 'mna-popup')
+    anchor.setAttribute('data-popup-anchor', '')
+    anchor.setAttribute('data-popup-open', '')
+    items.forEach(function (item) {
+      var button = el('button', 'mna-popup-item' + (item.danger ? ' danger' : ''))
+      button.type = 'button'
+      if (item.icon) { var icon = el('span', 'mna-popup-icon'); icon.innerHTML = item.icon; button.appendChild(icon) }
+      button.appendChild(el('span', '', item.label))
+      button.addEventListener('click', function () { closePopup(); anchor.removeAttribute('data-popup-open'); item.onClick() })
+      menu.appendChild(button)
+    })
+    document.body.appendChild(menu)
+    var rect = anchor.getBoundingClientRect()
+    var width = menu.offsetWidth
+    menu.style.left = Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8)) + 'px'
+    menu.style.top = Math.min(rect.bottom + 4, window.innerHeight - menu.offsetHeight - 8) + 'px'
+    popup = menu
+  }
+
   // ---- Form dialog ----
 
   function buildField(field, values) {

@@ -43,6 +43,7 @@ SCRIPT_ICONS = {
 		"align-center", "align-left", "align-right", "archive", "bold", "heading", "heading-2", "heading-3", "heading-4", "image",
 		"italic", "link", "list", "list-ordered", "pilcrow", "quote", "save", "strikethrough", "trash-2", "underline",
 	),
+	"pub_core.js": ("arrow-left", "arrow-right", "check", "globe", "pencil", "search", "share-2", "shield", "user", "user-minus", "user-plus", "x"),
 	"notifications.js": ("heart", "message-circle", "at-sign", "users", "newspaper", "bell", "check-check", "x"),
 }
 VENDOR_OUT = APP / "public" / "builder_assets" / "vendor"
@@ -69,6 +70,7 @@ from auth_page import LOGIN_DATA_SCRIPT, SIGNUP_DATA_SCRIPT, build_login, build_
 from blocks import svg  # noqa: E402
 from shell_component import build_shell  # noqa: E402
 from chat_page import CHAT_DATA_SCRIPT, CHAT_PARTS, build_native_chat, native_head_html  # noqa: E402
+from pub_page import INVITE_DATA_SCRIPT, MEMBERS_DATA_SCRIPT, PUB_PARTS, PUBLICATION_DATA_SCRIPT, build_invite, build_members, build_publication  # noqa: E402
 from write_page import WRITE_NATIVE_DATA_SCRIPT, WRITE_PARTS, build_native_write, native_head_html as native_write_head  # noqa: E402
 
 
@@ -190,6 +192,8 @@ def main():
 		("MNA Code", "JavaScript", "code.js"),
 		("MNA Chat Styles", "CSS", "chat.css"),
 		*[(f"MNA Chat {part.title()}", "JavaScript", f"chat_{part}.js") for part in CHAT_PARTS],
+		("MNA Publications Styles", "CSS", "publications.css"),
+		*[(f"MNA Pub {part.title()}", "JavaScript", f"pub_{part}.js") for part in PUB_PARTS],
 		("MNA Write Styles", "CSS", "write.css"),
 		*[(f"MNA Write {part.title()}", "JavaScript", f"write_{part}.js") for part in WRITE_PARTS],
 	]
@@ -233,6 +237,9 @@ def main():
 	shared = ["MNA Styles", "MNA UI", "MNA Shell", "MNA Settings", "MNA Notifications"]
 	# The sign-in pages have no shell, so none of the scripts that work with it.
 	alone = ["MNA Styles", "MNA UI"]
+	def pub_scripts(part):
+		return ["MNA Publications Styles", "MNA Pub Core", f"MNA Pub {part.title()}"]
+
 	write_scripts = ["MNA Write Styles"] + [f"MNA Write {part.title()}" for part in WRITE_PARTS]
 	chat_scripts = ["MNA Chat Styles"] + [f"MNA Chat {part.title()}" for part in CHAT_PARTS]
 	pages = [
@@ -245,6 +252,9 @@ def main():
 		("mna-settings", "Settings", "settings", build_settings, shared, SETTINGS_DATA_SCRIPT, False),
 		("mna-login", "Login", "login", build_login, alone + ["MNA Auth"], LOGIN_DATA_SCRIPT, False),
 		("mna-signup", "Signup", "signup", build_signup, alone + ["MNA Auth"], SIGNUP_DATA_SCRIPT, False),
+		("mna-publication", "Publication", "publications/:handle", build_publication, shared + pub_scripts("detail"), PUBLICATION_DATA_SCRIPT, True),
+		("mna-publication-members", "Publication members", "publications/:handle/members", build_members, shared + pub_scripts("members"), MEMBERS_DATA_SCRIPT, True),
+		("mna-invite", "Invite people", "invite", build_invite, shared + pub_scripts("invite"), INVITE_DATA_SCRIPT, False),
 		("mna-write", "Write", "write", build_native_write, shared + write_scripts, WRITE_NATIVE_DATA_SCRIPT, False, native_write_head()),
 		("mna-write-edit", "Edit post", "write/:post_id", build_native_write, shared + write_scripts, WRITE_NATIVE_DATA_SCRIPT, True, native_write_head()),
 		("mna-chat", "Messages", "messages", build_native_chat, shared + chat_scripts, CHAT_DATA_SCRIPT, False, native_head_html()),

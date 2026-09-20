@@ -1885,3 +1885,46 @@ button.mna-rail-item {
     display: flex !important;
   }
 }
+
+/* ---- Pop-up menu (MNA.popupMenu) ---- */
+.mna-popup {
+  position: fixed;
+  z-index: 70;
+  min-width: 160px;
+  padding: 4px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.12);
+  font-family: 'InterVar', ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 420;
+  letter-spacing: 0.02em;
+  color: #171717;
+}
+.mna-popup-item {
+  display: flex;
+  width: 100%;
+  height: 28px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.mna-popup-item:hover {
+  background: var(--mna-surface-2);
+}
+.mna-popup-item.danger {
+  color: #b41d1d;
+}
+.mna-popup-icon {
+  display: inline-flex;
+  color: #7c7c7c;
+}
+.mna-popup-item.danger .mna-popup-icon {
+  color: inherit;
+}

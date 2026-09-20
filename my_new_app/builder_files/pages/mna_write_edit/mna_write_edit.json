@@ -21,13 +21,13 @@
       "letterSpacing": "0.02em",
       "lineHeight": "1.15"
      },
-     "blockId": "tivhyw744",
+     "blockId": "9mdxgmwtr",
      "blockName": "App",
      "children": [
       {
        "attributes": {},
        "baseStyles": {},
-       "blockId": "rv0l4610f",
+       "blockId": "q93c0qf1y",
        "blockName": "Shell",
        "children": [],
        "classes": [],
@@ -60,7 +60,7 @@
         "height": "100vh",
         "overflow": "hidden"
        },
-       "blockId": "cqbsc1llw",
+       "blockId": "wlvlay7gp",
        "blockName": "Main",
        "children": [
         {
@@ -77,7 +77,7 @@
           "borderBottom": "1px solid #ededed",
           "backgroundColor": "#ffffff"
          },
-         "blockId": "4ks341kn5",
+         "blockId": "ljp6qnv4z",
          "blockName": "Mobile header",
          "children": [
           {
@@ -95,7 +95,7 @@
             "borderRadius": "8px",
             "color": "#171717"
            },
-           "blockId": "v7zxnez3a",
+           "blockId": "rt5pesthj",
            "blockName": "Back",
            "children": [],
            "classes": [
@@ -137,7 +137,7 @@
             "letterSpacing": "0.015em",
             "lineHeight": "1.25"
            },
-           "blockId": "dr9o5eb0d",
+           "blockId": "2otav8oy8",
            "blockName": "Title",
            "children": [],
            "classes": [
@@ -172,7 +172,7 @@
             "flexShrink": "0",
             "marginLeft": "auto"
            },
-           "blockId": "bvp8uhqry",
+           "blockId": "u6t1w0lg4",
            "blockName": "Actions",
            "children": [],
            "classes": [],
@@ -234,7 +234,7 @@
           "borderBottom": "1px solid #ededed",
           "backgroundColor": "#ffffff"
          },
-         "blockId": "fnlj3vmq7",
+         "blockId": "b69mndxf1",
          "blockName": "Header",
          "children": [
           {
@@ -249,7 +249,7 @@
             "letterSpacing": "0.015em",
             "color": "#7c7c7c"
            },
-           "blockId": "yjfdds2c3",
+           "blockId": "bf4hfylz8",
            "blockName": "Breadcrumbs",
            "children": [
             {
@@ -257,7 +257,7 @@
               "href": "/"
              },
              "baseStyles": {},
-             "blockId": "nsl1uqrkh",
+             "blockId": "z37uwofe4",
              "blockName": null,
              "children": [],
              "classes": [],
@@ -288,7 +288,7 @@
               "fontWeight": "420",
               "letterSpacing": "0.02em"
              },
-             "blockId": "foy1xku69",
+             "blockId": "h15sjnr6y",
              "blockName": "Separator",
              "children": [],
              "classes": [
@@ -320,7 +320,7 @@
              "baseStyles": {
               "color": "#0f0f0f"
              },
-             "blockId": "ei9ox2lb4",
+             "blockId": "abdt79w7t",
              "blockName": "Current",
              "children": [],
              "classes": [
@@ -375,7 +375,7 @@
             "alignItems": "center",
             "gap": "8px"
            },
-           "blockId": "5ildqh94o",
+           "blockId": "fyasjuuvv",
            "blockName": "Actions",
            "children": [],
            "classes": [],
@@ -433,7 +433,7 @@
           "width": "100%",
           "backgroundColor": "#ffffff"
          },
-         "blockId": "nin47202p",
+         "blockId": "f562zymp6",
          "blockName": "Write",
          "children": [
           {
@@ -441,7 +441,7 @@
            "baseStyles": {
             "width": "100%"
            },
-           "blockId": "ygxhggv7b",
+           "blockId": "oimj6z3zr",
            "blockName": "Preview",
            "children": [],
            "classes": [
@@ -599,7 +599,7 @@
    "builder_script": "MNA Write Live"
   }
  ],
- "creation": "2026-09-20 15:12:56.771025",
+ "creation": "2026-09-20 15:29:40.738553",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
@@ -609,7 +609,7 @@
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 15:12:56.771025",
+ "modified": "2026-09-20 15:29:40.738553",
  "modified_by": "Administrator",
  "name": "mna-write-edit",
  "owner": "Administrator",
@@ -618,6 +618,6 @@
  "page_title": "Edit post",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 15:12:56.771025",
+ "published_at": "2026-09-20 15:29:40.738553",
  "route": "write/:post_id"
 }
