@@ -18,7 +18,16 @@ const routes = [
   { path: '/posts/:postId', name: 'PostDetail', component: NOT_HERE },
 ]
 
+// Builder's Preview adds a <base href> for the site's host_name, which can be
+// another origin than the one this page runs on (the Vite dev server); the
+// editor's requests are relative, so they are pointed back at this origin.
+function useThisOrigin() {
+  const base = document.querySelector('base[href]')
+  if (base && new URL(base.href).origin !== location.origin) base.href = location.origin + '/'
+}
+
 function start(root) {
+  useThisOrigin()
   // frappe-ui reads the CSRF token from here, as the Vue app's page does.
   window.csrf_token = (window.frappe && window.frappe.csrf_token) || window.csrf_token
   const router = createRouter({ history: createMemoryHistory(), routes })
@@ -29,7 +38,8 @@ function start(root) {
     }
   })
   router.afterEach((to) => {
-    if (to.name === 'WritePost') history.replaceState(null, '', to.fullPath)
+    // Not inside Builder's Preview frame, which is not at the editor's address.
+    if (to.name === 'WritePost' && window.top === window) history.replaceState(null, '', to.fullPath)
   })
   // The provider is what shows toasts and confirm dialogs.
   const app = createApp({ render: () => h(FrappeUIProvider, null, () => h(RouterView)) })

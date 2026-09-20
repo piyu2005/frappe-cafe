@@ -220,17 +220,17 @@
    "builder_script": "MNA Notifications"
   }
  ],
- "creation": "2026-09-20 10:52:35.648174",
+ "creation": "2026-09-20 10:57:10.964635",
  "disable_indexing": 1,
  "docstatus": 0,
  "doctype": "Builder Page",
  "draft_blocks": null,
  "dynamic_route": 1,
- "head_html": "<link rel=\"stylesheet\" href=\"/assets/my_new_app/builder_assets/write/write.css?v=4fb25b5634\">\n<script src=\"/assets/my_new_app/builder_assets/write/write.js?v=5a4e72f3ed\" defer></script>",
+ "head_html": "<link rel=\"stylesheet\" href=\"/assets/my_new_app/builder_assets/write/write.css?v=4fb25b5634\">\n<script src=\"/assets/my_new_app/builder_assets/write/write.js?v=146af8c9a1\" defer></script>",
  "idx": 0,
  "is_standard": 1,
  "is_template": 0,
- "modified": "2026-09-20 10:52:35.648174",
+ "modified": "2026-09-20 10:57:10.964635",
  "modified_by": "Administrator",
  "name": "mna-write-edit",
  "owner": "Administrator",
@@ -239,6 +239,6 @@
  "page_title": "Edit post",
  "project_folder": "my_new_app",
  "published": 1,
- "published_at": "2026-09-20 10:52:35.648174",
+ "published_at": "2026-09-20 10:57:10.964635",
  "route": "write/:post_id"
 }
