@@ -8,9 +8,8 @@
     "build": "vite build",
     "postbuild": "cp ../my_new_app/www/index.html ../my_new_app/www/me.html",
     "preview": "vite preview",
-    "build:write": "ISLAND=write vite build --config vite.island.config.js",
-    "build:islands": "yarn build:write",
     "build:hljs": "esbuild src/island/hljs-entry.js --bundle --minify --format=iife --outfile=../my_new_app/public/builder_assets/vendor/highlight.min.js",
+    "build:write-editor": "esbuild src/island/write-editor-entry.js --bundle --minify --format=iife --outfile=../my_new_app/public/builder_assets/vendor/write-editor.min.js",
     "build:chat-editor": "esbuild src/island/chat-editor-entry.js --bundle --minify --format=iife --outfile=../my_new_app/public/builder_assets/vendor/chat-editor.min.js"
   },
   "dependencies": {

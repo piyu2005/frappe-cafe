@@ -233,6 +233,8 @@
     button.title = label
     button.setAttribute('aria-label', label)
     button.appendChild(C.icon(icon, 'mna-c-small'))
+    // Pressing a tool never takes the cursor out of the message.
+    button.addEventListener('mousedown', function (event) { event.preventDefault() })
     button.addEventListener('click', onClick)
     return button
   }
@@ -265,8 +267,6 @@
     row.hidden = true
     var buttons = FORMATS.map(function (item) {
       var button = toolButton(item[0], item[1], function () { editor.chain().focus()[item[2]]().run() })
-      // Keep the cursor in the editor while you press a format button.
-      button.addEventListener('mousedown', function (event) { event.preventDefault() })
       button.setAttribute('data-command', item[2])
       row.appendChild(button)
       return button

@@ -50,6 +50,25 @@
     })
   }
 
+  // Any /api/v2 call with a verb: MNA.request('PUT', '/api/v2/document/Post/abc', { title: 'x' }).
+  // Resolves with `data`; rejects with an Error whose message is safe to show.
+  MNA.request = function (verb, path, body) {
+    return fetch(location.origin + path, {
+      method: verb,
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Frappe-CSRF-Token': (window.frappe && window.frappe.csrf_token) || '',
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    }).then(function (response) {
+      return response.json().catch(function () { return {} }).then(function (result) {
+        if (!response.ok) throw new Error(errorText(result) || MNA.DEFAULT_ERROR)
+        return result.data
+      })
+    })
+  }
+
   MNA.get = function (method, params) {
     var query = Object.keys(params || {})
       .map(function (key) { return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]) })

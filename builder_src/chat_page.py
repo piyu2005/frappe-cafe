@@ -10,7 +10,7 @@ import hashlib
 from bell import mobile_bell
 from blocks import INK, INK_BLACK, MUTED, attribute, block, html_el, instance_of, raw_block, svg, text_style
 from data_scripts import HELPERS
-from island_page import ASSETS, ASSETS_URL, chat_panes
+from stand_ins import ASSETS, ASSETS_URL, chat_panes
 from layout import crumb_current, crumb_link, crumb_separator, page_header
 
 # The scripts, in the order they load (chat_<part>.js).
