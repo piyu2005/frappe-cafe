@@ -1,10 +1,10 @@
-"""Generates the Builder files in my_new_app/builder_files/ from the sources here.
+"""Generates the Builder files in cafe/builder_files/ from the sources here.
 
 Builder stores pages, components and scripts as JSON that is long and hard to
 review. The sources of truth are the plain files in this folder (styles.css,
 shell.js, search.js) and this script. Run it after changing any of them:
 
-	python3 apps/my_new_app/builder_src/generate.py
+	python3 apps/cafe/builder_src/generate.py
 
 Styling is split on purpose. Everything static (sizes, colors, spacing, layout)
 is set on the blocks, because Builder's editor canvas shows only block styles:
@@ -26,25 +26,104 @@ from pathlib import Path
 
 SRC = Path(__file__).resolve().parent
 REPO = SRC.parent
-APP = REPO / "my_new_app"
+APP = REPO / "cafe"
 OUT = APP / "builder_files"
 FONTS_OUT = APP / "public" / "builder_assets" / "fonts"
 SCRIPT_ICONS = {
 	"settings.js": ("bookmark", "bookmark-minus"),
 	"code.js": ("copy", "check"),
 	"chat_core.js": (
-		"arrow-left", "at-sign", "bar-chart-2", "bell", "bell-off", "bold", "braces", "check", "chevron-down", "chevron-left",
-		"chevron-right", "chevron-up", "circle", "circle-check", "code", "download", "ellipsis", "file", "forward", "highlighter",
-		"inbox", "italic", "list", "list-ordered", "paperclip", "pencil", "plus", "quote", "remove-formatting", "reply", "search",
-		"send", "shield", "shield-ban", "shield-check", "shield-off", "smile-plus", "strikethrough", "trash-2", "type", "underline",
-		"user-minus", "users", "x",
+		"arrow-left",
+		"at-sign",
+		"bar-chart-2",
+		"bell",
+		"bell-off",
+		"bold",
+		"braces",
+		"check",
+		"chevron-down",
+		"chevron-left",
+		"chevron-right",
+		"chevron-up",
+		"circle",
+		"circle-check",
+		"code",
+		"download",
+		"ellipsis",
+		"file",
+		"forward",
+		"highlighter",
+		"inbox",
+		"italic",
+		"list",
+		"list-ordered",
+		"paperclip",
+		"pencil",
+		"plus",
+		"quote",
+		"remove-formatting",
+		"reply",
+		"search",
+		"send",
+		"shield",
+		"shield-ban",
+		"shield-check",
+		"shield-off",
+		"smile-plus",
+		"strikethrough",
+		"trash-2",
+		"type",
+		"underline",
+		"user-minus",
+		"users",
+		"x",
 	),
 	"write_core.js": (
-		"align-center", "align-left", "align-right", "archive", "bold", "heading", "heading-2", "heading-3", "heading-4", "image",
-		"italic", "link", "list", "list-ordered", "pilcrow", "quote", "save", "strikethrough", "trash-2", "underline",
+		"align-center",
+		"align-left",
+		"align-right",
+		"archive",
+		"bold",
+		"heading",
+		"heading-2",
+		"heading-3",
+		"heading-4",
+		"image",
+		"italic",
+		"link",
+		"list",
+		"list-ordered",
+		"pilcrow",
+		"quote",
+		"save",
+		"strikethrough",
+		"trash-2",
+		"underline",
 	),
-	"pub_core.js": ("arrow-left", "arrow-right", "check", "globe", "pencil", "search", "share-2", "shield", "user", "user-minus", "user-plus", "x"),
-	"notifications.js": ("heart", "message-circle", "at-sign", "users", "newspaper", "bell", "check-check", "x"),
+	"pub_core.js": (
+		"arrow-left",
+		"arrow-right",
+		"check",
+		"globe",
+		"pencil",
+		"search",
+		"share-2",
+		"shield",
+		"user",
+		"user-minus",
+		"user-plus",
+		"x",
+	),
+	"notifications.js": (
+		"heart",
+		"message-circle",
+		"at-sign",
+		"users",
+		"newspaper",
+		"bell",
+		"check-check",
+		"x",
+	),
 }
 VENDOR_OUT = APP / "public" / "builder_assets" / "vendor"
 SOCKET_CLIENT = REPO / "frontend" / "node_modules" / "socket.io-client" / "dist" / "socket.io.min.js"
@@ -52,26 +131,38 @@ FONT_DIR = REPO / "frontend" / "src" / "assets" / "Newsreader"
 FONT_FILES = {FONT_DIR / "Newsreader-Regular.woff2", FONT_DIR / "Newsreader-Medium.woff2"}
 
 NOW = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+
+
 def slug(name):
 	return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
 
-from profile_page import (  # noqa: E402
+
+from auth_page import LOGIN_DATA_SCRIPT, SIGNUP_DATA_SCRIPT, build_login, build_signup
+from blocks import svg
+from chat_page import CHAT_DATA_SCRIPT, CHAT_PARTS, build_native_chat, native_head_html
+from home_page import HOME_DATA_SCRIPT, build_home
+from post_page import POST_DATA_SCRIPT, build_post_page
+from posts_page import POSTS_DATA_SCRIPT, build_posts_page
+from profile_page import (
 	PROFILE_DATA_SCRIPT,
 	PROFILE_REDIRECT_SCRIPT,
 	build_profile,
 	build_profile_redirect,
 )
-from home_page import HOME_DATA_SCRIPT, build_home  # noqa: E402
-from post_page import POST_DATA_SCRIPT, build_post_page  # noqa: E402
-from posts_page import POSTS_DATA_SCRIPT, build_posts_page  # noqa: E402
-from settings_page import SETTINGS_DATA_SCRIPT, build_settings  # noqa: E402
-from search_page import SEARCH_DATA_SCRIPT, build_search  # noqa: E402
-from auth_page import LOGIN_DATA_SCRIPT, SIGNUP_DATA_SCRIPT, build_login, build_signup  # noqa: E402
-from blocks import svg  # noqa: E402
-from shell_component import build_shell  # noqa: E402
-from chat_page import CHAT_DATA_SCRIPT, CHAT_PARTS, build_native_chat, native_head_html  # noqa: E402
-from pub_page import INVITE_DATA_SCRIPT, MEMBERS_DATA_SCRIPT, PUB_PARTS, PUBLICATION_DATA_SCRIPT, build_invite, build_members, build_publication  # noqa: E402
-from write_page import WRITE_NATIVE_DATA_SCRIPT, WRITE_PARTS, build_native_write, native_head_html as native_write_head  # noqa: E402
+from pub_page import (
+	INVITE_DATA_SCRIPT,
+	MEMBERS_DATA_SCRIPT,
+	PUB_PARTS,
+	PUBLICATION_DATA_SCRIPT,
+	build_invite,
+	build_members,
+	build_publication,
+)
+from search_page import SEARCH_DATA_SCRIPT, build_search
+from settings_page import SETTINGS_DATA_SCRIPT, build_settings
+from shell_component import build_shell
+from write_page import WRITE_NATIVE_DATA_SCRIPT, WRITE_PARTS, build_native_write
+from write_page import native_head_html as native_write_head
 
 
 def client_script(name, script_type, source, idx):
@@ -109,7 +200,7 @@ def component(component_id, name, root_block):
 
 def page(name, title, route, blocks, script_names, data_script, dynamic=False, head=None):
 	return {
-		"app": "my_new_app",
+		"app": "cafe",
 		"authenticated_access": 0,
 		"blocks": blocks,
 		"client_scripts": [{"builder_script": script} for script in script_names],
@@ -130,7 +221,7 @@ def page(name, title, route, blocks, script_names, data_script, dynamic=False, h
 		"page_data_script": data_script,
 		"page_name": name,
 		"page_title": title,
-		"project_folder": "my_new_app",
+		"project_folder": "cafe",
 		"published": 1,
 		"published_at": NOW,
 		"route": route,
@@ -201,10 +292,12 @@ def main():
 		source = (SRC / filename).read_text()
 		# These scripts draw their icons from the same lucide files as the blocks.
 		if filename in SCRIPT_ICONS:
-			source = source.replace("'@@ICONS@@'", json.dumps({name: svg(name, 16) for name in SCRIPT_ICONS[filename]}))
+			source = source.replace(
+				"'@@ICONS@@'", json.dumps({name: svg(name, 16) for name in SCRIPT_ICONS[filename]})
+			)
 		write_json("client_scripts", name, client_script(name, kind, source, index))
 
-	shell_id = hashlib.sha1(b"my_new_app:MNA Shell").hexdigest()[:16]
+	shell_id = hashlib.sha1(b"cafe:MNA Shell").hexdigest()[:16]
 	shell_block = build_shell()
 	write_json("components", "MNA Shell", component(shell_id, "MNA Shell", shell_block))
 
@@ -215,7 +308,7 @@ def main():
 		"newsreader",
 		{
 			"doctype": "User Font",
-			"font_file": "/assets/my_new_app/builder_assets/fonts/Newsreader-Regular.woff2",
+			"font_file": "/assets/cafe/builder_assets/fonts/Newsreader-Regular.woff2",
 			"font_name": "Newsreader",
 			"name": "Newsreader",
 		},
@@ -228,7 +321,7 @@ def main():
 		"newsreader_medium",
 		{
 			"doctype": "User Font",
-			"font_file": "/assets/my_new_app/builder_assets/fonts/Newsreader-Medium.woff2",
+			"font_file": "/assets/cafe/builder_assets/fonts/Newsreader-Medium.woff2",
 			"font_name": "Newsreader Medium",
 			"name": "Newsreader Medium",
 		},
@@ -237,28 +330,121 @@ def main():
 	shared = ["MNA Styles", "MNA UI", "MNA Shell", "MNA Settings", "MNA Notifications"]
 	# The sign-in pages have no shell, so none of the scripts that work with it.
 	alone = ["MNA Styles", "MNA UI"]
+
 	def pub_scripts(part):
 		return ["MNA Publications Styles", "MNA Pub Core", f"MNA Pub {part.title()}"]
 
 	write_scripts = ["MNA Write Styles"] + [f"MNA Write {part.title()}" for part in WRITE_PARTS]
 	chat_scripts = ["MNA Chat Styles"] + [f"MNA Chat {part.title()}" for part in CHAT_PARTS]
 	pages = [
-		("mna-search", "Search", "search", build_search, shared + ["MNA Search"], SEARCH_DATA_SCRIPT, False),
-		("mna-profile", "Profile", "profile/:username", build_profile, shared + ["MNA Profile"], PROFILE_DATA_SCRIPT, True),
-		("mna-profile-self", "My profile", "profile", build_profile_redirect, ["MNA Styles"], PROFILE_REDIRECT_SCRIPT, False),
-		("mna-profile-posts", "Profile posts", "profile/:username/posts", build_posts_page, shared + ["MNA Posts"], POSTS_DATA_SCRIPT, True),
-		("mna-post", "Post", "posts/:post_id", build_post_page, shared + ["MNA Post", "MNA Code"], POST_DATA_SCRIPT, True),
-		("mna-home", "Home", "mna-home", build_home, shared + ["MNA Home"], HOME_DATA_SCRIPT, False),
+		("mna-search", "Search", "search", build_search, [*shared, "MNA Search"], SEARCH_DATA_SCRIPT, False),
+		(
+			"mna-profile",
+			"Profile",
+			"profile/:username",
+			build_profile,
+			[*shared, "MNA Profile"],
+			PROFILE_DATA_SCRIPT,
+			True,
+		),
+		(
+			"mna-profile-self",
+			"My profile",
+			"profile",
+			build_profile_redirect,
+			["MNA Styles"],
+			PROFILE_REDIRECT_SCRIPT,
+			False,
+		),
+		(
+			"mna-profile-posts",
+			"Profile posts",
+			"profile/:username/posts",
+			build_posts_page,
+			[*shared, "MNA Posts"],
+			POSTS_DATA_SCRIPT,
+			True,
+		),
+		(
+			"mna-post",
+			"Post",
+			"posts/:post_id",
+			build_post_page,
+			[*shared, "MNA Post", "MNA Code"],
+			POST_DATA_SCRIPT,
+			True,
+		),
+		("mna-home", "Home", "mna-home", build_home, [*shared, "MNA Home"], HOME_DATA_SCRIPT, False),
 		("mna-settings", "Settings", "settings", build_settings, shared, SETTINGS_DATA_SCRIPT, False),
-		("mna-login", "Login", "login", build_login, alone + ["MNA Auth"], LOGIN_DATA_SCRIPT, False),
-		("mna-signup", "Signup", "signup", build_signup, alone + ["MNA Auth"], SIGNUP_DATA_SCRIPT, False),
-		("mna-publication", "Publication", "publications/:handle", build_publication, shared + pub_scripts("detail"), PUBLICATION_DATA_SCRIPT, True),
-		("mna-publication-members", "Publication members", "publications/:handle/members", build_members, shared + pub_scripts("members"), MEMBERS_DATA_SCRIPT, True),
-		("mna-invite", "Invite people", "invite", build_invite, shared + pub_scripts("invite"), INVITE_DATA_SCRIPT, False),
-		("mna-write", "Write", "write", build_native_write, shared + write_scripts, WRITE_NATIVE_DATA_SCRIPT, False, native_write_head()),
-		("mna-write-edit", "Edit post", "write/:post_id", build_native_write, shared + write_scripts, WRITE_NATIVE_DATA_SCRIPT, True, native_write_head()),
-		("mna-chat", "Messages", "messages", build_native_chat, shared + chat_scripts, CHAT_DATA_SCRIPT, False, native_head_html()),
-		("mna-chat-thread", "Conversation", "messages/:conversation_id", build_native_chat, shared + chat_scripts, CHAT_DATA_SCRIPT, True, native_head_html()),
+		("mna-login", "Login", "login", build_login, [*alone, "MNA Auth"], LOGIN_DATA_SCRIPT, False),
+		("mna-signup", "Signup", "signup", build_signup, [*alone, "MNA Auth"], SIGNUP_DATA_SCRIPT, False),
+		(
+			"mna-publication",
+			"Publication",
+			"publications/:handle",
+			build_publication,
+			shared + pub_scripts("detail"),
+			PUBLICATION_DATA_SCRIPT,
+			True,
+		),
+		(
+			"mna-publication-members",
+			"Publication members",
+			"publications/:handle/members",
+			build_members,
+			shared + pub_scripts("members"),
+			MEMBERS_DATA_SCRIPT,
+			True,
+		),
+		(
+			"mna-invite",
+			"Invite people",
+			"invite",
+			build_invite,
+			shared + pub_scripts("invite"),
+			INVITE_DATA_SCRIPT,
+			False,
+		),
+		(
+			"mna-write",
+			"Write",
+			"write",
+			build_native_write,
+			shared + write_scripts,
+			WRITE_NATIVE_DATA_SCRIPT,
+			False,
+			native_write_head(),
+		),
+		(
+			"mna-write-edit",
+			"Edit post",
+			"write/:post_id",
+			build_native_write,
+			shared + write_scripts,
+			WRITE_NATIVE_DATA_SCRIPT,
+			True,
+			native_write_head(),
+		),
+		(
+			"mna-chat",
+			"Messages",
+			"messages",
+			build_native_chat,
+			shared + chat_scripts,
+			CHAT_DATA_SCRIPT,
+			False,
+			native_head_html(),
+		),
+		(
+			"mna-chat-thread",
+			"Conversation",
+			"messages/:conversation_id",
+			build_native_chat,
+			shared + chat_scripts,
+			CHAT_DATA_SCRIPT,
+			True,
+			native_head_html(),
+		),
 	]
 	for name, title, route, builder, script_names, data_script, dynamic, *extra in pages:
 		blocks = builder(shell_id, shell_block)

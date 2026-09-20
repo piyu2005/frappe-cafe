@@ -140,20 +140,20 @@ const isMobile = useIsMobile()
 const route = useRoute()
 
 const pub = useCall({
-  url: '/api/v2/method/my_new_app.api.get_publication',
+  url: '/api/v2/method/cafe.api.get_publication',
   params: () => ({ handle: route.params.handle }),
 })
 const pubTitle = computed(() => pub.data?.title || 'Publication')
 
 const members = useCall({
-  url: '/api/v2/method/my_new_app.api.list_publication_members',
+  url: '/api/v2/method/cafe.api.list_publication_members',
   params: () => ({ publication: route.params.handle }),
 })
 
 const isAdmin = computed(() => members.data?.my_role === 'Admin')
 
 const cancelInviteCall = useCall({
-  url: '/api/v2/method/my_new_app.api.cancel_publication_invite',
+  url: '/api/v2/method/cafe.api.cancel_publication_invite',
   method: 'POST',
   immediate: false,
   onSuccess: () => members.reload(),
@@ -164,7 +164,7 @@ function cancelInvite(name) {
 }
 
 const removeCall = useCall({
-  url: '/api/v2/method/my_new_app.api.remove_publication_member',
+  url: '/api/v2/method/cafe.api.remove_publication_member',
   method: 'POST',
   immediate: false,
   onSuccess: () => members.reload(),
@@ -172,7 +172,7 @@ const removeCall = useCall({
 })
 
 const roleCall = useCall({
-  url: '/api/v2/method/my_new_app.api.set_publication_member_role',
+  url: '/api/v2/method/cafe.api.set_publication_member_role',
   method: 'POST',
   immediate: false,
   onSuccess: () => members.reload(),

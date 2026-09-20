@@ -108,7 +108,7 @@ function startResendCooldown() {
 onBeforeUnmount(() => clearInterval(cooldownTimer))
 
 const googleLoginUrl = useCall({
-  url: '/api/v2/method/my_new_app.api.get_google_login_url',
+  url: '/api/v2/method/cafe.api.get_google_login_url',
   method: 'POST',
   immediate: false,
   onSuccess(url) {
@@ -127,7 +127,7 @@ async function sendCode() {
   sendCodeLoading.value = true
   sendCodeError.value = ''
   try {
-    await call('my_new_app.api.send_signup_code', { email: email.value, username: username.value })
+    await call('cafe.api.send_signup_code', { email: email.value, username: username.value })
     code.value = ''
     step.value = 'code'
     startResendCooldown()
@@ -146,7 +146,7 @@ async function verifyCode() {
   verifyCodeLoading.value = true
   verifyCodeError.value = ''
   try {
-    await call('my_new_app.api.verify_signup_code', { email: email.value, code: code.value })
+    await call('cafe.api.verify_signup_code', { email: email.value, code: code.value })
     await session.refresh()
     router.replace('/')
   } catch (e) {

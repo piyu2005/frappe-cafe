@@ -59,7 +59,9 @@ def build_post_row():
 		children=[block("div", "Title and excerpt", children=[title, excerpt]), meta],
 	)
 	return attribute(
-		block("a", "Post", ["mna-post"], attrs={"href": "/posts"}, children=[text, thumbnail], styles=ROW_STYLES),
+		block(
+			"a", "Post", ["mna-post"], attrs={"href": "/posts"}, children=[text, thumbnail], styles=ROW_STYLES
+		),
 		"href",
 		"href",
 	)

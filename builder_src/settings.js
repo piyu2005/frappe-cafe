@@ -95,7 +95,7 @@
       var before = posts
       posts = posts.filter(function (item) { return item.name !== post.name })
       render()
-      MNA.api('my_new_app.api.toggle_save_post', { post: post.name }).then(
+      MNA.api('cafe.api.toggle_save_post', { post: post.name }).then(
         function (result) {
           // `saved` true means it is still saved (a double click, say): put it back.
           if (!result || result.saved) { posts = before; render() }
@@ -108,7 +108,7 @@
     empty.hidden = true
     failed.hidden = true
     loading.hidden = false
-    MNA.get('my_new_app.api.list_saved_posts').then(
+    MNA.get('cafe.api.list_saved_posts').then(
       function (data) {
         if (request !== savedRequest) return
         loading.hidden = true
