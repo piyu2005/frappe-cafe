@@ -17,7 +17,7 @@ NAV_ITEMS = [
 	("messages", "Messages", "/messages", "message-circle"),
 	("profile", "Profile", "/profile", "user"),
 ]
-TAB_ITEMS = [*NAV_ITEMS, ("settings", "Settings", "/settings", "settings")]
+TAB_ITEMS = NAV_ITEMS + [("settings", "Settings", "/settings", "settings")]
 
 # On the rail the pill hangs off the item's top right, inside a white ring.
 RAIL_BADGE_STYLES = {
@@ -122,13 +122,7 @@ def bell_item():
 	return html_el(
 		"button",
 		["mna-rail-item"],
-		{
-			"type": "button",
-			"title": "Notifications",
-			"aria-label": "Notifications",
-			"data-nav": "notifications",
-			"data-bell": "",
-		},
+		{"type": "button", "title": "Notifications", "aria-label": "Notifications", "data-nav": "notifications", "data-bell": ""},
 		{**RAIL_ITEM_STYLES, "padding": "0", "border": "0", "cursor": "pointer"},
 		[svg("bell", 16), badge("notifications", RAIL_BADGE_STYLES)],
 	)
@@ -189,9 +183,7 @@ def build_shell_html():
 				["mna-rail-content"],
 				None,
 				RAIL_CONTENT_STYLES,
-				[logo]
-				+ [rail_item(*item) for item in NAV_ITEMS[:3]]
-				+ [bell_item(), rail_item(*NAV_ITEMS[3]), expand_item()],
+				[logo] + [rail_item(*item) for item in NAV_ITEMS[:3]] + [bell_item(), rail_item(*NAV_ITEMS[3]), expand_item()],
 			)
 		],
 	)

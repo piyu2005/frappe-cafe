@@ -10,7 +10,7 @@ only builtins and `frappe`, because functions defined in a server script cannot
 see each other. And the snippets are joined as text, so they share names."""
 
 # Functions to call from the top level of a data script.
-HELPERS = """\
+HELPERS = '''\
 def clean(value):
     return frappe.utils.escape_html(value or "")
 
@@ -39,10 +39,10 @@ def path_segment(value):
     return value
 
 
-"""
+'''
 
 # Turns `rows` (from list_profile_posts) into `posts`, the list the post rows show.
-POST_ROWS = """\
+POST_ROWS = '''\
 posts = []
 for row in rows:
     text = plain_text(row.get("content"))
@@ -59,7 +59,7 @@ for row in rows:
         "meta": day_month_year(row.creation) + " \\u00b7 " + str(minutes) + " min read \\u00b7 " + str(comments) + (" comment" if comments == 1 else " comments"),
         "thumbnail": safe_url(thumbnail),
     })
-"""
+'''
 
 
 def indent(text, spaces):
@@ -71,14 +71,14 @@ def indent(text, spaces):
 # In Builder's editor canvas the address has no username, and a list with no
 # data shows no rows, so its row could not be seen or edited. These samples fill
 # an empty list there. A real visit always has a username, so it never gets them.
-SAMPLE_POST = """\
+SAMPLE_POST = '''\
 if not identifier and not posts:
     posts = [{"href": "/posts", "title": "Post title", "excerpt": "A short preview of the post.", "meta": "Sep 18, 2026 \\u00b7 1 min read \\u00b7 0 comments", "thumbnail": ""}]
-"""
+'''
 
-SAMPLE_WORK_AND_EDUCATION = """\
+SAMPLE_WORK_AND_EDUCATION = '''\
 if not identifier and not work:
     work = [{"id": "", "is_own": is_own, "company": "Company", "title": "Title", "dates": "Jan 2020 \\u2014 Present", "show_dot": True, "description": "What I did there."}]
 if not identifier and not education:
     education = [{"id": "", "is_own": is_own, "school": "School", "degree_line": "Degree, Field of study", "dates": "2016 \\u2014 2020", "show_dot": True}]
-"""
+'''

@@ -84,7 +84,7 @@ const sending = ref(false)
 const selected = ref([])
 
 const peopleSearch = useCall({
-  url: '/api/v2/method/cafe.chat.search_people_to_message',
+  url: '/api/v2/method/my_new_app.chat.search_people_to_message',
   params: () => ({ query: query.value }),
   immediate: false,
 })
@@ -152,9 +152,9 @@ async function send() {
     for (const target of selected.value) {
       const conversationId =
         target.kind === 'person'
-          ? (await call('cafe.chat.start_dm', { other_user: target.id })).conversation
+          ? (await call('my_new_app.chat.start_dm', { other_user: target.id })).conversation
           : target.id
-      await call('cafe.chat.forward_message', { message: props.message.name, conversation: conversationId })
+      await call('my_new_app.chat.forward_message', { message: props.message.name, conversation: conversationId })
     }
     toast.success(selected.value.length > 1 ? `Message forwarded to ${selected.value.length} chats` : 'Message forwarded')
     open.value = false

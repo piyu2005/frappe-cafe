@@ -49,7 +49,7 @@
 
   // The freshest copy of the profile, so an edit dialog never shows stale values.
   function loadProfile() {
-    return MNA.get('cafe.api.get_profile', { user: username })
+    return MNA.get('my_new_app.api.get_profile', { user: username })
   }
 
   // ---- Own-profile editing ----
@@ -71,7 +71,7 @@
           },
         ],
         onSubmit: function (values) {
-          return reloadAfter(MNA.api('cafe.api.update_profile', values), 'Profile updated')
+          return reloadAfter(MNA.api('my_new_app.api.update_profile', values), 'Profile updated')
         },
       })
     })
@@ -84,7 +84,7 @@
         values: profile,
         fields: [{ name: 'bio', label: 'Introduction', type: 'textarea', rows: 6 }],
         onSubmit: function (values) {
-          return reloadAfter(MNA.api('cafe.api.update_profile', values), 'Introduction updated')
+          return reloadAfter(MNA.api('my_new_app.api.update_profile', values), 'Introduction updated')
         },
       })
     })
@@ -124,11 +124,11 @@
           end_date: combineMonthYear(v.end_yr, v.end_month),
         }
         if (editing) payload.name = entry.name
-        return reloadAfter(MNA.api(editing ? 'cafe.api.update_work' : 'cafe.api.add_work', payload), 'Saved')
+        return reloadAfter(MNA.api(editing ? 'my_new_app.api.update_work' : 'my_new_app.api.add_work', payload), 'Saved')
       },
       onDelete: editing
         ? function () {
-            return deleteEntry('cafe.api.delete_work', entry.name, 'Delete work experience?', 'This will permanently remove "' + entry.company + '" from your profile.')
+            return deleteEntry('my_new_app.api.delete_work', entry.name, 'Delete work experience?', 'This will permanently remove "' + entry.company + '" from your profile.')
           }
         : null,
     })
@@ -156,11 +156,11 @@
           end_year: combineMonthYear(v.end_yr, v.end_month),
         }
         if (editing) payload.name = entry.name
-        return reloadAfter(MNA.api(editing ? 'cafe.api.update_education' : 'cafe.api.add_education', payload), 'Saved')
+        return reloadAfter(MNA.api(editing ? 'my_new_app.api.update_education' : 'my_new_app.api.add_education', payload), 'Saved')
       },
       onDelete: editing
         ? function () {
-            return deleteEntry('cafe.api.delete_education', entry.name, 'Delete education?', 'This will permanently remove "' + entry.school + '" from your profile.')
+            return deleteEntry('my_new_app.api.delete_education', entry.name, 'Delete education?', 'This will permanently remove "' + entry.school + '" from your profile.')
           }
         : null,
     })

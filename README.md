@@ -1,4 +1,4 @@
-### Cafe
+### My New App
 
 project
 
@@ -9,7 +9,7 @@ You can install this app using the [bench](https://github.com/frappe/bench) CLI:
 ```bash
 cd $PATH_TO_YOUR_BENCH
 bench get-app $URL_OF_THIS_REPO --branch version-16
-bench install-app cafe
+bench install-app my_new_app
 ```
 
 ### Contributing
@@ -17,7 +17,7 @@ bench install-app cafe
 This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
 
 ```bash
-cd apps/cafe
+cd apps/my_new_app
 pre-commit install
 ```
 

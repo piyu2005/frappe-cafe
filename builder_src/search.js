@@ -50,7 +50,7 @@
     var request = ++latestRequest
     // Built from location.origin, not a relative URL: Builder's editor Preview adds a
     // <base href> (from the site's host_name) that can point at another origin.
-    var url = location.origin + '/api/v2/method/cafe.api.list_people?query=' + encodeURIComponent(query)
+    var url = location.origin + '/api/v2/method/my_new_app.api.list_people?query=' + encodeURIComponent(query)
     fetch(url, { credentials: 'same-origin' })
       .then(function (r) {
         if (r.status === 401 || r.status === 403) {

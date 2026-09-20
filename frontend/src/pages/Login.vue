@@ -172,7 +172,7 @@ function startResendCooldown() {
 onBeforeUnmount(() => clearInterval(cooldownTimer))
 
 const googleLoginUrl = useCall({
-  url: '/api/v2/method/cafe.api.get_google_login_url',
+  url: '/api/v2/method/my_new_app.api.get_google_login_url',
   method: 'POST',
   immediate: false,
   onSuccess(url) {

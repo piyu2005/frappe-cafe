@@ -49,7 +49,7 @@ watch(open, (isOpen) => {
 const canCreate = computed(() => Boolean(title.value.trim()) && selected.value.length > 0)
 
 const createGroup = useCall({
-  url: '/api/v2/method/cafe.chat.create_group',
+  url: '/api/v2/method/my_new_app.chat.create_group',
   method: 'POST',
   immediate: false,
   onSuccess: (data) => {

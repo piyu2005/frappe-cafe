@@ -190,7 +190,7 @@
   }
 
   CodeFlow.prototype.google = function () {
-    call('cafe.api.get_google_login_url', {}).then(
+    call('my_new_app.api.get_google_login_url', {}).then(
       function (url) {
         if (url) location.assign(url)
         else MNA.toast('Google sign-in is not configured yet')
@@ -207,8 +207,8 @@
         var email = form.querySelector('#mna-email').value.trim()
         return email ? { email: email } : null
       },
-      send: function (values) { return call('cafe.api.send_login_code', { email: values.email }) },
-      verify: function (email, code) { return call('cafe.api.verify_login_code', { email: email, code: code }) },
+      send: function (values) { return call('my_new_app.api.send_login_code', { email: values.email }) },
+      verify: function (email, code) { return call('my_new_app.api.verify_login_code', { email: email, code: code }) },
       after: function () { return next || '/' },
     }
   }
@@ -220,8 +220,8 @@
         var email = form.querySelector('#mna-email').value.trim()
         return username && email ? { username: username, email: email } : null
       },
-      send: function (values) { return call('cafe.api.send_signup_code', { email: values.email, username: values.username }) },
-      verify: function (email, code) { return call('cafe.api.verify_signup_code', { email: email, code: code }) },
+      send: function (values) { return call('my_new_app.api.send_signup_code', { email: values.email, username: values.username }) },
+      verify: function (email, code) { return call('my_new_app.api.verify_signup_code', { email: email, code: code }) },
       after: function () { return '/' },
     }
   }

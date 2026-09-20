@@ -143,8 +143,8 @@ onMounted(() => {
 // a plain function, to react to inviteMode changing.
 const searchUrl = computed(() =>
   inviteMode.value
-    ? '/api/v2/method/cafe.chat.search_people_to_message'
-    : '/api/v2/method/cafe.api.list_people',
+    ? '/api/v2/method/my_new_app.chat.search_people_to_message'
+    : '/api/v2/method/my_new_app.api.list_people',
 )
 
 const people = useCall({
@@ -154,12 +154,12 @@ const people = useCall({
 })
 
 const pub = useCall({
-  url: '/api/v2/method/cafe.api.get_publication',
+  url: '/api/v2/method/my_new_app.api.get_publication',
   params: () => ({ handle: route.query.pub }),
   immediate: false,
 })
 const pubMembers = useCall({
-  url: '/api/v2/method/cafe.api.list_publication_members',
+  url: '/api/v2/method/my_new_app.api.list_publication_members',
   params: () => ({ publication: route.query.pub }),
   immediate: false,
 })
@@ -193,7 +193,7 @@ function selectPerson(person) {
 }
 
 const inviteCall = useCall({
-  url: '/api/v2/method/cafe.api.invite_to_publication',
+  url: '/api/v2/method/my_new_app.api.invite_to_publication',
   method: 'POST',
   immediate: false,
   onSuccess: () => {

@@ -4,7 +4,7 @@
   'use strict'
 
   var C = window.MNA.chat
-  var DATA_SCRIPT = '/assets/cafe/builder_assets/vendor/emoji-data.js'
+  var DATA_SCRIPT = '/assets/my_new_app/builder_assets/vendor/emoji-data.js'
   var loading = null
   var picker = null
 
