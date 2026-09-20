@@ -139,7 +139,12 @@ def build_tabs():
 		html_el(
 			"button",
 			["mna-tab-btn"],
-			{"type": "button", "role": "tab", "data-tab": key, "aria-selected": "true" if key == "published" else "false"},
+			{
+				"type": "button",
+				"role": "tab",
+				"data-tab": key,
+				"aria-selected": "true" if key == "published" else "false",
+			},
 			TAB_STYLES,
 			text=label,
 		)
@@ -172,23 +177,45 @@ def build_published_panel():
 			"Nothing yet",
 			children=[
 				block("span", text="You haven't published anything yet. "),
-				block("a", "Write link", ["mna-plain-link"], text="Write your first blog.", attrs={"href": "/write"}, styles={"fontWeight": "500", "color": INK}),
+				block(
+					"a",
+					"Write link",
+					["mna-plain-link"],
+					text="Write your first blog.",
+					attrs={"href": "/write"},
+					styles={"fontWeight": "500", "color": INK},
+				),
 			],
 			styles={"margin": "24px 0 0", **text_style(14, "420", MUTED)},
 		),
 		"pp.published_empty_own",
 	)
 	empty_other = when(
-		block("p", "No posts", text="No posts yet.", styles={"margin": "24px 0 0", **text_style(14, "420", MUTED)}),
+		block(
+			"p",
+			"No posts",
+			text="No posts yet.",
+			styles={"margin": "24px 0 0", **text_style(14, "420", MUTED)},
+		),
 		"pp.published_empty_other",
 	)
-	return block("div", "Published panel", attrs={"id": "mna-panel-published"}, children=[posts, empty_own, empty_other])
+	return block(
+		"div",
+		"Published panel",
+		attrs={"id": "mna-panel-published"},
+		children=[posts, empty_own, empty_other],
+	)
 
 
 def build_other_panel():
 	"""Drafts and Archived share one panel. posts.js fills it when the tab opens."""
 	skeleton = "".join(
-		html_el("div", ["mna-skeleton"], None, {"height": "80px", "borderRadius": "10px", "backgroundColor": SURFACE_2})
+		html_el(
+			"div",
+			["mna-skeleton"],
+			None,
+			{"height": "80px", "borderRadius": "10px", "backgroundColor": SURFACE_2},
+		)
 		for _ in range(3)
 	)
 	panel = html_el(
@@ -197,9 +224,25 @@ def build_other_panel():
 		{"id": "mna-panel-other", "hidden": "hidden"},
 		None,
 		[
-			html_el("div", ["mna-loading"], {"hidden": "hidden"}, {"marginTop": "16px", "flexDirection": "column", "gap": "20px"}, [skeleton]),
-			html_el("p", ["mna-other-empty"], {"hidden": "hidden"}, {"margin": "24px 0 0", **text_style(14, "420", MUTED)}),
-			html_el("div", ["mna-posts", "mna-other-list"], None, {"display": "flex", "flexDirection": "column", "marginTop": "16px"}),
+			html_el(
+				"div",
+				["mna-loading"],
+				{"hidden": "hidden"},
+				{"marginTop": "16px", "flexDirection": "column", "gap": "20px"},
+				[skeleton],
+			),
+			html_el(
+				"p",
+				["mna-other-empty"],
+				{"hidden": "hidden"},
+				{"margin": "24px 0 0", **text_style(14, "420", MUTED)},
+			),
+			html_el(
+				"div",
+				["mna-posts", "mna-other-list"],
+				None,
+				{"display": "flex", "flexDirection": "column", "marginTop": "16px"},
+			),
 			draft_row_template(),
 		],
 	)
@@ -211,7 +254,13 @@ def build_not_found():
 		raw_block(
 			"Not found",
 			svg("user-x", 32, "#c8c8c8")
-			+ html_el("p", None, None, {"margin": "0", **text_style(14, "420", MUTED, "0.02em", "1.5")}, text="This profile does not exist."),
+			+ html_el(
+				"p",
+				None,
+				None,
+				{"margin": "0", **text_style(14, "420", MUTED, "0.02em", "1.5")},
+				text="This profile does not exist.",
+			),
 			styles={
 				"display": "flex",
 				"flexDirection": "column",
@@ -250,7 +299,7 @@ def build_posts_page(shell_id, shell_block):
 
 # ---- Data script ----
 
-POSTS_MAIN = '''\
+POSTS_MAIN = """\
 identifier = frappe.form_dict.username or ""
 tab_param = frappe.form_dict.tab or ""
 
@@ -297,7 +346,7 @@ else:
         "published_empty_other": (not is_own) and not posts,
     }
     data.posts = posts
-'''
+"""
 
 POSTS_DATA_SCRIPT = HELPERS + POSTS_MAIN.replace("@@POST_ROWS@@\n", indent(POST_ROWS, 4)).replace(
 	"@@SAMPLE@@\n", indent(SAMPLE_POST, 4)

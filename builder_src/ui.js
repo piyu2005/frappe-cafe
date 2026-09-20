@@ -26,7 +26,7 @@
       try {
         var first = JSON.parse(JSON.parse(body._server_messages)[0])
         if (first && first.message) return String(first.message).replace(/<[^>]+>/g, '')
-      } catch (e) {}
+      } catch (e) { /* not a JSON message */ }
     }
     return ''
   }
