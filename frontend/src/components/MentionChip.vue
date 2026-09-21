@@ -50,7 +50,7 @@ const isAll = computed(() => userId.value === 'all')
 // "@all" - `userId` is fixed for this NodeView instance's whole lifetime, so
 // a plain boolean (not a getter) is enough to keep it off for that instance.
 const profile = useCall({
-  url: '/api/v2/method/my_new_app.api.get_profile',
+  url: '/api/v2/method/cafe.api.get_profile',
   params: () => ({ user: userId.value }),
   immediate: !isAll.value,
   // A plain string, not a getter — cacheKey isn't unwrapped reactively, but
@@ -59,7 +59,7 @@ const profile = useCall({
 })
 
 const startDm = useCall({
-  url: '/api/v2/method/my_new_app.chat.start_dm',
+  url: '/api/v2/method/cafe.chat.start_dm',
   method: 'POST',
   immediate: false,
   onSuccess: (data) => {

@@ -6,8 +6,8 @@ from pathlib import Path
 
 from blocks import GRAY_4, INK, INK_BLACK, MUTED, OUTLINE, SURFACE_2, html_el, svg, text_style
 
-ASSETS = Path(__file__).resolve().parent.parent / "my_new_app" / "public" / "builder_assets"
-ASSETS_URL = "/assets/my_new_app/builder_assets/"
+ASSETS = Path(__file__).resolve().parent.parent / "cafe" / "public" / "builder_assets"
+ASSETS_URL = "/assets/cafe/builder_assets/"
 
 
 def pill(label, solid=False):

@@ -1,5 +1,5 @@
 """The Home feed: writings from everyone, newest first. Served at "/" while the
-page is published (see my_new_app/routing.py); unpublish it and "/" goes back
+page is published (see cafe/routing.py); unpublish it and "/" goes back
 to the Vue app.
 
 A row is one block whose inner HTML comes from the data script. That is one

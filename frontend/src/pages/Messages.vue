@@ -984,7 +984,7 @@ const composerToolbar = computed(() => {
 const activeConversationId = computed(() => route.params.conversationId || null)
 
 const mentionableUsers = useCall({
-  url: '/api/v2/method/my_new_app.chat.list_mentionable_users',
+  url: '/api/v2/method/cafe.chat.list_mentionable_users',
   params: () => ({ conversation: activeConversationId.value }),
   immediate: false,
 })
@@ -1063,17 +1063,17 @@ let typingClearTimer = null
 let typingThrottled = false
 
 const conversations = useCall({
-  url: '/api/v2/method/my_new_app.chat.list_conversations',
+  url: '/api/v2/method/cafe.chat.list_conversations',
   refetch: true,
 })
 
 const messageRequests = useCall({
-  url: '/api/v2/method/my_new_app.chat.list_message_requests',
+  url: '/api/v2/method/cafe.chat.list_message_requests',
   refetch: true,
 })
 
 const conversation = useCall({
-  url: '/api/v2/method/my_new_app.chat.get_conversation',
+  url: '/api/v2/method/cafe.chat.get_conversation',
   params: () => ({ conversation: activeConversationId.value }),
   immediate: false,
 })
@@ -1092,7 +1092,7 @@ const isConversationDataCurrent = computed(
 const messagesFetchLimit = ref(50)
 
 const messages = useCall({
-  url: '/api/v2/method/my_new_app.chat.get_messages',
+  url: '/api/v2/method/cafe.chat.get_messages',
   params: () => ({ conversation: activeConversationId.value, limit: messagesFetchLimit.value }),
   immediate: false,
 })
@@ -1116,7 +1116,7 @@ const showingPeopleSearch = computed(() => search.value.trim().length > 0)
 const showingRequests = ref(false)
 
 const peopleSearch = useCall({
-  url: '/api/v2/method/my_new_app.chat.search_people_to_message',
+  url: '/api/v2/method/cafe.chat.search_people_to_message',
   params: () => ({ query: search.value }),
   immediate: false,
 })
@@ -1129,7 +1129,7 @@ watch(search, (val) => {
 })
 
 const searchResults = useCall({
-  url: '/api/v2/method/my_new_app.chat.search_messages',
+  url: '/api/v2/method/cafe.chat.search_messages',
   params: () => ({ conversation: activeConversationId.value, query: messageSearchQuery.value }),
   immediate: false,
 })
@@ -1148,7 +1148,7 @@ function invalidateSearchResults() {
 }
 
 const markRead = useCall({
-  url: '/api/v2/method/my_new_app.chat.mark_read',
+  url: '/api/v2/method/cafe.chat.mark_read',
   method: 'POST',
   immediate: false,
   onSuccess: () => {
@@ -1243,7 +1243,7 @@ function openConversation(id) {
 }
 
 const startDm = useCall({
-  url: '/api/v2/method/my_new_app.chat.start_dm',
+  url: '/api/v2/method/cafe.chat.start_dm',
   method: 'POST',
   immediate: false,
   onSuccess: (data) => {
@@ -1255,7 +1255,7 @@ const startDm = useCall({
 })
 
 const respondToMessageRequest = useCall({
-  url: '/api/v2/method/my_new_app.chat.respond_to_message_request',
+  url: '/api/v2/method/cafe.chat.respond_to_message_request',
   method: 'POST',
   immediate: false,
   onSuccess: (data) => {
@@ -1292,7 +1292,7 @@ function onGroupRenamed() {
 }
 
 const sendMessage = useCall({
-  url: '/api/v2/method/my_new_app.chat.send_message',
+  url: '/api/v2/method/cafe.chat.send_message',
   method: 'POST',
   immediate: false,
   onError: (err) => toast.error(err.message),
@@ -1336,7 +1336,7 @@ function buildOptimisticMessage({ content, attachments, replyTo }) {
 }
 
 const editMessageCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.edit_message',
+  url: '/api/v2/method/cafe.chat.edit_message',
   method: 'POST',
   immediate: false,
   onSuccess: (result) => {
@@ -1403,7 +1403,7 @@ function openForwardDialog(m) {
 }
 
 const deleteMessageCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.delete_message',
+  url: '/api/v2/method/cafe.chat.delete_message',
   method: 'POST',
   immediate: false,
   onSuccess: () => {
@@ -1654,7 +1654,7 @@ function removePollOption(index) {
 }
 
 const createPoll = useCall({
-  url: '/api/v2/method/my_new_app.chat.create_poll',
+  url: '/api/v2/method/cafe.chat.create_poll',
   method: 'POST',
   immediate: false,
   onSuccess: (msg) => {
@@ -1679,7 +1679,7 @@ function submitPoll() {
 }
 
 const votePoll = useCall({
-  url: '/api/v2/method/my_new_app.chat.toggle_poll_vote',
+  url: '/api/v2/method/cafe.chat.toggle_poll_vote',
   method: 'POST',
   immediate: false,
   onError: (err) => toast.error(err.message),
@@ -1735,7 +1735,7 @@ function pollOptionPercent(pollData, option) {
 }
 
 const setTypingCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.set_typing',
+  url: '/api/v2/method/cafe.chat.set_typing',
   method: 'POST',
   immediate: false,
 })
@@ -1784,7 +1784,7 @@ async function onSearchInput() {
 }
 
 const toggleReactionCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.toggle_reaction',
+  url: '/api/v2/method/cafe.chat.toggle_reaction',
   method: 'POST',
   immediate: false,
 })
@@ -1820,7 +1820,7 @@ function toggleReaction(message, emoji) {
 }
 
 const muteCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.mute_conversation',
+  url: '/api/v2/method/cafe.chat.mute_conversation',
   method: 'POST',
   immediate: false,
   onSuccess: () => {
@@ -1830,7 +1830,7 @@ const muteCall = useCall({
 })
 
 const blockCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.block_user',
+  url: '/api/v2/method/cafe.chat.block_user',
   method: 'POST',
   immediate: false,
   onSuccess: () => {
@@ -1840,7 +1840,7 @@ const blockCall = useCall({
 })
 
 const unblockCall = useCall({
-  url: '/api/v2/method/my_new_app.chat.unblock_user',
+  url: '/api/v2/method/cafe.chat.unblock_user',
   method: 'POST',
   immediate: false,
   onSuccess: () => {

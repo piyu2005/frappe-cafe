@@ -55,8 +55,8 @@
 
   // The unread counts on the rail's and the top bars' badges.
   var COUNTS = {
-    messages: 'my_new_app.chat.unread_message_count',
-    notifications: 'my_new_app.follow.unread_notification_count',
+    messages: 'cafe.chat.unread_message_count',
+    notifications: 'cafe.follow.unread_notification_count',
   }
   var REFRESH_MS = 60000
 

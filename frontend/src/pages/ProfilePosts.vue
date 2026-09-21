@@ -175,7 +175,7 @@ const targetUser = computed(() => route.params.userId || session.user)
 const isOwnProfile = computed(() => !route.params.userId || profile.data?.name === session.user)
 
 const profile = useCall({
-  url: '/api/v2/method/my_new_app.api.get_profile',
+  url: '/api/v2/method/cafe.api.get_profile',
   params: () => ({ user: targetUser.value }),
 })
 
@@ -193,7 +193,7 @@ watch(
 // limit: 0 means "no limit" server-side (see Profile.vue's own posts list for
 // the same convention) - this page's whole point is showing all of them.
 const posts = useCall({
-  url: '/api/v2/method/my_new_app.api.list_profile_posts',
+  url: '/api/v2/method/cafe.api.list_profile_posts',
   params: () => ({ user: targetUser.value, limit: 0 }),
   refetch: true,
 })
