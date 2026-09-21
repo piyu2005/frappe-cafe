@@ -10,6 +10,7 @@ fills it for the first ten posts, home.js fills the copy in the page's
 <template> for search results and infinite scroll, and the row block takes its
 own styles from it."""
 
+from bell import mobile_bell
 from blocks import (
 	GRAY_6,
 	INK,
@@ -24,7 +25,6 @@ from blocks import (
 	text_style,
 	when,
 )
-from bell import mobile_bell
 from data_scripts import HELPERS
 from layout import crumb_current, crumb_link, crumb_separator, page_layout
 
@@ -56,7 +56,13 @@ BODY_STYLES = {"display": "flex", "alignItems": "flex-start", "gap": "16px"}
 TEXT_STYLES = {"flex": "1 1 0%", "minWidth": "0"}
 TITLE_STYLES = text_style(16, "600", INK, "0.015em")
 EXCERPT_STYLES = {"margin": "4px 0 0", **text_style(14, "420", GRAY_6, "0.02em", "1.5")}
-META_STYLES = {"display": "flex", "alignItems": "center", "gap": "12px", "marginTop": "16px", **text_style(12, "420", MUTED)}
+META_STYLES = {
+	"display": "flex",
+	"alignItems": "center",
+	"gap": "12px",
+	"marginTop": "16px",
+	**text_style(12, "420", MUTED),
+}
 THUMBNAIL_STYLES = {
 	"width": "128px",
 	"height": "96px",
@@ -71,29 +77,63 @@ THUMBNAIL_STYLES = {
 # in; [[!name]] marks a piece of HTML that was built already.
 ROW_INNER = "".join(
 	[
-		html_el("div", ["mna-feed-author"], None, AUTHOR_LINE_STYLES, [
-			html_el("span", ["mna-avatar"], None, AVATAR_STYLES, "[[!avatar]]"),
-			html_el("span", None, None, NAME_STYLES, text="[[name]]"),
-		]),
-		html_el("div", None, None, BODY_STYLES, [
-			html_el("div", None, None, TEXT_STYLES, [
-				html_el("div", None, None, TITLE_STYLES, text="[[title]]"),
-				html_el("p", ["mna-clamp-2"], None, EXCERPT_STYLES, text="[[excerpt]]"),
-				html_el("div", None, None, META_STYLES, [
-					html_el("span", text="[[date]]"),
-					html_el("span", text="·"),
-					html_el("span", text="[[minutes]] min read"),
-					html_el("span", text="·"),
-					html_el("span", ["mna-feed-comments"], None, None, text="[[comments]] comments"),
-				]),
-			]),
-			"[[!thumbnail]]",
-		]),
+		html_el(
+			"div",
+			["mna-feed-author"],
+			None,
+			AUTHOR_LINE_STYLES,
+			[
+				html_el("span", ["mna-avatar"], None, AVATAR_STYLES, "[[!avatar]]"),
+				html_el("span", None, None, NAME_STYLES, text="[[name]]"),
+			],
+		),
+		html_el(
+			"div",
+			None,
+			None,
+			BODY_STYLES,
+			[
+				html_el(
+					"div",
+					None,
+					None,
+					TEXT_STYLES,
+					[
+						html_el("div", None, None, TITLE_STYLES, text="[[title]]"),
+						html_el("p", ["mna-clamp-2"], None, EXCERPT_STYLES, text="[[excerpt]]"),
+						html_el(
+							"div",
+							None,
+							None,
+							META_STYLES,
+							[
+								html_el("span", text="[[date]]"),
+								html_el("span", text="·"),
+								html_el("span", text="[[minutes]] min read"),
+								html_el("span", text="·"),
+								html_el(
+									"span", ["mna-feed-comments"], None, None, text="[[comments]] comments"
+								),
+							],
+						),
+					],
+				),
+				"[[!thumbnail]]",
+			],
+		),
 	]
 )
 AVATAR_IMAGE = html_el("img", None, {"src": "[[image]]", "alt": ""}, AVATAR_IMAGE_STYLES)
-THUMBNAIL = html_el("img", ["mna-feed-thumb"], {"src": "[[cover]]", "alt": "", "loading": "lazy", "decoding": "async"}, THUMBNAIL_STYLES)
-ROW_TEMPLATE = html_el("a", ["mna-feed-row"], {"href": "[[href]]"}, ROW_STYLES, "[[!inner]]").replace("[[!inner]]", ROW_INNER)
+THUMBNAIL = html_el(
+	"img",
+	["mna-feed-thumb"],
+	{"src": "[[cover]]", "alt": "", "loading": "lazy", "decoding": "async"},
+	THUMBNAIL_STYLES,
+)
+ROW_TEMPLATE = html_el("a", ["mna-feed-row"], {"href": "[[href]]"}, ROW_STYLES, "[[!inner]]").replace(
+	"[[!inner]]", ROW_INNER
+)
+
 
 def build_feed_row():
 	"""The row Builder repeats for each post. It is empty in the file: the data
@@ -157,7 +197,14 @@ def build_home(shell_id, shell_block):
 			"First post",
 			children=[
 				block("span", text="You haven't written anything yet. "),
-				block("a", "Write link", ["mna-plain-link"], text="Write your first blog.", attrs={"href": "/write"}, styles={"fontWeight": "500", "color": INK}),
+				block(
+					"a",
+					"Write link",
+					["mna-plain-link"],
+					text="Write your first blog.",
+					attrs={"href": "/write"},
+					styles={"fontWeight": "500", "color": INK},
+				),
 			],
 			styles={"margin": "0 0 24px", **text_style(14, "420", "#7c7c7c")},
 		),
@@ -223,7 +270,13 @@ def build_home(shell_id, shell_block):
 	empty = when(
 		raw_block(
 			"Nothing found",
-			html_el("p", None, None, {"margin": "0", **text_style(16, "420", GRAY_6, "0.02em", "1.5")}, text="No writings found."),
+			html_el(
+				"p",
+				None,
+				None,
+				{"margin": "0", **text_style(16, "420", GRAY_6, "0.02em", "1.5")},
+				text="No writings found.",
+			),
 			["mna-feed-empty"],
 			styles={"padding": "64px 0", "textAlign": "center"},
 		),
@@ -240,7 +293,9 @@ def build_home(shell_id, shell_block):
 		).replace("[[row]]", ROW_TEMPLATE),
 		styles={"display": "none"},
 	)
-	sentinel = block("div", "Sentinel", attrs={"id": "mna-feed-end"}, custom={"data-more": ""}, styles={"height": "4px"})
+	sentinel = block(
+		"div", "Sentinel", attrs={"id": "mna-feed-end"}, custom={"data-more": ""}, styles={"height": "4px"}
+	)
 	sentinel = attribute(sentinel, "hp.more", "data-more")
 	crumbs = [crumb_link("Cafe", "/"), crumb_separator(), crumb_current("Explore")]
 	return page_layout(
@@ -259,7 +314,7 @@ def build_home(shell_id, shell_block):
 # The row markup goes into the script as text, so the server fills it the same
 # way home.js does.
 
-HOME_MAIN = '''\
+HOME_MAIN = """\
 if frappe.session.user == "Guest":
     redirect("/login")
 
@@ -320,7 +375,7 @@ data.hp = {
     "empty": not posts,
     "more": "1" if more else "",
 }
-'''
+"""
 
 
 def _literal(text):

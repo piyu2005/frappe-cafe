@@ -2,7 +2,20 @@
 a centered container."""
 
 from bell import mobile_bell
-from blocks import INK, INK_BLACK, MUTED, OUTLINE, attribute, block, html_el, instance_of, raw_block, show, svg, text_style
+from blocks import (
+	INK,
+	INK_BLACK,
+	MUTED,
+	OUTLINE,
+	attribute,
+	block,
+	html_el,
+	instance_of,
+	raw_block,
+	show,
+	svg,
+	text_style,
+)
 
 
 def crumb_link(label, href, styles=None, name=None):
@@ -85,7 +98,16 @@ def page_header(crumbs):
 	)
 
 
-def page_layout(shell_id, shell_block, crumbs, content, max_width, mobile_header=None, container_class=None, padding="32px 20px"):
+def page_layout(
+	shell_id,
+	shell_block,
+	crumbs,
+	content,
+	max_width,
+	mobile_header=None,
+	container_class=None,
+	padding="32px 20px",
+):
 	"""The page body: `crumbs` go in the header and `content` in the container,
 	which is `max_width` wide including its side padding. A page can add a
 	`mobile_header`, a top bar that only shows on a phone, and a `container_class`
@@ -185,7 +207,15 @@ def build_mobile_header(title, title_key=None, back_href="/", back_key=None, bac
 		heading = show(heading, title_key)
 	styles = {"display": "flex", "flexShrink": "0", "justifyContent": "flex-end", "width": "32px"}
 	if action or not bell:
-		styles = {"position": "relative", "display": "flex", "flexShrink": "0", "alignItems": "center", "justifyContent": "flex-end", "gap": "4px", "marginLeft": "auto"}
+		styles = {
+			"position": "relative",
+			"display": "flex",
+			"flexShrink": "0",
+			"alignItems": "center",
+			"justifyContent": "flex-end",
+			"gap": "4px",
+			"marginLeft": "auto",
+		}
 	right = raw_block("Notifications", (mobile_bell() if bell else "") + action, styles=styles)
 	return block(
 		"header",

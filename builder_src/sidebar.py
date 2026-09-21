@@ -8,7 +8,13 @@ from blocks import INK, MUTED, OUTLINE, SURFACE_1, html_el, svg
 from shell_component_parts import BADGE_STYLES
 
 GRAY_6 = "#525252"
-LABEL_STYLES = {"fontSize": "13px", "fontWeight": "420", "letterSpacing": "0.02em", "lineHeight": "1.15", "color": "inherit"}
+LABEL_STYLES = {
+	"fontSize": "13px",
+	"fontWeight": "420",
+	"letterSpacing": "0.02em",
+	"lineHeight": "1.15",
+	"color": "inherit",
+}
 ITEM_STYLES = {
 	"display": "flex",
 	"alignItems": "center",
@@ -24,7 +30,13 @@ ITEM_STYLES = {
 	"textAlign": "left",
 	"textDecoration": "none",
 }
-COUNT_STYLES = {**BADGE_STYLES, "position": "static", "marginLeft": "auto", "marginRight": "4px", "flexShrink": "0"}
+COUNT_STYLES = {
+	**BADGE_STYLES,
+	"position": "static",
+	"marginLeft": "auto",
+	"marginRight": "4px",
+	"flexShrink": "0",
+}
 
 ITEMS = [
 	("home", "Feed", "/", "house"),
@@ -41,7 +53,13 @@ def item(key, label, href, icon_name):
 		children.append(html_el("span", ["mna-badge"], {"data-badge": key}, COUNT_STYLES))
 	if href:
 		return html_el("a", ["mna-side-item"], {"href": href, "data-nav": key}, ITEM_STYLES, children)
-	return html_el("button", ["mna-side-item"], {"type": "button", "data-nav": key, "data-bell": ""}, ITEM_STYLES, children)
+	return html_el(
+		"button",
+		["mna-side-item"],
+		{"type": "button", "data-nav": key, "data-bell": ""},
+		ITEM_STYLES,
+		children,
+	)
 
 
 def build_sidebar():
@@ -49,10 +67,51 @@ def build_sidebar():
 		"button",
 		["mna-side-logo"],
 		{"type": "button", "aria-label": "Cafe menu", "aria-haspopup": "menu", "data-logo": ""},
-		{"display": "flex", "alignItems": "center", "gap": "8px", "width": "100%", "height": "40px", "padding": "4px", "border": "0", "borderRadius": "8px", "backgroundColor": "transparent", "cursor": "pointer", "color": INK},
+		{
+			"display": "flex",
+			"alignItems": "center",
+			"gap": "8px",
+			"width": "100%",
+			"height": "40px",
+			"padding": "4px",
+			"border": "0",
+			"borderRadius": "8px",
+			"backgroundColor": "transparent",
+			"cursor": "pointer",
+			"color": INK,
+		},
 		[
-			html_el("span", None, None, {"display": "grid", "placeItems": "center", "flexShrink": "0", "width": "32px", "height": "32px", "borderRadius": "8px", "backgroundColor": INK, "color": "#ffffff"}, [svg("feather", 16)]),
-			html_el("span", None, None, {"flex": "1", "textAlign": "left", "fontSize": "14px", "fontWeight": "500", "letterSpacing": "0.015em", "lineHeight": "1.15", "color": INK}, text="Cafe"),
+			html_el(
+				"span",
+				None,
+				None,
+				{
+					"display": "grid",
+					"placeItems": "center",
+					"flexShrink": "0",
+					"width": "32px",
+					"height": "32px",
+					"borderRadius": "8px",
+					"backgroundColor": INK,
+					"color": "#ffffff",
+				},
+				[svg("feather", 16)],
+			),
+			html_el(
+				"span",
+				None,
+				None,
+				{
+					"flex": "1",
+					"textAlign": "left",
+					"fontSize": "14px",
+					"fontWeight": "500",
+					"letterSpacing": "0.015em",
+					"lineHeight": "1.15",
+					"color": INK,
+				},
+				text="Cafe",
+			),
 		],
 	)
 	collapse = html_el(
@@ -69,7 +128,19 @@ def build_sidebar():
 		{"position": "sticky", "top": "0", "display": "flex", "flexDirection": "column", "height": "100vh"},
 		[
 			html_el("div", None, None, {"flexShrink": "0", "padding": "8px"}, [logo]),
-			html_el("div", None, None, {"display": "flex", "flexDirection": "column", "gap": "6px", "marginTop": "2px", "padding": "0 8px"}, [item(*entry) for entry in ITEMS]),
+			html_el(
+				"div",
+				None,
+				None,
+				{
+					"display": "flex",
+					"flexDirection": "column",
+					"gap": "6px",
+					"marginTop": "2px",
+					"padding": "0 8px",
+				},
+				[item(*entry) for entry in ITEMS],
+			),
 			html_el("div", None, None, {"marginTop": "auto", "padding": "0 8px 8px"}, [collapse]),
 		],
 	)
@@ -77,6 +148,12 @@ def build_sidebar():
 		"nav",
 		["mna-sidebar"],
 		{"aria-label": "Main"},
-		{"display": "none", "flexShrink": "0", "width": "224px", "backgroundColor": SURFACE_1, "borderRight": f"1px solid {OUTLINE}"},
+		{
+			"display": "none",
+			"flexShrink": "0",
+			"width": "224px",
+			"backgroundColor": SURFACE_1,
+			"borderRight": f"1px solid {OUTLINE}",
+		},
 		[content],
 	)

@@ -9,7 +9,20 @@ methods that send and check the codes are the same ones the Vue app calls.
 signed out. That gets a separate card with a username and password, since
 system users have no email code."""
 
-from blocks import INK, INK_BLACK, MUTED, OUTLINE, SURFACE_1, SURFACE_2, block, html_el, raw_block, svg, text_style, when
+from blocks import (
+	INK,
+	INK_BLACK,
+	MUTED,
+	OUTLINE,
+	SURFACE_1,
+	SURFACE_2,
+	block,
+	html_el,
+	raw_block,
+	svg,
+	text_style,
+	when,
+)
 
 GOOGLE_ICON = (
 	'<svg viewBox="0 0 48 48" width="16" height="16" aria-hidden="true" style="display:block;flex-shrink:0">'
@@ -82,11 +95,24 @@ OTP_STYLES = {
 
 def field(name, label, input_type, placeholder, autocomplete, first=False, autofocus=False):
 	"""A label and a text box, like frappe-ui's FormControl."""
-	attrs = {"id": f"mna-{name}", "name": name, "type": input_type, "placeholder": placeholder, "autocomplete": autocomplete, "required": "required"}
+	attrs = {
+		"id": f"mna-{name}",
+		"name": name,
+		"type": input_type,
+		"placeholder": placeholder,
+		"autocomplete": autocomplete,
+		"required": "required",
+	}
 	if autofocus:
 		attrs["autofocus"] = "autofocus"
 	star = html_el("span", None, None, {"color": "#e03434"}, text=" *")
-	title = html_el("label", None, {"for": f"mna-{name}"}, {"display": "block", "marginBottom": "6px", **text_style(14, "420", MUTED)}, [html_el("span", text=label), star])
+	title = html_el(
+		"label",
+		None,
+		{"for": f"mna-{name}"},
+		{"display": "block", "marginBottom": "6px", **text_style(14, "420", MUTED)},
+		[html_el("span", text=label), star],
+	)
 	box = html_el("input", ["mna-auth-input"], attrs, INPUT_STYLES)
 	return html_el("div", None, None, {} if first else {"marginTop": "16px"}, [title, box])
 
@@ -96,7 +122,9 @@ def message(name, hidden=True, text=None):
 	attrs = {"id": f"mna-{name}", "role": "alert"}
 	if hidden:
 		attrs["hidden"] = "hidden"
-	return html_el("div", ["mna-auth-error"], attrs, {"marginTop": "12px", **text_style(13, "420", ERROR_RED)}, text=text)
+	return html_el(
+		"div", ["mna-auth-error"], attrs, {"marginTop": "12px", **text_style(13, "420", ERROR_RED)}, text=text
+	)
 
 
 BUTTON_STYLES = {
@@ -112,8 +140,20 @@ BUTTON_STYLES = {
 	"letterSpacing": "0.02em",
 	"cursor": "pointer",
 }
-SOLID_STYLES = {**BUTTON_STYLES, "marginTop": "16px", "border": "0", "backgroundColor": INK, "color": "#ffffff"}
-OUTLINE_STYLES = {**BUTTON_STYLES, "marginTop": "8px", "border": "1px solid #e2e2e2", "backgroundColor": "#ffffff", "color": INK}
+SOLID_STYLES = {
+	**BUTTON_STYLES,
+	"marginTop": "16px",
+	"border": "0",
+	"backgroundColor": INK,
+	"color": "#ffffff",
+}
+OUTLINE_STYLES = {
+	**BUTTON_STYLES,
+	"marginTop": "8px",
+	"border": "1px solid #e2e2e2",
+	"backgroundColor": "#ffffff",
+	"color": INK,
+}
 
 
 def button(label, kind, attrs=None, before=""):
@@ -129,10 +169,27 @@ def google_button():
 
 def code_form(sent_text="We sent a 6 digit verification code to "):
 	boxes = "".join(
-		html_el("input", ["mna-otp"], {"type": "text", "inputmode": "numeric", "autocomplete": "one-time-code", "maxlength": "1", "aria-label": f"Digit {i + 1}"}, OTP_STYLES)
+		html_el(
+			"input",
+			["mna-otp"],
+			{
+				"type": "text",
+				"inputmode": "numeric",
+				"autocomplete": "one-time-code",
+				"maxlength": "1",
+				"aria-label": f"Digit {i + 1}",
+			},
+			OTP_STYLES,
+		)
 		for i in range(6)
 	)
-	sent = html_el("p", None, None, {"margin": "0", **text_style(13, "420", MUTED, "0.015em", "19.5px")}, [html_el("span", text=sent_text), html_el("span", None, {"id": "mna-sent-to"}, None)])
+	sent = html_el(
+		"p",
+		None,
+		None,
+		{"margin": "0", **text_style(13, "420", MUTED, "0.015em", "19.5px")},
+		[html_el("span", text=sent_text), html_el("span", None, {"id": "mna-sent-to"}, None)],
+	)
 	resend = html_el("p", ["mna-resend"], None, {"margin": "12px 0 0", "textAlign": "center", **SMALL})
 	return html_el(
 		"form",
@@ -151,21 +208,41 @@ def code_form(sent_text="We sent a 6 digit verification code to "):
 
 def footer(prefix, link_label, href):
 	link = html_el("a", ["mna-auth-link"], {"href": href}, LINK_STYLES, text=link_label)
-	return html_el("div", None, None, {"marginTop": "24px", "textAlign": "center", **SMALL}, [html_el("span", text=prefix + " " if prefix else ""), link])
+	return html_el(
+		"div",
+		None,
+		None,
+		{"marginTop": "24px", "textAlign": "center", **SMALL},
+		[html_el("span", text=prefix + " " if prefix else ""), link],
+	)
 
 
 def card(title, subtitle, content, footer_html):
 	head = [
 		raw_block("Logo", svg("feather", 16), styles=LOGO_STYLES),
-		block("h1", "Title", text=title, styles={"margin": "0", **text_style(17, "600", INK_BLACK, "0.02em", "1.15")}),
-		block("p", "Subtitle", text=subtitle, styles={"margin": "4px 0 0", **text_style(13, "420", MUTED, "0.15px", "19.5px")}),
+		block(
+			"h1",
+			"Title",
+			text=title,
+			styles={"margin": "0", **text_style(17, "600", INK_BLACK, "0.02em", "1.15")},
+		),
+		block(
+			"p",
+			"Subtitle",
+			text=subtitle,
+			styles={"margin": "4px 0 0", **text_style(13, "420", MUTED, "0.15px", "19.5px")},
+		),
 	]
 	return block(
 		"div",
 		"Card",
 		["mna-auth-card"],
 		styles=CARD_STYLES,
-		children=[*head, raw_block("Form", content, styles={"marginTop": "24px"}), raw_block("Footer", footer_html)],
+		children=[
+			*head,
+			raw_block("Form", content, styles={"marginTop": "24px"}),
+			raw_block("Footer", footer_html),
+		],
 	)
 
 
@@ -178,12 +255,23 @@ def login_card():
 		[
 			field("email", "Email", "email", "name@example.com", "email", first=True, autofocus=True),
 			message("email-error"),
-			html_el("p", ["mna-signup-hint"], {"hidden": "hidden"}, {"margin": "8px 0 0", **SMALL}, [html_el("a", ["mna-auth-link"], {"href": "/signup"}, LINK_STYLES, text="Create one.")]),
+			html_el(
+				"p",
+				["mna-signup-hint"],
+				{"hidden": "hidden"},
+				{"margin": "8px 0 0", **SMALL},
+				[html_el("a", ["mna-auth-link"], {"href": "/signup"}, LINK_STYLES, text="Create one.")],
+			),
 			button("Send verification code", "solid", {"id": "mna-send"}),
 			google_button(),
 		],
 	)
-	return card("Log in to Cafe", "Write, share, and connect.", email_form + code_form(), footer("New member?", "Create a new account.", "/signup"))
+	return card(
+		"Log in to Cafe",
+		"Write, share, and connect.",
+		email_form + code_form(),
+		footer("New member?", "Create a new account.", "/signup"),
+	)
 
 
 def signup_card():
@@ -200,7 +288,12 @@ def signup_card():
 			google_button(),
 		],
 	)
-	return card("Create your account", "Write, share, and connect — without the noise.", details + code_form(), footer("Already have an account?", "Log in.", "/login"))
+	return card(
+		"Create your account",
+		"Write, share, and connect — without the noise.",
+		details + code_form(),
+		footer("Already have an account?", "Log in.", "/login"),
+	)
 
 
 def system_card():
